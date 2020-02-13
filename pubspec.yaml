@@ -1,8 +1,8 @@
 name: social_foundation
 description: social foundation
 version: 0.0.1
-author:
-homepage:
+author: gohopo
+homepage: https://github.com/gohopo/social_foundation
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
