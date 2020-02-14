@@ -45,9 +45,9 @@ class ChatService {
   static Future<String> getClientId() async {
     return _clientId;
   }
-  static Future<ChatService> initialize(String appId, String appKey) async {
+  static Future<ChatService> initialize(String appId, String appKey, String serverURL) async {
     if (_instance == null){
-      _channel.invokeMethod(ChatMethod.Initialize, {'appId': appId, 'appKey': appKey});
+      _channel.invokeMethod(ChatMethod.Initialize, {'appId': appId, 'appKey': appKey, 'serverURL': serverURL});
     }
     return ChatService.getInstance();
   }

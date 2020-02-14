@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+export './services/chat/chat_service.dart';
 
 class SocialFoundation {
   static final SocialFoundation instance = new SocialFoundation();

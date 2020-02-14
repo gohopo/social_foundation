@@ -17,7 +17,8 @@ public class ChatMethodHandler implements MethodChannel.MethodCallHandler {
             case Constants.Method_initialize:{
                 String appId = call.argument("appId");
                 String appKey = call.argument("appKey");
-                LeancloudFunction.initialize(appId,appKey);
+                String serverURL = call.argument("serverURL");
+                LeancloudFunction.initialize(appId,appKey,serverURL);
                 break;
             }
             case Constants.Method_login:{

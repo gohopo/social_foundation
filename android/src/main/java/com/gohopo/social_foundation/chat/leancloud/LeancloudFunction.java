@@ -7,6 +7,7 @@ import com.gohopo.social_foundation.SocialFoundationPlugin;
 import com.gohopo.social_foundation.chat.utils.Constants;
 import com.gohopo.social_foundation.utils.SfResponse;
 
+import cn.leancloud.AVLogger;
 import cn.leancloud.AVOSCloud;
 import cn.leancloud.im.AVIMOptions;
 import cn.leancloud.im.v2.AVIMClient;
@@ -21,8 +22,9 @@ import io.flutter.plugin.common.MethodChannel;
 
 public class LeancloudFunction {
     private static String curUserId;
-    public static void initialize(String appId,String appKey){
-        AVOSCloud.initialize(SocialFoundationPlugin.getInstance().getContext(), appId, appKey);
+    public static void initialize(String appId,String appKey,String serverURL){
+        AVOSCloud.initialize(SocialFoundationPlugin.Activity.getApplication(), appId, appKey, serverURL);
+        //AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
         AVIMOptions.getGlobalOptions().setUnreadNotificationEnabled(true);
         AVIMMessageManager.setConversationEventHandler(ConversationEventHandler.getInstance());
         AVIMClient.setClientEventHandler(ClientEventHandler.getInstance());
@@ -37,13 +39,10 @@ public class LeancloudFunction {
         AVIMClient.getInstance(userId).open(new AVIMClientCallback() {
             @Override
             public void done(AVIMClient client, AVIMException e) {
-                if(null != e){
-                    callback.internalDone(client,e);
+                if(null == e){
+                    curUserId = userId; 
                 }
-                else{
-                    curUserId = userId;
-                    callback.internalDone(client,e);
-                }
+                callback.internalDone(client,e);
             }
         });
     }

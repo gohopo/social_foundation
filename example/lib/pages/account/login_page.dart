@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/config/router_manager.dart';
 
 class LoginPage extends StatefulWidget {
@@ -82,6 +83,8 @@ class _LoginPageState extends State<LoginPage> {
     ),
   );
   void login() async {
+    var response = await ChatService.login(_usernameController.text);
+    print(response.message);
     Navigator.pushReplacementNamed(context, RouteName.Tab);
   }
 }
