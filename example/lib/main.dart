@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/config/secrets.dart';
+import 'config/chat_manager.dart';
 import 'config/router_manager.dart';
 
 class App extends StatelessWidget {
@@ -23,7 +24,5 @@ void main() async {
 Future<void> initApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   ChatService.initialize(LeancloudSecret.appId, LeancloudSecret.appKey, LeancloudSecret.serverURL);
-  ChatService.getInstance().handleMessages().listen((data){
-    print(data);
-  });
+  ChatService.getInstance().handleEvents(new ChatManager());
 }

@@ -15,6 +15,7 @@ import cn.leancloud.im.v2.AVIMConversation;
 import cn.leancloud.im.v2.AVIMException;
 import cn.leancloud.im.v2.AVIMMessageManager;
 import cn.leancloud.im.v2.AVIMMessageOption;
+import cn.leancloud.im.v2.AVIMTypedMessage;
 import cn.leancloud.im.v2.callback.AVIMClientCallback;
 import cn.leancloud.im.v2.callback.AVIMConversationCallback;
 import cn.leancloud.im.v2.messages.AVIMTextMessage;
@@ -26,8 +27,9 @@ public class LeancloudFunction {
         AVOSCloud.initialize(SocialFoundationPlugin.Activity.getApplication(), appId, appKey, serverURL);
         //AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
         AVIMOptions.getGlobalOptions().setUnreadNotificationEnabled(true);
-        AVIMMessageManager.setConversationEventHandler(ConversationEventHandler.getInstance());
-        AVIMClient.setClientEventHandler(ClientEventHandler.getInstance());
+        AVIMClient.setClientEventHandler(new ClientEventHandler());
+        AVIMMessageManager.setConversationEventHandler(new ConversationEventHandler());
+        AVIMMessageManager.registerMessageHandler(AVIMTypedMessage.class,new MessageHandler());
     }
     public static AVIMClient getClient(){
         if(!TextUtils.isEmpty(curUserId)){
