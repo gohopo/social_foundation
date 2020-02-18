@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:social_foundation_example/states/chat_state.dart';
+import 'package:social_foundation_example/widgets/conversation_item.dart';
 
 class MessagePage extends StatefulWidget {
   @override
@@ -9,9 +12,19 @@ class _MessagePageState extends State<MessagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-          child: Text('消息列表'),
-        ),
+      appBar: AppBar(title: Text('消息')),
+      body: Consumer<ChatState>(
+        builder: (context, snapshot, child){
+          return ListView.separated(
+            itemCount: snapshot.conversations.length,
+            itemBuilder: (context,index){
+              var conv = snapshot.conversations[index];
+              return ConversationItemWidget(conversation: conv);
+            },
+            separatorBuilder: (context,index) => Divider(color: Colors.green)
+          );
+        },
+      ),
     );
   }
 }

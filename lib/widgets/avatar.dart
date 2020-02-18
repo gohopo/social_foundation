@@ -49,10 +49,10 @@ class Avatar extends StatelessWidget{
   }
   @protected
   DecorationImage buildImage(){
-    return DecorationImage(
+    return image!=null ? DecorationImage(
       image: image,
       fit: BoxFit.cover
-    );
+    ) : null;
   }
   @protected
   BorderRadiusGeometry buildBorderRadius(){
