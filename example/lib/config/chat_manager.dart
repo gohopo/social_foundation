@@ -1,48 +1,53 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
-import 'package:social_foundation_example/state/chat_state.dart';
+import '../model/message.dart';
+import '../model/conversation.dart';
+import '../state/chat_state.dart';
 
-class ChatManager extends ChatEventManager<ChatConversation,ChatMessage> {
+class ChatManager extends ChatEventManager<Conversation,Message> {
+  static ChatManager get instance => GetIt.instance<ChatManager>();
   ChatManager(String appId, String appKey, String serverURL) : super(appId,appKey,serverURL);
-  saveConversation(ChatConversation conversation){
-    GetIt.instance<ChatState>().saveConversation(conversation);
+  saveConversation(Conversation conversation){
+    conversation.save();
+    ChatState.instance.saveConversation(conversation);
   }
-  saveMessage(ChatMessage message){
+  saveMessage(Message message){
+    message.insert();
     GetIt.instance<EventBus>().fire(message);
   }
 
   @override
-  ChatConversation convertConversation(String conversation) {
-    return conversation == null ? null : ChatConversation.fromJsonString(conversation);
+  Conversation convertConversation(Map<String,dynamic> data) {
+    return Conversation(data);
   }
   @override
-  ChatMessage convertMessage(String message) {
-    return message == null ? null : ChatMessage.fromJsonString(message);
+  Message convertMessage(Map<String,dynamic> data) {
+    return Message(data);
   }
   @override
-  void onMessageReceived(ChatConversation conversation,ChatMessage message){
+  void onMessageReceived(Conversation conversation,Message message){
     saveConversation(conversation);
     saveMessage(message);
   }
   @override
-  void onLastDeliveredAtUpdated(ChatConversation conversation, ChatMessage message) {
+  void onLastDeliveredAtUpdated(Conversation conversation, Message message) {
 
   }
   @override
-  void onLastReadAtUpdated(ChatConversation conversation, ChatMessage message) {
+  void onLastReadAtUpdated(Conversation conversation, Message message) {
   
   }
   @override
-  void onMessageRecalled(ChatConversation conversation, ChatMessage message) {
+  void onMessageRecalled(Conversation conversation, Message message) {
   
   }
   @override
-  void onMessageUpdated(ChatConversation conversation, ChatMessage message) {
+  void onMessageUpdated(Conversation conversation, Message message) {
 
   }
   @override
-  void onUnreadMessagesCountUpdated(ChatConversation conversation, ChatMessage message) {
+  void onUnreadMessagesCountUpdated(Conversation conversation, Message message) {
 
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:social_foundation/social_foundation.dart';
+import 'package:get_it/get_it.dart';
+import '../model/conversation.dart';
 
 class ChatState with ChangeNotifier{
-  List<ChatConversation> conversations = [];
+  static ChatState get instance => GetIt.instance<ChatState>();
+  List<Conversation> conversations = [];
 
-  void saveConversation(ChatConversation conversation){
+  void saveConversation(Conversation conversation){
     conversations.removeWhere((e) => e.convId==conversation.convId);
     conversations.add(conversation);
     notifyListeners();

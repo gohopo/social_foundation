@@ -1,20 +1,41 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-abstract class ChatEventManager<TConversation,TMessage> {
+abstract class ChatEventManager<TConversation extends ChatConversation,TMessage extends ChatMessage> {
   final MethodChannel _channel = MethodChannel('social_foundation/chat');
   final EventChannel _eventChannel = EventChannel("social_foundation/chat/events");
   ChatEventManager(String appId, String appKey, String serverURL){
     _channel.invokeMethod('initialize', {'appId': appId, 'appKey': appKey, 'serverURL': serverURL});
     _eventChannel.receiveBroadcastStream().listen(_handleEvent);
   }
-  @protected _handleEvent(data){
+  Future<String> login(String userId) {
+    return _channel.invokeMethod('login', {'userId': userId});
+  }
+  Future<String> close() {
+    return _channel.invokeMethod('close');
+  }
+  Future<TMessage> sendMessage(String conversationId,String message) async {
+    var result = await _channel.invokeMethod('sendMessage',{'conversationId':conversationId,'message':message});
+    return convertMessage(result);
+  }
+  void setConversationRead(String conversationId) {
+    _channel.invokeMethod('setConversationRead');
+  }
+  TConversation convertConversation(Map<String,dynamic> data);
+  TMessage convertMessage(Map<String,dynamic> data);
+  void onMessageReceived(TConversation conversation,TMessage message);
+  void onUnreadMessagesCountUpdated(TConversation conversation,TMessage message);
+  void onLastDeliveredAtUpdated(TConversation conversation,TMessage message);
+  void onLastReadAtUpdated(TConversation conversation,TMessage message);
+  void onMessageUpdated(TConversation conversation,TMessage message);
+  void onMessageRecalled(TConversation conversation,TMessage message);
+
+  void _handleEvent(data){
     String event = data['event'];
-    var conversation = convertConversation(data['conversation']);
-    var message = convertMessage(data['message']);
+    var conversation = _convertConversation(data['conversation']);
+    var message = _convertMessage(data['message']);
     switch(event){
         case 'onMessageReceived':
           onMessageReceived(conversation,message);
@@ -36,52 +57,73 @@ abstract class ChatEventManager<TConversation,TMessage> {
           break;
       }
   }
-  Future<String> login(String userId) {
-    return _channel.invokeMethod('login', {'userId': userId});
+  TConversation _convertConversation(String conversation){
+    if(conversation == null) return null;
+    var data = json.decode(conversation);
+    var map = new Map<String,dynamic>();
+    map['convId'] = data['conversationId'];
+    map['creator'] = data['creator'];
+    map['members'] = data['members'].cast<String>();
+    map['unreadMessagesCount'] = data['unreadMessagesCount'];
+    map['lastMessage'] = _convertMessage(data['lastMessage']);
+    map['lastMessageAt'] = data['lastMessageAt'];
+    return convertConversation(map);
   }
-  Future<String> close() {
-    return _channel.invokeMethod('close');
+  TMessage _convertMessage(String message){
+    if(message == null) return null;
+    var data = json.decode(message);
+    var map = new Map<String,dynamic>();
+    map['msgId'] = data['messageId'];
+    map['convId'] = data['conversationId'];
+    map['fromId'] = data['from'];
+    map['message'] = data['text'];
+    map['timestamp'] = data['timestamp'];
+    map['status'] = data['messageStatus'];
+    map['receiptTimestamp'] = data['receiptTimestamp'];
+    return convertMessage(map);
   }
-  Future<TMessage> sendMessage(String conversationId,String message) async {
-    var result = await _channel.invokeMethod('sendMessage',{'conversationId':conversationId,'message':message});
-    return convertMessage(result);
-  }
-  void setConversationRead(String conversationId) {
-    _channel.invokeMethod('setConversationRead');
-  }
-  TConversation convertConversation(String conversation);
-  TMessage convertMessage(String message);
-  void onMessageReceived(TConversation conversation,TMessage message);
-  void onUnreadMessagesCountUpdated(TConversation conversation,TMessage message);
-  void onLastDeliveredAtUpdated(TConversation conversation,TMessage message);
-  void onLastReadAtUpdated(TConversation conversation,TMessage message);
-  void onMessageUpdated(TConversation conversation,TMessage message);
-  void onMessageRecalled(TConversation conversation,TMessage message);
 }
 
-class ChatConversation {
+class ChatConversation<TMessage extends ChatMessage> {
   String convId;
   String creator;
   List<String> members;
   int unreadMessagesCount;
-  ChatMessage lastMessage;
+  TMessage lastMessage;
   int lastMessageAt;
-  ChatConversation(this.convId,this.creator,this.members,this.unreadMessagesCount,this.lastMessage,this.lastMessageAt);
-  ChatConversation.fromJson(Map data) : this(data['conversationId'],data['creator'],data['members'].cast<String>(),data['unreadMessagesCount'],ChatMessage.fromJson(data['lastMessage']),data['lastMessageAt']);
-  ChatConversation.fromJsonString(String data) : this.fromJson(jsonDecode(data));
+  ChatConversation(Map<String,dynamic> data) : convId = data['convId'],creator = data['creator'],members = data['members'],unreadMessagesCount = data['unreadMessagesCount'],lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'];
+  toMap(){
+    var map = new Map<String,dynamic>();
+    map['convId'] = convId;
+    map['creator'] = creator;
+    map['members'] = members.toString();
+    map['unreadMessagesCount'] = unreadMessagesCount;
+    map['lastMessage'] = lastMessage.toMap();
+    map['lastMessageAt'] = lastMessageAt;
+    return map;
+  }
 }
 
 class ChatMessage {
   String msgId;
   String convId;
   String fromId;
-  String text;
+  String message;
   int timestamp;
   String status;
   int receiptTimestamp;
-  ChatMessage(this.msgId,this.convId,this.fromId,this.text,this.timestamp,this.status,this.receiptTimestamp);
-  ChatMessage.fromJson(Map data) : this(data['messageId'],data['conversationId'],data['from'],data['text'],data['timestamp'],data['messageStatus'],data['receiptTimestamp']);
-  ChatMessage.fromJsonString(String data) : this.fromJson(jsonDecode(data));
+  ChatMessage(Map<String,dynamic> data) : msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],message = data['message'],timestamp = data['timestamp'],status = data['status'],receiptTimestamp = data['receiptTimestamp'];
+  toMap(){
+    var map = new Map<String,dynamic>();
+    map['msgId'] = msgId;
+    map['convId'] = convId;
+    map['fromId'] = fromId;
+    map['message'] = message;
+    map['timestamp'] = timestamp;
+    map['status'] = status;
+    map['receiptTimestamp'] = receiptTimestamp;
+    return map;
+  }
 }
 
 class ChatMessageStatus {

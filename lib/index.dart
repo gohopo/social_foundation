@@ -1,3 +1,3 @@
-export './services/chat_service.dart';
+export './service/chat_service.dart';
 
-export './widgets/avatar.dart';
+export './widget/avatar.dart';

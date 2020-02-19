@@ -24,7 +24,7 @@ class ConversationItemWidget extends StatelessWidget{
             Avatar(width: 45,height:45,image: AssetImage('assets/images/bird.png'),),
             Expanded(
               flex: 1,
-              child: Text(conversation.lastMessage.text),
+              child: Text(conversation.lastMessage.message),
             ),
             Text(DateTime.fromMillisecondsSinceEpoch(conversation.lastMessageAt).toString().substring(0,19))
           ],
