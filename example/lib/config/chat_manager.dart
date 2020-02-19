@@ -3,7 +3,8 @@ import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/states/chat_state.dart';
 
-class ChatManager extends ChatEventManager {
+class ChatManager extends ChatEventManager<ChatConversation,ChatMessage> {
+  ChatManager(String appId, String appKey, String serverURL) : super(appId,appKey,serverURL);
   saveConversation(ChatConversation conversation){
     GetIt.instance<ChatState>().saveConversation(conversation);
   }
@@ -12,28 +13,36 @@ class ChatManager extends ChatEventManager {
   }
 
   @override
+  ChatConversation convertConversation(String conversation) {
+    return conversation == null ? null : ChatConversation.fromJsonString(conversation);
+  }
+  @override
+  ChatMessage convertMessage(String message) {
+    return message == null ? null : ChatMessage.fromJsonString(message);
+  }
+  @override
   void onMessageReceived(ChatConversation conversation,ChatMessage message){
     saveConversation(conversation);
     saveMessage(message);
   }
   @override
   void onLastDeliveredAtUpdated(ChatConversation conversation, ChatMessage message) {
-    // TODO: implement onLastDeliveredAtUpdated
+
   }
   @override
   void onLastReadAtUpdated(ChatConversation conversation, ChatMessage message) {
-    // TODO: implement onLastReadAtUpdated
+  
   }
   @override
   void onMessageRecalled(ChatConversation conversation, ChatMessage message) {
-    // TODO: implement onMessageRecalled
+  
   }
   @override
   void onMessageUpdated(ChatConversation conversation, ChatMessage message) {
-    // TODO: implement onMessageUpdated
+
   }
   @override
   void onUnreadMessagesCountUpdated(ChatConversation conversation, ChatMessage message) {
-    // TODO: implement onUnreadMessagesCountUpdated
+
   }
 }

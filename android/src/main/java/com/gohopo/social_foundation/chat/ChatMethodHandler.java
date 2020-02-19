@@ -2,7 +2,6 @@ package com.gohopo.social_foundation.chat;
 
 import com.gohopo.social_foundation.chat.leancloud.LeancloudFunction;
 import com.gohopo.social_foundation.chat.utils.Constants;
-import com.gohopo.social_foundation.utils.SfResponse;
 
 import cn.leancloud.im.v2.AVIMClient;
 import cn.leancloud.im.v2.AVIMException;
@@ -27,10 +26,10 @@ public class ChatMethodHandler implements MethodChannel.MethodCallHandler {
                     @Override
                     public void done(AVIMClient client, AVIMException e) {
                         if(null != e){
-                            SfResponse.returnError(result,Constants.Code_error,e.getMessage());
+                            result.error("",e.getMessage(),null);
                         }
                         else{
-                            SfResponse.returnResult(result,userId);
+                            result.success(userId);
                         }
                     }
                 });
@@ -41,10 +40,10 @@ public class ChatMethodHandler implements MethodChannel.MethodCallHandler {
                     @Override
                     public void done(AVIMClient client, AVIMException e) {
                         if(null != e){
-                            SfResponse.returnError(result,Constants.Code_error,e.getMessage());
+                            result.error("",e.getMessage(),null);
                         }
                         else{
-                            SfResponse.returnResult(result,Constants.Code_success);
+                            result.success("");
                         }
                     }
                 });
@@ -58,13 +57,7 @@ public class ChatMethodHandler implements MethodChannel.MethodCallHandler {
             }
             case Constants.Method_setConversationRead:{
                 String conversationId = call.argument("conversationId");
-                int code = LeancloudFunction.setConversationRead(conversationId);
-                if(Constants.Code_success == code){
-                    SfResponse.returnResult(result,"");
-                }
-                else{
-                    SfResponse.returnError(result,code,"");
-                }
+                LeancloudFunction.setConversationRead(conversationId);
                 break;
             }
             default:{

@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import com.alibaba.fastjson.JSON;
 import com.gohopo.social_foundation.SocialFoundationPlugin;
 import com.gohopo.social_foundation.chat.utils.Constants;
-import com.gohopo.social_foundation.utils.SfResponse;
 
 import cn.leancloud.AVLogger;
 import cn.leancloud.AVOSCloud;
@@ -70,20 +69,16 @@ public class LeancloudFunction {
             @Override
             public void done(AVIMException e) {
                 if(null != e){
-                    SfResponse.returnError(result, Constants.Code_error,e.getMessage());
+                    result.error("",e.getMessage(),null);
                 }
                 else{
-                    SfResponse.returnResult(result, JSON.parse(JSON.toJSONString(msg)));
+                    result.success(JSON.parse(JSON.toJSONString(msg)));
                 }
             }
         });
     }
-    public static int setConversationRead(String conversationId){
+    public static void setConversationRead(String conversationId){
         AVIMConversation conversation = getConversation(conversationId);
-        if(conversation != null){
-            conversation.read();
-            return Constants.Code_success;
-        }
-        return Constants.Code_error;
+        conversation.read();
     }
 }

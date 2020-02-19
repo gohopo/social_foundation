@@ -13,7 +13,4 @@ public class Constants {
     public static final String Event_onLastReadAtUpdated = "onLastReadAtUpdated";
     public static final String Event_onMessageUpdated = "onMessageUpdated";
     public static final String Event_onMessageRecalled = "onMessageRecalled";
-
-    public static final int Code_success = 0;
-    public static final int Code_error = 1;
 }
