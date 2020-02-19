@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'package:social_foundation_example/config/provider_manager.dart';
 import 'package:social_foundation_example/config/secrets.dart';
-import 'package:social_foundation_example/states/chat_state.dart';
+import 'package:social_foundation_example/state/chat_state.dart';
 import 'config/chat_manager.dart';
 import 'config/router_manager.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:social_foundation_example/pages/account/login_page.dart';
-import 'package:social_foundation_example/pages/chat/chat_page.dart';
-import 'package:social_foundation_example/pages/tab_navigator.dart';
+import 'package:social_foundation_example/page/account/login_page.dart';
+import 'package:social_foundation_example/page/chat/chat_page.dart';
+import 'package:social_foundation_example/page/tab_navigator.dart';
 
 class RouteName {
   static const String Splash = 'splash';

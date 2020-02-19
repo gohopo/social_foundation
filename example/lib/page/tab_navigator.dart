@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:social_foundation_example/pages/forum/forum_page.dart';
-import 'package:social_foundation_example/pages/settings/settings_page.dart';
+import 'package:social_foundation_example/page/forum/forum_page.dart';
+import 'package:social_foundation_example/page/settings/settings_page.dart';
 
 import 'chat/message_page.dart';
 

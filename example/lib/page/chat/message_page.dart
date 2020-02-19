@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:social_foundation_example/states/chat_state.dart';
-import 'package:social_foundation_example/widgets/conversation_item.dart';
+import 'package:social_foundation_example/state/chat_state.dart';
+import 'package:social_foundation_example/widget/conversation_item.dart';
 
 class MessagePage extends StatefulWidget {
   @override

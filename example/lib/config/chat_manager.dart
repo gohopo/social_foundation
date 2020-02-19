@@ -1,7 +1,7 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
-import 'package:social_foundation_example/states/chat_state.dart';
+import 'package:social_foundation_example/state/chat_state.dart';
 
 class ChatManager extends ChatEventManager<ChatConversation,ChatMessage> {
   ChatManager(String appId, String appKey, String serverURL) : super(appId,appKey,serverURL);
