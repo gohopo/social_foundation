@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:social_foundation_example/config/chat_manager.dart';
 import 'package:social_foundation_example/config/router_manager.dart';
+import 'package:social_foundation_example/model/user.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -84,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
     ),
   );
   void login() async {
-      await GetIt.instance<ChatManager>().login(_usernameController.text);
-      Navigator.pushReplacementNamed(context, RouteName.Tab);
+    await User.login(_usernameController.text);
+    Navigator.pushReplacementNamed(context, RouteName.Tab);
   }
 }

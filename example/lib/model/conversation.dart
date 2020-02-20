@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation_example/state/user_state.dart';
 import '../config/storage_manager.dart';
-import '../state/app_state.dart';
 
 import 'message.dart';
 
@@ -16,12 +16,12 @@ class Conversation extends ChatConversation<Message> {
   }
   static Future<Conversation> query(String convId) async {
     var database = await StorageManager.instance.getDatabase();
-    var result = await database.query('conversation',where: 'ownerId="?" and convId="?"',whereArgs: [AppState.instance.curUser.userId,convId],limit: 1);
+    var result = await database.query('conversation',where: 'ownerId="?" and convId="?"',whereArgs: [UserState.instance.curUser.userId,convId],limit: 1);
     return result.length>0 ? Conversation.fromDB(result[0]) : null;
   }
   static Future<List<Conversation>> queryAll(String orderBy,int limit,int offset) async {
     var database = await StorageManager.instance.getDatabase();
-    var result = await database.query('conversation',where: 'ownerId="?"',whereArgs: [AppState.instance.curUser.userId],orderBy: orderBy,limit: limit,offset: offset);
+    var result = await database.query('conversation',where: 'ownerId="?"',whereArgs: [UserState.instance.curUser.userId],orderBy: orderBy,limit: limit,offset: offset);
     return result.map(Conversation.fromDB);
   }
   Future<int> insert() async {
@@ -30,7 +30,7 @@ class Conversation extends ChatConversation<Message> {
   }
   Future<int> update() async {
     var database = await StorageManager.instance.getDatabase();
-    return database.update('conversation', {'lastMessage':lastMessage,'lastMessageAt':lastMessageAt},where: 'ownerId="?" and convId="?"',whereArgs: [AppState.instance.curUser.userId,convId]);
+    return database.update('conversation', {'lastMessage':lastMessage,'lastMessageAt':lastMessageAt},where: 'ownerId="?" and convId="?"',whereArgs: [UserState.instance.curUser.userId,convId]);
   }
   Future<int> save() async {
     var conversation = await query(convId);

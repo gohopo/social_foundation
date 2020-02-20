@@ -1,6 +1,6 @@
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/config/storage_manager.dart';
-import 'package:social_foundation_example/state/app_state.dart';
+import 'package:social_foundation_example/state/user_state.dart';
 
 class Message extends ChatMessage {
   Message(Map<String,dynamic> data) : ownerId = data['ownerId'],super(data);
@@ -13,7 +13,7 @@ class Message extends ChatMessage {
   }
   static Future<List<Message>> queryAll(String convId,String orderBy,int limit,int offset) async {
     var database = await StorageManager.instance.getDatabase();
-    var result = await database.query('message',where: 'ownerId="?" and convId="?"',whereArgs: [AppState.instance.curUser.userId,convId],orderBy: orderBy,limit: limit,offset: offset);
+    var result = await database.query('message',where: 'ownerId="?" and convId="?"',whereArgs: [UserState.instance.curUser.userId,convId],orderBy: orderBy,limit: limit,offset: offset);
     return result.map(Message.fromDB);
   }
   Future<int> insert() async {

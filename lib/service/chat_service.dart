@@ -92,7 +92,7 @@ class ChatConversation<TMessage extends ChatMessage> {
   TMessage lastMessage;
   int lastMessageAt;
   ChatConversation(Map<String,dynamic> data) : convId = data['convId'],creator = data['creator'],members = data['members'],unreadMessagesCount = data['unreadMessagesCount'],lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'];
-  toMap(){
+  Map<String,dynamic> toMap(){
     var map = new Map<String,dynamic>();
     map['convId'] = convId;
     map['creator'] = creator;
@@ -113,7 +113,7 @@ class ChatMessage {
   String status;
   int receiptTimestamp;
   ChatMessage(Map<String,dynamic> data) : msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],message = data['message'],timestamp = data['timestamp'],status = data['status'],receiptTimestamp = data['receiptTimestamp'];
-  toMap(){
+  Map<String,dynamic> toMap(){
     var map = new Map<String,dynamic>();
     map['msgId'] = msgId;
     map['convId'] = convId;

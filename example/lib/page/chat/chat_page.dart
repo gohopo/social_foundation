@@ -4,6 +4,7 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation_example/widget/chat_input.dart';
 import 'package:social_foundation_example/widget/message_item.dart';
 
 class ChatPage extends StatefulWidget {
@@ -36,12 +37,18 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(title: Text('聊天')),
       body: Column(children: <Widget>[
-        ListView.builder(
-          itemCount: _messages.length,
-          itemBuilder: (context,index) => MessageItemWidget(message: _messages[index])
-        ),
-        
+        buildMessages(),
+        buildInput()
       ],),
     );
+  }
+  Widget buildMessages(){
+    return ListView.builder(
+      itemCount: _messages.length,
+      itemBuilder: (context,index) => MessageItemWidget(message: _messages[index])
+    );
+  }
+  Widget buildInput(){
+    return ChatInput();
   }
 }

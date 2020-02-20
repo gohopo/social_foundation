@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation_example/model/message.dart';
 
 class MessageItemWidget extends StatelessWidget{
   MessageItemWidget({
@@ -7,7 +7,7 @@ class MessageItemWidget extends StatelessWidget{
     this.onTap
   }) : super(key: ValueKey(message.msgId));
 
-  final ChatMessage message;
+  final Message message;
   final GestureTapCallback onTap;
 
   @override

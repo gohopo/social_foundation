@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/config/router_manager.dart';
+import 'package:social_foundation_example/model/conversation.dart';
 
 class ConversationItemWidget extends StatelessWidget{
   ConversationItemWidget({
@@ -8,7 +9,7 @@ class ConversationItemWidget extends StatelessWidget{
     this.onTap
   }) : super(key: ValueKey(conversation.convId));
 
-  final ChatConversation conversation;
+  final Conversation conversation;
   final GestureTapCallback onTap;
 
   @override
