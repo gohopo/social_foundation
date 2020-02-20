@@ -34,8 +34,8 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
 
   void _handleEvent(data){
     String event = data['event'];
-    var conversation = _convertConversation(data['conversation']);
-    var message = _convertMessage(data['message']);
+    var conversation = data['conversation']==null ? null : _convertConversation(json.decode(data['conversation']));
+    var message = data['message']==null ? null : _convertMessage(json.decode(data['message']));
     switch(event){
         case 'onMessageReceived':
           onMessageReceived(conversation,message);
@@ -57,9 +57,7 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
           break;
       }
   }
-  TConversation _convertConversation(String conversation){
-    if(conversation == null) return null;
-    var data = json.decode(conversation);
+  TConversation _convertConversation(Map data){
     var map = new Map<String,dynamic>();
     map['convId'] = data['conversationId'];
     map['creator'] = data['creator'];
@@ -69,9 +67,7 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
     map['lastMessageAt'] = data['lastMessageAt'];
     return convertConversation(map);
   }
-  TMessage _convertMessage(String message){
-    if(message == null) return null;
-    var data = json.decode(message);
+  TMessage _convertMessage(Map data){
     var map = new Map<String,dynamic>();
     map['msgId'] = data['messageId'];
     map['convId'] = data['conversationId'];
@@ -98,7 +94,7 @@ class ChatConversation<TMessage extends ChatMessage> {
     map['creator'] = creator;
     map['members'] = members.toString();
     map['unreadMessagesCount'] = unreadMessagesCount;
-    map['lastMessage'] = lastMessage.toMap();
+    map['lastMessage'] = json.encode(lastMessage.toMap());
     map['lastMessageAt'] = lastMessageAt;
     return map;
   }

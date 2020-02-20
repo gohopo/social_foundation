@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_foundation_example/model/conversation.dart';
 import 'package:social_foundation_example/page/account/login_page.dart';
 import 'package:social_foundation_example/page/chat/chat_page.dart';
 import 'package:social_foundation_example/page/tab_navigator.dart';
@@ -21,7 +22,7 @@ class Router {
       case RouteName.Tab:
         return MaterialPageRoute(builder: (_) => TabNavigator());
       case RouteName.Chat:
-        return MaterialPageRoute(builder: (_) => ChatPage());
+        return MaterialPageRoute(builder: (_) => ChatPage(conversation: settings.arguments as Conversation));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

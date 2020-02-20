@@ -27,8 +27,9 @@ class StorageManager {
   }
   @protected
   void onCreateDatabase(Database database,int version) async {
-    database.execute('create table conversation(ownerId text primary key,convId text primary key,creator text,members text,unreadMessagesCount integer,lastMessage text,lastMessageAt integer)');
-    database.execute('create table message(ownerId text primary key,msgId text primary key,convId text,fromId text,message text,timestamp integer,status text,receiptTimestamp integer');
+    database.execute('create table user(userId text primary key,nickName text,icon text)');
+    database.execute('create table conversation(ownerId text,convId text,creator text,members text,unreadMessagesCount integer,lastMessage text,lastMessageAt integer)');
+    database.execute('create table message(ownerId text,msgId text primary key,convId text,fromId text,message text,timestamp integer,status text,receiptTimestamp integer)');
   }
   @protected
   void onUpgradeDatabase(Database database,int oldVersion, int newVersion) async {

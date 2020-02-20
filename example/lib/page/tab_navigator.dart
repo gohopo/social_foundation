@@ -18,27 +18,27 @@ class TabNavigator extends StatefulWidget {
 }
 
 class _TabNavigatorState extends State<TabNavigator> {
-  var _pageController = PageController();
+  PageController _pageController;
   int _selectedIndex = 1;
 
   @override
+  void initState(){
+    _pageController = PageController(initialPage: _selectedIndex);
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: () async {
-          return true;
+      body: PageView.builder(
+        itemBuilder: (ctx, index) => pages[index],
+        itemCount: pages.length,
+        controller: _pageController,
+        physics: NeverScrollableScrollPhysics(),
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
         },
-        child: PageView.builder(
-          itemBuilder: (ctx, index) => pages[index],
-          itemCount: pages.length,
-          controller: _pageController,
-          physics: NeverScrollableScrollPhysics(),
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

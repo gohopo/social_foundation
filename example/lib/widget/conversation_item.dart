@@ -16,7 +16,7 @@ class ConversationItemWidget extends StatelessWidget{
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap ?? (){
-        Navigator.of(context).pushNamed(RouteName.Chat,arguments: {conversation:conversation});
+        Navigator.of(context).pushNamed(RouteName.Chat,arguments: conversation);
       },
       child: Ink(
         padding: EdgeInsets.all(10),

@@ -2,6 +2,8 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'package:social_foundation_example/state/app_state.dart';
+import 'package:social_foundation_example/state/user_state.dart';
 
 import 'config/provider_manager.dart';
 import 'config/secrets.dart';
@@ -34,6 +36,8 @@ void main() async {
 void configureServices(){
   GetIt.instance.registerSingleton(StorageManager());
   GetIt.instance.registerSingleton(EventBus());
+  GetIt.instance.registerSingleton(AppState());
+  GetIt.instance.registerSingleton(UserState());
   GetIt.instance.registerSingleton(ChatState());
   GetIt.instance.registerSingleton(ChatManager(LeancloudSecret.appId, LeancloudSecret.appKey, LeancloudSecret.serverURL));
 }

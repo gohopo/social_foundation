@@ -1,6 +1,7 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation_example/state/user_state.dart';
 import '../model/message.dart';
 import '../model/conversation.dart';
 import '../state/chat_state.dart';
@@ -19,10 +20,12 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
 
   @override
   Conversation convertConversation(Map<String,dynamic> data) {
+    data['ownerId'] = UserState.instance.curUser.userId;
     return Conversation(data);
   }
   @override
   Message convertMessage(Map<String,dynamic> data) {
+    data['ownerId'] = UserState.instance.curUser.userId;
     return Message(data);
   }
   @override
