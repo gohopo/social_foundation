@@ -5,19 +5,24 @@ import '../model/user.dart';
 class UserState with ChangeNotifier{
   static UserState get instance => GetIt.instance<UserState>();
   Map<String,User> _users = {};
-  User _curUser;
+  String _curUserId;
 
-  User get curUser => _curUser;
-  User operator [](String userId) => _curUser!=null&&_curUser.userId==userId ? _curUser : _users[userId];
-  void changeCurUser(User user){
-    _curUser = user;
-    notifyListeners();
-  }
-  void updateUser(User user){
-    if(_curUser==null || _curUser.userId==user.userId){
-      return changeCurUser(user);
-    }
+  User operator [](String userId) => _users[userId];
+  String get curUserId => _curUserId;
+  Future<User> login(String userId) async {
+    var user = await User.login(userId);
+    _curUserId = user.userId;
     _users[user.userId] = user;
     notifyListeners();
+    return user;
+  }
+  Future<User> queryUser(String userId) async {
+    var user = this[userId];
+    if(user == null){
+      user = await User.queryUser(userId);
+      _users[user.userId] = user;
+      notifyListeners();
+    }
+    return user;
   }
 }

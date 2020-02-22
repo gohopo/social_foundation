@@ -1,7 +1,5 @@
-import 'package:social_foundation_example/config/chat_manager.dart';
-import 'package:social_foundation_example/config/storage_manager.dart';
-import 'package:social_foundation_example/state/chat_state.dart';
-import 'package:social_foundation_example/state/user_state.dart';
+import 'package:social_foundation_example/service/chat_manager.dart';
+import 'package:social_foundation_example/service/storage_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
 class User {
@@ -19,31 +17,21 @@ class User {
     map['icon'] = icon;
     return map;
   }
-  Future<void> save() async {
-    UserState.instance.updateUser(this);
+  Future<User> save() async {
     var database = await StorageManager.instance.getDatabase();
     await database.insert('user', toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
+    return this;
   }
-  static Future<void> login(String userId) async {
-    await ChatManager.instance.login(userId);
+  static Future<User> login(String userId) async {
     var user = User({'userId':userId});
-    user.save();
-    ChatState.instance.loadMore();
+    ChatManager.instance.login(userId);
+    return user.save();
   }
   static Future<User> queryUser(String userId) async {
-    var user = UserState.instance[userId];
-    if(user == null){
-      var database = await StorageManager.instance.getDatabase();
-      var result = await database.query('user',where:'userId=?',whereArgs:[userId]);
-      if(result.length > 0){
-        user = User(result[0]);
-        UserState.instance.updateUser(user);
-      }
-      else{
-        user = User({'userId':userId});
-        user.save();
-      }
-    }
-    return user;
+    var database = await StorageManager.instance.getDatabase();
+    var result = await database.query('user',where:'userId=?',whereArgs:[userId]);
+    if(result.length > 0) return User(result[0]);
+    var user = User({'userId':userId});
+    return user.save();
   }
 }

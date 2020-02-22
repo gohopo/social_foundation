@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:social_foundation/social_foundation.dart';
-import 'package:social_foundation_example/config/router_manager.dart';
+import 'package:social_foundation_example/service/router_manager.dart';
 import 'package:social_foundation_example/model/conversation.dart';
 
 class ConversationItemWidget extends StatelessWidget{

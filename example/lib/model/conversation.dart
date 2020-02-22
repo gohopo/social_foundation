@@ -1,10 +1,8 @@
 import 'dart:convert';
 
 import 'package:social_foundation/social_foundation.dart';
-import 'package:social_foundation_example/state/user_state.dart';
-import '../config/storage_manager.dart';
-
-import 'message.dart';
+import 'package:social_foundation_example/model/message.dart';
+import 'package:social_foundation_example/service/storage_manager.dart';
 
 class Conversation extends ChatConversation<Message> {
   Conversation(Map<String,dynamic> data) : ownerId = data['ownerId'],super(data);
@@ -22,14 +20,14 @@ class Conversation extends ChatConversation<Message> {
     map['ownerId'] = ownerId;
     return map;
   }
-  static Future<Conversation> query(String convId) async {
+  static Future<Conversation> query(String ownerId,String convId) async {
     var database = await StorageManager.instance.getDatabase();
-    var result = await database.query('conversation',where: 'ownerId=? and convId=?',whereArgs: [UserState.instance.curUser.userId,convId],limit: 1);
+    var result = await database.query('conversation',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId],limit: 1);
     return result.length>0 ? Conversation.fromDB(result[0]) : null;
   }
-  static Future<List<Conversation>> queryAll(int limit,int offset) async {
+  static Future<List<Conversation>> queryAll(String ownerId,int limit,int offset) async {
     var database = await StorageManager.instance.getDatabase();
-    var result = await database.query('conversation',where: 'ownerId=?',whereArgs: [UserState.instance.curUser.userId],orderBy: 'lastMessageAt desc',limit: limit,offset: offset);
+    var result = await database.query('conversation',where: 'ownerId=?',whereArgs: [ownerId],orderBy: 'lastMessageAt desc',limit: limit,offset: offset);
     return result.map(Conversation.fromDB).toList();
   }
   Future<int> insert() async {
@@ -38,10 +36,10 @@ class Conversation extends ChatConversation<Message> {
   }
   Future<int> update() async {
     var database = await StorageManager.instance.getDatabase();
-    return database.update('conversation', {'lastMessage':lastMessage,'lastMessageAt':lastMessageAt},where: 'ownerId=? and convId=?',whereArgs: [UserState.instance.curUser.userId,convId]);
+    return database.update('conversation', {'lastMessage':lastMessage,'lastMessageAt':lastMessageAt},where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
   }
   Future<int> save() async {
-    var conversation = await query(convId);
+    var conversation = await query(ownerId,convId);
     return conversation!=null ? update() : insert();
   }
 }

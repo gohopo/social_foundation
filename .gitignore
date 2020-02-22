@@ -24,4 +24,4 @@ doc/api/
 .pub/
 /.idea
 /**/.settings
-/example/lib/config/secrets.dart
+/example/lib/config.dart

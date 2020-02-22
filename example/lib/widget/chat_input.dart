@@ -22,7 +22,9 @@ class _ChatInputState extends State<ChatInput> {
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       Row(children: <Widget>[
-        buildEditor(),
+        Expanded(
+          child: buildEditor()
+        ),
         buildSend()
       ]),
       buildAccessory()
@@ -45,7 +47,9 @@ class _ChatInputState extends State<ChatInput> {
   }
   Widget buildAccessory(){
     return Row(children: <Widget>[
-
+      buildSend(),
+      buildSend(),
+      buildSend()
     ]);
   }
 }

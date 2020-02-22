@@ -20,12 +20,12 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
 
   @override
   Conversation convertConversation(Map<String,dynamic> data) {
-    data['ownerId'] = UserState.instance.curUser.userId;
+    data['ownerId'] = UserState.instance.curUserId;
     return Conversation(data);
   }
   @override
   Message convertMessage(Map<String,dynamic> data) {
-    data['ownerId'] = UserState.instance.curUser.userId;
+    data['ownerId'] = UserState.instance.curUserId;
     return Message(data);
   }
   @override

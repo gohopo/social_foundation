@@ -5,11 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:social_foundation_example/state/app_state.dart';
 import 'package:social_foundation_example/state/user_state.dart';
 
-import 'config/provider_manager.dart';
-import 'config/secrets.dart';
-import 'config/chat_manager.dart';
-import 'config/router_manager.dart';
-import 'config/storage_manager.dart';
+import 'service/provider_manager.dart';
+import 'config.dart';
+import 'service/chat_manager.dart';
+import 'service/router_manager.dart';
+import 'service/storage_manager.dart';
 import 'state/chat_state.dart';
 
 class App extends StatelessWidget {

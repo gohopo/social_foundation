@@ -1,6 +1,5 @@
 import 'package:social_foundation/social_foundation.dart';
-import 'package:social_foundation_example/config/storage_manager.dart';
-import 'package:social_foundation_example/state/user_state.dart';
+import 'package:social_foundation_example/service/storage_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Message extends ChatMessage {
@@ -19,9 +18,9 @@ class Message extends ChatMessage {
     var result = await database.query('message',where: 'msgId=?',whereArgs: [msgId],limit: 1);
     return result.length>0 ? Message.fromDB(result[0]) : null;
   }
-  static Future<List<Message>> queryAll(String convId,int limit,int offset) async {
+  static Future<List<Message>> queryAll(String ownerId,String convId,int limit,int offset) async {
     var database = await StorageManager.instance.getDatabase();
-    var result = await database.query('message',where: 'ownerId=? and convId=?',whereArgs: [UserState.instance.curUser.userId,convId],orderBy: 'timestamp desc',limit: limit,offset: offset);
+    var result = await database.query('message',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId],orderBy: 'timestamp desc',limit: limit,offset: offset);
     return result.map(Message.fromDB).toList();
   }
   Future<int> insert() async {

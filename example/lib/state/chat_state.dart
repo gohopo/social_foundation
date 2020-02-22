@@ -1,19 +1,19 @@
-import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import '../model/conversation.dart';
+import 'package:social_foundation_example/model/conversation.dart';
+import 'package:social_foundation_example/state/user_state.dart';
+import 'package:social_foundation_example/state/view_state.dart';
 
-class ChatState with ChangeNotifier{
+class ChatState extends RefreshListViewState<Conversation> {
   static ChatState get instance => GetIt.instance<ChatState>();
-  List<Conversation> conversations = [];
 
-  void loadMore() async {
-    var result = await Conversation.queryAll(20, conversations.length);
-    conversations.addAll(result);
+  void saveConversation(Conversation conversation){
+    list.removeWhere((e) => e.convId==conversation.convId);
+    list.insert(0,conversation);
     notifyListeners();
   }
-  void saveConversation(Conversation conversation){
-    conversations.removeWhere((e) => e.convId==conversation.convId);
-    conversations.insert(0,conversation);
-    notifyListeners();
+
+  @override
+  Future<List<Conversation>> loadData() {
+    return Conversation.queryAll(UserState.instance.curUserId,20, list.length);
   }
 }

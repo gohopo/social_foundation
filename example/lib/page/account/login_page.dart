@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:social_foundation_example/config/router_manager.dart';
-import 'package:social_foundation_example/model/user.dart';
+import 'package:social_foundation_example/service/router_manager.dart';
+import 'package:social_foundation_example/state/user_state.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
     ),
   );
   void login() async {
-    await User.login(_usernameController.text);
+    await UserState.instance.login(_usernameController.text);
     Navigator.pushReplacementNamed(context, RouteName.Tab);
   }
 }
