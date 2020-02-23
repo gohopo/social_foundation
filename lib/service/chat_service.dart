@@ -20,8 +20,29 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
     var result = await _channel.invokeMethod('sendMessage',{'conversationId':conversationId,'message':message});
     return convertMessage(result);
   }
-  void setConversationRead(String conversationId) {
-    _channel.invokeMethod('setConversationRead');
+  Future<TConversation> convCreate(String name,List<String> members,bool isUnique,Map attributes,bool isTransient) async {
+    try{
+      var result = await _channel.invokeMethod('convCreate',{'name':name,'members':members,'isUnique':isUnique,'attributes':attributes,'isTransient':isTransient});
+      return _convertConversation(json.decode(result));
+    }
+    catch(e){
+      return null;
+    }
+  }
+  Future<void> convJoin(String conversationId){
+    return _channel.invokeMethod('convJoin',{'conversationId':conversationId});
+  }
+  Future<void> convQuit(String conversationId){
+    return _channel.invokeMethod('convQuit',{'conversationId':conversationId});
+  }
+  Future<void> convInvite(String conversationId,List<String> members){
+    return _channel.invokeMethod('convInvite',{'conversationId':conversationId,'members':members});
+  }
+  Future<void> convKick(String conversationId,List<String> members){
+    return _channel.invokeMethod('convKick',{'conversationId':conversationId,'members':members});
+  }
+  void convRead(String conversationId) {
+    _channel.invokeMethod('convRead');
   }
   TConversation convertConversation(Map<String,dynamic> data);
   TMessage convertMessage(Map<String,dynamic> data);
@@ -92,7 +113,7 @@ class ChatConversation<TMessage extends ChatMessage> {
     var map = new Map<String,dynamic>();
     map['convId'] = convId;
     map['creator'] = creator;
-    map['members'] = members.toString();
+    map['members'] = json.encode(members);
     map['unreadMessagesCount'] = unreadMessagesCount;
     map['lastMessage'] = json.encode(lastMessage.toMap());
     map['lastMessageAt'] = lastMessageAt;

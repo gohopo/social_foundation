@@ -5,7 +5,12 @@ public class Constants {
     public static final String Method_login = "login";
     public static final String Method_close = "close";
     public static final String Method_sendMessage = "sendMessage";
-    public static final String Method_setConversationRead = "setConversationRead";
+    public static final String Method_convCreate = "convCreate";
+    public static final String Method_convJoin = "convJoin";
+    public static final String Method_convQuit = "convQuit";
+    public static final String Method_convInvite = "convInvite";
+    public static final String Method_convKick = "convKick";
+    public static final String Method_convRead = "convRead";
 
     public static final String Event_onMessageReceived = "onMessageReceived";
     public static final String Event_onUnreadMessagesCountUpdated = "onUnreadMessagesCountUpdated";

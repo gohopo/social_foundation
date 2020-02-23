@@ -6,6 +6,9 @@ import com.alibaba.fastjson.JSON;
 import com.gohopo.social_foundation.SocialFoundationPlugin;
 import com.gohopo.social_foundation.chat.utils.Constants;
 
+import java.util.List;
+import java.util.Map;
+
 import cn.leancloud.AVLogger;
 import cn.leancloud.AVOSCloud;
 import cn.leancloud.im.AVIMOptions;
@@ -17,6 +20,8 @@ import cn.leancloud.im.v2.AVIMMessageOption;
 import cn.leancloud.im.v2.AVIMTypedMessage;
 import cn.leancloud.im.v2.callback.AVIMClientCallback;
 import cn.leancloud.im.v2.callback.AVIMConversationCallback;
+import cn.leancloud.im.v2.callback.AVIMConversationCreatedCallback;
+import cn.leancloud.im.v2.callback.AVIMOperationPartiallySucceededCallback;
 import cn.leancloud.im.v2.messages.AVIMTextMessage;
 import io.flutter.plugin.common.MethodChannel;
 
@@ -77,7 +82,26 @@ public class LeancloudFunction {
             }
         });
     }
-    public static void setConversationRead(String conversationId){
+    public static void convCreate(String name, List<String> members, boolean isUnique, Map<String, Object> attributes, boolean isTransient, AVIMConversationCreatedCallback callback){
+        getClient().createConversation(members,name,attributes,isTransient,isUnique,callback);
+    }
+    public static void convJoin(String conversationId,AVIMConversationCallback callback){
+        AVIMConversation conversation = getConversation(conversationId);
+        conversation.join(callback);
+    }
+    public static void convQuit(String conversationId,AVIMConversationCallback callback){
+        AVIMConversation conversation = getConversation(conversationId);
+        conversation.quit(callback);
+    }
+    public static void convInvite(String conversationId,List<String> members,AVIMOperationPartiallySucceededCallback callback){
+        AVIMConversation conversation = getConversation(conversationId);
+        conversation.addMembers(members,callback);
+    }
+    public static void convKick(String conversationId, List<String> members, AVIMOperationPartiallySucceededCallback callback){
+        AVIMConversation conversation = getConversation(conversationId);
+        conversation.kickMembers(members,callback);
+    }
+    public static void convRead(String conversationId){
         AVIMConversation conversation = getConversation(conversationId);
         conversation.read();
     }
