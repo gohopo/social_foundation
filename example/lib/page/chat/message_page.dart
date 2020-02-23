@@ -13,6 +13,7 @@ class MessagePage extends StatelessWidget {
       controller: model1.refreshController,
       onRefresh: model1.refresh,
       onLoading: model1.loadMore,
+      enablePullDown: true,
       enablePullUp: true,
       child: ListView.separated(
         itemCount: model1.list.length,

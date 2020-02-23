@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 abstract class ChatEventManager<TConversation extends ChatConversation,TMessage extends ChatMessage> {
@@ -16,7 +17,7 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
   Future<String> close() {
     return _channel.invokeMethod('close');
   }
-  Future<TMessage> sendMessage(String conversationId,String message) async {
+  @protected Future<TMessage> sendMessage(String conversationId,String message) async {
     var result = await _channel.invokeMethod('sendMessage',{'conversationId':conversationId,'message':message});
     return convertMessage(result);
   }
@@ -93,10 +94,10 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
     map['msgId'] = data['messageId'];
     map['convId'] = data['conversationId'];
     map['fromId'] = data['from'];
-    map['message'] = data['text'];
     map['timestamp'] = data['timestamp'];
     map['status'] = data['messageStatus'];
     map['receiptTimestamp'] = data['receiptTimestamp'];
+    map.addAll(json.decode(data['text']));
     return convertMessage(map);
   }
 }
@@ -125,20 +126,24 @@ class ChatMessage {
   String msgId;
   String convId;
   String fromId;
-  String message;
   int timestamp;
   String status;
   int receiptTimestamp;
-  ChatMessage(Map<String,dynamic> data) : msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],message = data['message'],timestamp = data['timestamp'],status = data['status'],receiptTimestamp = data['receiptTimestamp'];
+  String msg;
+  String msgType;
+  Map<String,dynamic> attribute;
+  ChatMessage(Map<String,dynamic> data) : msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],timestamp = data['timestamp'],status = data['status'],receiptTimestamp = data['receiptTimestamp'],msg = data['msg'],msgType = data['msgType'],attribute = data['attribute'];
   Map<String,dynamic> toMap(){
     var map = new Map<String,dynamic>();
     map['msgId'] = msgId;
     map['convId'] = convId;
     map['fromId'] = fromId;
-    map['message'] = message;
     map['timestamp'] = timestamp;
     map['status'] = status;
     map['receiptTimestamp'] = receiptTimestamp;
+    map['msg'] = msg;
+    map['msgType'] = msgType;
+    map['attribute'] = attribute!=null ? json.encode(attribute) : null;
     return map;
   }
 }

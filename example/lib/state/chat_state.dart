@@ -14,7 +14,7 @@ class ChatState extends RefreshListViewState<Conversation> {
   }
 
   @override
-  Future<List<Conversation>> loadData() {
-    return Conversation.queryAll(UserState.instance.curUserId,20, list.length);
+  Future<List<Conversation>> loadData(bool refresh) {
+    return Conversation.queryAll(UserState.instance.curUserId,20, refresh ? 0 : list.length);
   }
 }

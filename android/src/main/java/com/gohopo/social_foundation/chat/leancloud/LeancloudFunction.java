@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.gohopo.social_foundation.SocialFoundationPlugin;
-import com.gohopo.social_foundation.chat.utils.Constants;
 
 import java.util.List;
 import java.util.Map;
@@ -26,8 +25,11 @@ import cn.leancloud.im.v2.messages.AVIMTextMessage;
 import io.flutter.plugin.common.MethodChannel;
 
 public class LeancloudFunction {
+    private static boolean isInitialized = false;
     private static String curUserId;
     public static void initialize(String appId,String appKey,String serverURL){
+        if(isInitialized) return;
+        isInitialized = true;
         AVOSCloud.initialize(SocialFoundationPlugin.Activity.getApplication(), appId, appKey, serverURL);
         //AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
         AVIMOptions.getGlobalOptions().setUnreadNotificationEnabled(true);

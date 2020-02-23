@@ -28,7 +28,7 @@ class ConversationItemWidget extends StatelessWidget{
             ),
             Expanded(
               flex: 1,
-              child: Text(conversation.lastMessage.message),
+              child: Text(conversation.lastMessage.msg),
             ),
             Text(DateTime.fromMillisecondsSinceEpoch(conversation.lastMessageAt).toString().substring(0,19))
           ],

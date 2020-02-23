@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/service/storage_manager.dart';
 import 'package:sqflite/sqflite.dart';
@@ -6,13 +8,18 @@ class Message extends ChatMessage {
   Message(Map<String,dynamic> data) : ownerId = data['ownerId'],super(data);
   String ownerId;
 
-  static Message fromDB(Map<String,dynamic> data) => Message(data);
+  static Message fromDB(Map<String,dynamic> data){
+    data = Map.from(data);
+    data['attribute'] = data['attribute']!=null ? json.decode(data['attribute']) : null;
+    return Message(data);
+  }
   @override
   Map<String,dynamic> toMap(){
     var map = super.toMap();
     map['ownerId'] = ownerId;
     return map;
   }
+  bool get fromOwner => fromId==ownerId;
   static Future<Message> query(String msgId) async {
     var database = await StorageManager.instance.getDatabase();
     var result = await database.query('message',where: 'msgId=?',whereArgs: [msgId],limit: 1);

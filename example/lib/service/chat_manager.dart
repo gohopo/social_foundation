@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:event_bus/event_bus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/state/user_state.dart';
@@ -8,7 +11,22 @@ import '../state/chat_state.dart';
 
 class ChatManager extends ChatEventManager<Conversation,Message> {
   static ChatManager get instance => GetIt.instance<ChatManager>();
+
   ChatManager(String appId, String appKey, String serverURL) : super(appId,appKey,serverURL);
+  Future<Message> sendTextMsg({@required String convId,String msg,Map<String,dynamic> attribute}){
+    return sendMsg(convId: convId,msg:msg,msgType:MessageType.text,attribute:attribute);
+  }
+  Future<Message> sendImageMsg({@required String convId,String path,Map<String,dynamic> attribute}){
+    var msg = path;
+    return sendMsg(convId: convId,msg:msg,msgType:MessageType.image,attribute:attribute);
+  }
+  Future<Message> sendMsg({@required String convId,String msg,@required String msgType,Map<String,dynamic> attribute}){
+    Map<String,dynamic> message = {
+      'msg': msg,
+      'msgType': msgType
+    };
+    return sendMessage(convId, json.encode(message));
+  }
   saveConversation(Conversation conversation){
     ChatState.instance.saveConversation(conversation);
   }
@@ -52,4 +70,10 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
   void onUnreadMessagesCountUpdated(Conversation conversation, Message message) {
 
   }
+}
+
+class MessageType {
+  static final String text = 'text';
+  static final String image = 'image';
+  static final String voice = 'voice';
 }

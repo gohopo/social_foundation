@@ -57,10 +57,10 @@ abstract class ViewState extends ChangeNotifier {
 abstract class ListViewState<T> extends ViewState {
   List<T> list = [];
 
-  Future<List<T>> loadData();
+  Future<List<T>> loadData(bool refresh);
   Future<void> refresh() async {
     try{
-      var data = await loadData();
+      var data = await loadData(true);
       if(data.isEmpty){
         list.clear();
         setEmpty();
@@ -91,7 +91,7 @@ abstract class RefreshListViewState<T> extends ListViewState<T> {
   RefreshController get refreshController => _refreshController;
   Future<List<T>> loadMore() async {
     try{
-      var data = await loadData();
+      var data = await loadData(false);
       if(data.isEmpty){
         refreshController.loadNoData();
       }
@@ -118,7 +118,7 @@ abstract class RefreshListViewState<T> extends ListViewState<T> {
   @override
   Future<void> refresh() async {
     try{
-      var data = await loadData();
+      var data = await loadData(true);
       if(data.isEmpty){
         refreshController.refreshCompleted(resetFooterState: true);
         list.clear();

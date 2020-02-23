@@ -34,10 +34,15 @@ class ChatPage extends StatelessWidget {
       controller: model.refreshController,
       onRefresh: model.refresh,
       onLoading: model.loadMore,
+      reverse: true,
+      enablePullDown: false,
       enablePullUp: true,
-      child: ListView.builder(
-        itemCount: model.list.length,
-        itemBuilder: (context,index) => MessageItemWidget(message: model.list[index])
+      child: ConstrainedBox(
+        constraints: BoxConstraints.expand(),
+        child: ListView.builder(
+          itemCount: model.list.length,
+          itemBuilder: (context,index) => MessageItemWidget(message: model.list[index])
+        ),
       ),
     );
   }

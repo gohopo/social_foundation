@@ -14,7 +14,7 @@ class ChatModel extends RefreshListViewState<Message>{
 
   ChatModel({@required this.conversation});
   void _onMessageReceived(Message message){
-    list.insert(0, message);
+    list.add(message);
     notifyListeners();
   }
 
@@ -24,8 +24,8 @@ class ChatModel extends RefreshListViewState<Message>{
     super.initData();
   }
   @override
-  Future<List<Message>> loadData() {
-    return Message.queryAll(UserState.instance.curUserId,conversation.convId, 20, list.length);
+  Future<List<Message>> loadData(bool refresh) {
+    return Message.queryAll(UserState.instance.curUserId,conversation.convId, 20, refresh ? 0 : list.length);
   }
   @override
   void dispose(){
