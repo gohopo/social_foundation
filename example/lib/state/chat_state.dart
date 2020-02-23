@@ -7,6 +7,7 @@ class ChatState extends RefreshListViewState<Conversation> {
   static ChatState get instance => GetIt.instance<ChatState>();
 
   void saveConversation(Conversation conversation){
+    conversation.save();
     list.removeWhere((e) => e.convId==conversation.convId);
     list.insert(0,conversation);
     notifyListeners();

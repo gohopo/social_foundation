@@ -20,6 +20,7 @@ class Conversation extends ChatConversation<Message> {
     map['ownerId'] = ownerId;
     return map;
   }
+  String get otherId => members.firstWhere((userId) => userId!=ownerId,orElse: ()=>null);
   static Future<Conversation> query(String ownerId,String convId) async {
     var database = await StorageManager.instance.getDatabase();
     var result = await database.query('conversation',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId],limit: 1);

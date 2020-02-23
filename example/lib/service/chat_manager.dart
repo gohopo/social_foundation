@@ -10,7 +10,6 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
   static ChatManager get instance => GetIt.instance<ChatManager>();
   ChatManager(String appId, String appKey, String serverURL) : super(appId,appKey,serverURL);
   saveConversation(Conversation conversation){
-    conversation.save();
     ChatState.instance.saveConversation(conversation);
   }
   saveMessage(Message message){

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import '../model/user.dart';
+import 'package:social_foundation_example/model/user.dart';
 
 class UserState with ChangeNotifier{
   static UserState get instance => GetIt.instance<UserState>();

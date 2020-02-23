@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:social_foundation_example/state/chat_state.dart';
 import 'package:social_foundation_example/view_model/message_model.dart';
@@ -26,13 +27,12 @@ class MessagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var model1 = Provider.of<ChatState>(context);
     return Scaffold(
       appBar: AppBar(title: Text('消息')),
-      body: ProviderWidget2<ChatState,MessageModel>(
-        model1: ChatState.instance,
-        model2: MessageModel(),
-        onModelReady: (model1,model2) => model1.initData(),
-        builder: (context,model1,model2,child) => buildList(context,model1,model2),
+      body: ProviderWidget<MessageModel>(
+        model: MessageModel(),
+        builder: (context,model2,child) => buildList(context,model1,model2),
       )
     );
   }

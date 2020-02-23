@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/service/router_manager.dart';
 import 'package:social_foundation_example/model/conversation.dart';
+import 'package:social_foundation_example/widget/user_widget.dart';
 
 class ConversationItemWidget extends StatelessWidget{
   ConversationItemWidget({
@@ -22,7 +22,10 @@ class ConversationItemWidget extends StatelessWidget{
         padding: EdgeInsets.all(10),
         child: Row(
           children: <Widget>[
-            Avatar(width: 45,height:45,image: AssetImage('assets/images/bird.png'),),
+            UserConsumer(
+              userId: conversation.otherId,
+              builder: (context,user,child) => UserAvatar(user: user),
+            ),
             Expanded(
               flex: 1,
               child: Text(conversation.lastMessage.message),
