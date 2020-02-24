@@ -2,6 +2,7 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:social_foundation_example/state/app_state.dart';
 import 'package:social_foundation_example/state/user_state.dart';
 
@@ -17,10 +18,16 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: providers,
-      child: MaterialApp(
-        title: 'social foundation',
-        onGenerateRoute: Router.generateRoute,
-        initialRoute: RouteName.Login,
+      child: RefreshConfiguration(
+        shouldFooterFollowWhenNotFull: (status) => false,
+        child: MaterialApp(
+          title: 'social foundation',
+          localizationsDelegates: [
+            RefreshLocalizations.delegate
+          ],
+          onGenerateRoute: Router.generateRoute,
+          initialRoute: RouteName.Login,
+        ),
       )
     );
   }

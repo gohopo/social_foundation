@@ -23,7 +23,7 @@ class ChatPage extends StatelessWidget {
             Expanded(
               child: buildMessages(context,model)
             ),
-            buildInput()
+            buildInput(context,model)
           ]
         ),
       )
@@ -37,16 +37,16 @@ class ChatPage extends StatelessWidget {
       reverse: true,
       enablePullDown: false,
       enablePullUp: true,
-      child: ConstrainedBox(
-        constraints: BoxConstraints.expand(),
-        child: ListView.builder(
-          itemCount: model.list.length,
-          itemBuilder: (context,index) => MessageItemWidget(message: model.list[index])
-        ),
+      child: ListView.builder(
+        controller: model.scrollController,
+        itemCount: model.list.length,
+        itemBuilder: (context,index) => MessageItemWidget(message: model.list[index])
       ),
     );
   }
-  Widget buildInput(){
-    return ChatInput();
+  Widget buildInput(BuildContext context,ChatModel model){
+    return ChatInput(
+      model: model.inputModel,
+    );
   }
 }

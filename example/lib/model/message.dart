@@ -5,8 +5,9 @@ import 'package:social_foundation_example/service/storage_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Message extends ChatMessage {
-  Message(Map<String,dynamic> data) : ownerId = data['ownerId'],super(data);
+  Message(Map<String,dynamic> data) : ownerId = data['ownerId'],id = data['id'],super(data);
   String ownerId;
+  int id;
 
   static Message fromDB(Map<String,dynamic> data){
     data = Map.from(data);
@@ -30,9 +31,10 @@ class Message extends ChatMessage {
     var result = await database.query('message',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId],orderBy: 'timestamp desc',limit: limit,offset: offset);
     return result.map(Message.fromDB).toList();
   }
-  Future<int> insert() async {
+  Future<Message> insert() async {
     var database = await StorageManager.instance.getDatabase();
-    return database.insert('message',toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
+    this.id = await database.insert('message',toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
+    return this;
   }
   Future<int> update() async {
     var database = await StorageManager.instance.getDatabase();

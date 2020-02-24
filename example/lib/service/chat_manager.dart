@@ -25,13 +25,21 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
       'msg': msg,
       'msgType': msgType
     };
-    return sendMessage(convId, json.encode(message));
+    //mock
+    message['ownerId'] = UserState.instance.curUserId;
+    message['convId'] = convId;
+    message['fromId'] = UserState.instance.curUserId;
+    message['timestamp'] = DateTime.now().millisecondsSinceEpoch;
+    message['status'] = ChatMessageStatus.Sending;
+    var result = Message(message).insert();
+    return result;
+    //return sendMessage(convId, json.encode(message));
   }
   saveConversation(Conversation conversation){
     ChatState.instance.saveConversation(conversation);
   }
-  saveMessage(Message message){
-    message.insert();
+  saveMessage(Message message) async {
+    await message.insert();
     GetIt.instance<EventBus>().fire(message);
   }
 

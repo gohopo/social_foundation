@@ -133,7 +133,7 @@ abstract class RefreshListViewState<T> extends ListViewState<T> {
           refreshController.loadNoData();
         }
         else{
-          refreshController.loadComplete();
+         refreshController.loadComplete();
         }
         setIdle();
       }

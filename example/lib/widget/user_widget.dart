@@ -36,6 +36,7 @@ class UserConsumer extends StatelessWidget {
 
 class UserAvatar extends Avatar {
   final User user;
+  final String defaultIcon;
 
   UserAvatar({
     Key key,
@@ -48,7 +49,8 @@ class UserAvatar extends Avatar {
     ImageProvider image,
     Widget child,
     VoidCallback onTap,
-  }) : super(key:key,width:width,height:height,decoration:decoration,borderRadius:borderRadius,radius:radius,image:image??AssetImage(user.icon),child:child,onTap:onTap);
+    this.defaultIcon : 'assets/images/bird.png'
+  }) : super(key:key,width:width,height:height,decoration:decoration,borderRadius:borderRadius,radius:radius,image:image??AssetImage(user.icon ?? defaultIcon),child:child,onTap:onTap);
 }
 
 class UserNickName extends StatelessWidget {
@@ -60,6 +62,6 @@ class UserNickName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(this.user.nickName);
+    return Text(this.user.nickName ?? '');
   }
 }

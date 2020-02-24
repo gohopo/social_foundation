@@ -13,7 +13,7 @@ class MessagePage extends StatelessWidget {
       controller: model1.refreshController,
       onRefresh: model1.refresh,
       onLoading: model1.loadMore,
-      enablePullDown: true,
+      enablePullDown: false,
       enablePullUp: true,
       child: ListView.separated(
         itemCount: model1.list.length,
@@ -22,7 +22,7 @@ class MessagePage extends StatelessWidget {
           return ConversationItemWidget(conversation: conv);
         },
         separatorBuilder: (context,index) => Divider(color: Colors.green)
-      ),
+      )
     );
   }
 
