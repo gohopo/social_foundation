@@ -21,7 +21,7 @@ class ChatModel extends RefreshListViewState<Message>{
   ChatModel({@required this.conversation}){
     inputModel = ChatInputModel(onTapSend:_onTapSend,onPickImage: _onPickImage);
   }
-  Future<void> _sendMessage({String msg,String msgType,Map attribute}) async {
+  Future<void> _sendMessage({@required String msg,@required String msgType,Map attribute}) async {
     await ChatManager.instance.sendMsg(convId:conversation.convId,msg:msg,msgType:msgType,attribute:attribute);
     scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
@@ -33,7 +33,7 @@ class ChatModel extends RefreshListViewState<Message>{
   }
   void _onTapSend() async {
     if(inputModel.textEditingController.text.isEmpty) return;
-    await _sendMessage(msg:inputModel.textEditingController.text);
+    await _sendMessage(msg:inputModel.textEditingController.text,msgType: MessageType.text);
     inputModel.textEditingController.clear();
   }
   void _onPickImage(File image) async {

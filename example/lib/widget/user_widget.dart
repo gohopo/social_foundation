@@ -50,7 +50,7 @@ class UserAvatar extends Avatar {
     Widget child,
     VoidCallback onTap,
     this.defaultIcon : 'assets/images/bird.png'
-  }) : super(key:key,width:width,height:height,decoration:decoration,borderRadius:borderRadius,radius:radius,image:image??AssetImage(user.icon ?? defaultIcon),child:child,onTap:onTap);
+  }) : super(key:key,width:width,height:height,decoration:decoration,borderRadius:borderRadius,radius:radius,image:image??AssetImage(user!=null?user.icon:defaultIcon),child:child,onTap:onTap);
 }
 
 class UserNickName extends StatelessWidget {
