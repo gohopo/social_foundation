@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
@@ -18,10 +19,11 @@ class ChatModel extends RefreshListViewState<Message>{
   ScrollController scrollController = ScrollController();
 
   ChatModel({@required this.conversation}){
-    inputModel = ChatInputModel(onTapSend:_onTapSend);
+    inputModel = ChatInputModel(onTapSend:_onTapSend,onPickImage: _onPickImage);
   }
-  Future<Message> _sendMessage({String msg,String msgType,Map<String,dynamic> attribute}){
-    return ChatManager.instance.sendMsg(convId:conversation.convId,msg:msg,msgType:msgType,attribute:attribute);
+  Future<void> _sendMessage({String msg,String msgType,Map attribute}) async {
+    await ChatManager.instance.sendMsg(convId:conversation.convId,msg:msg,msgType:msgType,attribute:attribute);
+    scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
   void _onMessageEvent(MessageEvent event){
     if(event.isNew){
@@ -33,7 +35,12 @@ class ChatModel extends RefreshListViewState<Message>{
     if(inputModel.textEditingController.text.isEmpty) return;
     await _sendMessage(msg:inputModel.textEditingController.text);
     inputModel.textEditingController.clear();
-    scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
+  }
+  void _onPickImage(File image) async {
+    Map attribute = {
+      'path': image.path
+    };
+    return _sendMessage(msg:image.path,msgType:MessageType.image,attribute:attribute);
   }
 
   @override

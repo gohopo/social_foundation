@@ -6,13 +6,13 @@ class User {
   String userId;
   String nickName;
   String icon;
-  User(Map<String,dynamic> data) :
+  User(Map data) :
   userId = data['userId'],nickName = data['nickName'],icon = data['icon']{
     nickName = userId;
     icon = 'assets/images/bird.png';
   }
   Map<String,dynamic> toMap(){
-    var map = new Map<String,dynamic>();
+    var map = Map<String,dynamic>();
     map['userId'] = userId;
     map['icon'] = icon;
     return map;

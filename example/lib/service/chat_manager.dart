@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:event_bus/event_bus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
@@ -14,16 +13,16 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
   static ChatManager get instance => GetIt.instance<ChatManager>();
 
   ChatManager(String appId, String appKey, String serverURL) : super(appId,appKey,serverURL);
-  Future<Message> sendTextMsg({@required String convId,String msg,Map<String,dynamic> attribute}){
+  Future<Message> sendTextMsg({@required String convId,String msg,Map attribute}){
     return sendMsg(convId: convId,msg:msg,msgType:MessageType.text,attribute:attribute);
   }
-  Future<Message> sendMsg({@required String convId,String msg,@required String msgType,Map<String,dynamic> attribute}) async {
+  Future<Message> sendMsg({@required String convId,String msg,@required String msgType,Map attribute}) async {
     var data = {
       'msg': msg,
       'msgType': msgType
     };
     //保存
-    var message = Map.from(data);
+    Map message = Map.from(data);
     message['ownerId'] = UserState.instance.curUserId;
     message['convId'] = convId;
     message['fromId'] = UserState.instance.curUserId;
@@ -56,12 +55,12 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
   }
 
   @override
-  Conversation convertConversation(Map<String,dynamic> data) {
+  Conversation convertConversation(Map data) {
     data['ownerId'] = UserState.instance.curUserId;
     return Conversation(data);
   }
   @override
-  Message convertMessage(Map<String,dynamic> data) {
+  Message convertMessage(Map data) {
     data['ownerId'] = UserState.instance.curUserId;
     return Message(data);
   }

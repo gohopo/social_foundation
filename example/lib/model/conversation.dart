@@ -5,10 +5,10 @@ import 'package:social_foundation_example/model/message.dart';
 import 'package:social_foundation_example/service/storage_manager.dart';
 
 class Conversation extends ChatConversation<Message> {
-  Conversation(Map<String,dynamic> data) : ownerId = data['ownerId'],super(data);
+  Conversation(Map data) : ownerId = data['ownerId'],super(data);
   String ownerId;
 
-  static Conversation fromDB(Map<String,dynamic> data){
+  static Conversation fromDB(Map data){
     data = Map.from(data);
     data['members'] = json.decode(data['members']).cast<String>();
     data['lastMessage'] = Message(json.decode(data['lastMessage']));

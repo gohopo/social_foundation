@@ -45,8 +45,8 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
   void convRead(String conversationId) {
     _channel.invokeMethod('convRead');
   }
-  TConversation convertConversation(Map<String,dynamic> data);
-  TMessage convertMessage(Map<String,dynamic> data);
+  TConversation convertConversation(Map data);
+  TMessage convertMessage(Map data);
   void onMessageReceived(TConversation conversation,TMessage message);
   void onUnreadMessagesCountUpdated(TConversation conversation,TMessage message);
   void onLastDeliveredAtUpdated(TConversation conversation,TMessage message);
@@ -80,7 +80,7 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
       }
   }
   TConversation _convertConversation(Map data){
-    var map = new Map<String,dynamic>();
+    var map = Map();
     map['convId'] = data['conversationId'];
     map['creator'] = data['creator'];
     map['members'] = data['members'].cast<String>();
@@ -90,7 +90,7 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
     return convertConversation(map);
   }
   TMessage _convertMessage(Map data){
-    var map = new Map<String,dynamic>();
+    var map = Map();
     map['msgId'] = data['messageId'];
     map['convId'] = data['conversationId'];
     map['fromId'] = data['from'];
@@ -109,9 +109,9 @@ class ChatConversation<TMessage extends ChatMessage> {
   int unreadMessagesCount;
   TMessage lastMessage;
   int lastMessageAt;
-  ChatConversation(Map<String,dynamic> data) : convId = data['convId'],creator = data['creator'],members = data['members'],unreadMessagesCount = data['unreadMessagesCount'],lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'];
+  ChatConversation(Map data) : convId = data['convId'],creator = data['creator'],members = data['members'],unreadMessagesCount = data['unreadMessagesCount'],lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'];
   Map<String,dynamic> toMap(){
-    var map = new Map<String,dynamic>();
+    var map = Map<String,dynamic>();
     map['convId'] = convId;
     map['creator'] = creator;
     map['members'] = json.encode(members);
@@ -131,10 +131,9 @@ class ChatMessage {
   int receiptTimestamp;
   String msg;
   String msgType;
-  Map<String,dynamic> attribute;
-  ChatMessage(Map<String,dynamic> data) : msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],timestamp = data['timestamp'],status = data['status'],receiptTimestamp = data['receiptTimestamp'],msg = data['msg'],msgType = data['msgType'],attribute = data['attribute'];
+  ChatMessage(Map data) : msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],timestamp = data['timestamp'],status = data['status'],receiptTimestamp = data['receiptTimestamp'],msg = data['msg'],msgType = data['msgType'];
   Map<String,dynamic> toMap(){
-    var map = new Map<String,dynamic>();
+    var map = Map<String,dynamic>();
     map['msgId'] = msgId;
     map['convId'] = convId;
     map['fromId'] = fromId;
@@ -143,7 +142,6 @@ class ChatMessage {
     map['receiptTimestamp'] = receiptTimestamp;
     map['msg'] = msg;
     map['msgType'] = msgType;
-    map['attribute'] = attribute!=null ? json.encode(attribute) : null;
     return map;
   }
 }

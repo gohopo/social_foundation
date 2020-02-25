@@ -5,11 +5,12 @@ import 'package:social_foundation_example/service/storage_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Message extends ChatMessage {
-  Message(Map<String,dynamic> data) : ownerId = data['ownerId'],id = data['id'],super(data);
+  Message(Map data) : ownerId = data['ownerId'],id = data['id'],attribute = data['attribute'],super(data);
   String ownerId;
   int id;
+  Map attribute;
 
-  static Message fromDB(Map<String,dynamic> data){
+  static Message fromDB(Map data){
     data = Map.from(data);
     if(data['attribute'] != null) data['attribute'] = json.decode(data['attribute']);
     return Message(data);
@@ -18,6 +19,7 @@ class Message extends ChatMessage {
   Map<String,dynamic> toMap(){
     var map = super.toMap();
     map['ownerId'] = ownerId;
+    map['attribute'] = attribute!=null ? json.encode(attribute) : null;
     return map;
   }
   bool get fromOwner => fromId==ownerId;
