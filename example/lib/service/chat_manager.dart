@@ -4,6 +4,7 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation_example/service/event_manager.dart';
 import 'package:social_foundation_example/state/user_state.dart';
 import '../model/message.dart';
 import '../model/conversation.dart';
@@ -16,31 +17,42 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
   Future<Message> sendTextMsg({@required String convId,String msg,Map<String,dynamic> attribute}){
     return sendMsg(convId: convId,msg:msg,msgType:MessageType.text,attribute:attribute);
   }
-  Future<Message> sendImageMsg({@required String convId,String path,Map<String,dynamic> attribute}){
-    var msg = path;
-    return sendMsg(convId: convId,msg:msg,msgType:MessageType.image,attribute:attribute);
-  }
-  Future<Message> sendMsg({@required String convId,String msg,@required String msgType,Map<String,dynamic> attribute}){
-    Map<String,dynamic> message = {
+  Future<Message> sendMsg({@required String convId,String msg,@required String msgType,Map<String,dynamic> attribute}) async {
+    var data = {
       'msg': msg,
       'msgType': msgType
     };
-    //mock
+    //保存
+    var message = Map.from(data);
     message['ownerId'] = UserState.instance.curUserId;
     message['convId'] = convId;
     message['fromId'] = UserState.instance.curUserId;
     message['timestamp'] = DateTime.now().millisecondsSinceEpoch;
     message['status'] = ChatMessageStatus.Sending;
-    var result = Message(message).insert();
+    message['attribute'] = attribute;
+    var result = await saveMessage(Message(message));
+    //发送
+    sendMessage(convId, json.encode(data)).then((data){
+      result.msgId = data.msgId;
+      result.status = data.status;
+      updateMessage(result);
+    }).catchError((data){
+      result.status = ChatMessageStatus.Failed;
+      updateMessage(result);
+    });
     return result;
-    //return sendMessage(convId, json.encode(message));
   }
   saveConversation(Conversation conversation){
     ChatState.instance.saveConversation(conversation);
   }
-  saveMessage(Message message) async {
+  Future<Message> saveMessage(Message message) async {
     await message.insert();
-    GetIt.instance<EventBus>().fire(message);
+    MessageEvent.emit(message: message);
+    return message;
+  }
+  Future<void> updateMessage(Message message) async {
+    await message.update();
+    MessageEvent.emit(message: message,isNew: false);
   }
 
   @override

@@ -11,7 +11,7 @@ class Message extends ChatMessage {
 
   static Message fromDB(Map<String,dynamic> data){
     data = Map.from(data);
-    data['attribute'] = data['attribute']!=null ? json.decode(data['attribute']) : null;
+    if(data['attribute'] != null) data['attribute'] = json.decode(data['attribute']);
     return Message(data);
   }
   @override
@@ -21,9 +21,9 @@ class Message extends ChatMessage {
     return map;
   }
   bool get fromOwner => fromId==ownerId;
-  static Future<Message> query(String msgId) async {
+  static Future<Message> query(String id) async {
     var database = await StorageManager.instance.getDatabase();
-    var result = await database.query('message',where: 'msgId=?',whereArgs: [msgId],limit: 1);
+    var result = await database.query('message',where: 'id=?',whereArgs: [id],limit: 1);
     return result.length>0 ? Message.fromDB(result[0]) : null;
   }
   static Future<List<Message>> queryAll(String ownerId,String convId,int limit,int offset) async {
@@ -38,6 +38,6 @@ class Message extends ChatMessage {
   }
   Future<int> update() async {
     var database = await StorageManager.instance.getDatabase();
-    return database.update('message', toMap(),where: 'msgId=?',whereArgs: [msgId]);
+    return database.update('message', toMap(),where: 'id=?',whereArgs: [id]);
   }
 }
