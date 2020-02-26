@@ -3,6 +3,8 @@ import 'package:social_foundation_example/model/conversation.dart';
 import 'package:social_foundation_example/page/account/login_page.dart';
 import 'package:social_foundation_example/page/chat/chat_page.dart';
 import 'package:social_foundation_example/page/tab_navigator.dart';
+import 'package:social_foundation_example/widget/page_route.dart';
+import 'package:social_foundation_example/widget/photo_viewer.dart';
 
 class RouteName {
   static const String Splash = 'splash';
@@ -12,6 +14,7 @@ class RouteName {
   static const String Message = 'message';
   static const String Chat = 'chat';
   static const String Settings = 'settings';
+  static const String PhotoViewer = 'photo_viewer';
 }
 
 class Router {
@@ -23,6 +26,9 @@ class Router {
         return MaterialPageRoute(builder: (_) => TabNavigator());
       case RouteName.Chat:
         return MaterialPageRoute(builder: (_) => ChatPage(conversation: settings.arguments as Conversation));
+      case RouteName.PhotoViewer:
+        var map = settings.arguments as Map;
+        return FadeRoute(page: PhotoGalleryViewer(images:map['images'],index:map['index'],heroTag: map['heroTag']));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
