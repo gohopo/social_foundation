@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:social_foundation_example/service/router_manager.dart';
 import 'package:social_foundation_example/model/conversation.dart';
@@ -19,18 +20,38 @@ class ConversationItemWidget extends StatelessWidget{
         Navigator.of(context).pushNamed(RouteName.Chat,arguments: conversation);
       },
       child: Ink(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.symmetric(horizontal: 12,vertical:8),
         child: Row(
           children: <Widget>[
-            UserConsumer(
-              userId: conversation.otherId,
-              builder: (context,user,child) => UserAvatar(user: user),
-            ),
             Expanded(
-              flex: 1,
-              child: Text(conversation.lastMessage.msg),
+              child: UserConsumer(
+                userId: conversation.otherId,
+                builder: (context,user,child) => Row(children: <Widget>[
+                  UserAvatar(user: user),
+                  Padding(padding: EdgeInsets.only(right:12)),
+                  Column(children: <Widget>[
+                    UserNickName(
+                      user: user,
+                      style: TextStyle(fontSize: 16.0, color: Color(0xFF353535))
+                    ),
+                    Text(
+                      conversation.lastMessage.msg,
+                      style: TextStyle(fontSize: 14.0, color: Color(0xFFa9a9a9)),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis
+                    )
+                  ])
+                ])
+              )
             ),
-            Text(DateTime.fromMillisecondsSinceEpoch(conversation.lastMessageAt).toString().substring(0,19))
+            Container(
+              alignment: AlignmentDirectional.topStart,
+              margin: const EdgeInsets.only(right: 12.0, top: 12.0),
+              child: Text(
+                formatDate(DateTime.fromMillisecondsSinceEpoch(conversation.lastMessageAt), [HH, ':', nn, ':', ss]).toString(),
+                style: TextStyle(fontSize: 14.0, color: Color(0xFFa9a9a9)),
+              ),
+            )
           ],
         ),
       ),

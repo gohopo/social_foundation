@@ -35,6 +35,9 @@ class MessageItemWidget extends StatelessWidget{
     else if(message.msgType == MessageType.image){
       content = buildImage();
     }
+    else if(message.msgType == MessageType.voice){
+      content = buildVoice();
+    }
     return Container(
       child: content,
     );
@@ -50,12 +53,34 @@ class MessageItemWidget extends StatelessWidget{
     );
   }
   Widget buildText(){
-    return Text(message.msg);
+    return Row(children: <Widget>[
+      Container(
+        padding: EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: message.fromOwner ? Colors.grey[300] : Colors.blue,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(message.msg)
+      ),
+
+    ]);
   }
   Widget buildImage(){
-    return Image.file(
-      File(message.attribute['path']),
-      width: 120,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(5),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 120),
+        child: Image.file(
+          File(message.attribute['path'])
+        ),
+      ),
+    );
+  }
+  Widget buildVoice(){
+    return Row(
+      children: <Widget>[
+
+      ]
     );
   }
 

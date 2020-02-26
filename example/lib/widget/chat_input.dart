@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/state/view_state.dart';
 import 'package:social_foundation_example/widget/provider_widget.dart';
 
@@ -63,7 +64,19 @@ class ChatInput extends StatelessWidget {
     Widget accessory;
     if(model.curAccessory == 0){
       accessory = Center(
-        child: Text('voice'),
+        child: AudioRecorderConsumer(
+          onStartRecord: model.onStartRecord,
+          onStopRecord: model.onStopRecord,
+          child: ClipOval(
+            child: Container(
+              color: Colors.blue,
+              width: 120,
+              height: 120,
+              alignment: AlignmentDirectional.center,
+              child: Text(model.recorderTips,style: TextStyle(fontSize: 17.0, color: Colors.white)),
+            ),
+          ),
+        ),
       );
     }
     return Container(
@@ -102,11 +115,14 @@ class ChatInputModel extends ViewState {
   TextEditingController textEditingController = TextEditingController();
   FocusNode focusNode = FocusNode();
   int _curAccessory = -1;
+  String recorderTips = '按住 说话';
   VoidCallback onTapSend;
-  void Function(File image) onPickImage;
+  final void Function(File image) onPickImage;
+  final void Function(String path,double duration) onRecordVoice;
   ChatInputModel({
     this.onTapSend,
-    this.onPickImage
+    this.onPickImage,
+    this.onRecordVoice
   }){
     initData();
   }
@@ -121,6 +137,15 @@ class ChatInputModel extends ViewState {
     }
     _curAccessory = curAccessory;
     notifyListeners();
+  }
+  void onStartRecord(){
+    recorderTips = '松开 结束';
+    notifyListeners();
+  }
+  void onStopRecord(String path,double duration){
+    recorderTips = '按住 说话';
+    notifyListeners();
+    onRecordVoice(path,duration);
   }
 
   @override

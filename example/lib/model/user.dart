@@ -9,7 +9,7 @@ class User {
   User(Map data) :
   userId = data['userId'],nickName = data['nickName'],icon = data['icon']{
     nickName = userId;
-    icon = 'assets/images/bird.png';
+    icon = 'assets/images/cat.jpg';
   }
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();

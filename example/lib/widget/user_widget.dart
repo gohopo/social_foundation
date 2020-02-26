@@ -55,13 +55,19 @@ class UserAvatar extends Avatar {
 
 class UserNickName extends StatelessWidget {
   final User user;
+  final TextStyle style;
   UserNickName({
     Key key,
-    @required this.user
+    @required this.user,
+    this.style
   }) : super(key:key);
 
   @override
   Widget build(BuildContext context) {
-    return Text(this.user.nickName ?? '');
+    return Text(
+      this.user!=null ? this.user.nickName : '',
+      style: this.style,
+      maxLines: 1,
+    );
   }
 }

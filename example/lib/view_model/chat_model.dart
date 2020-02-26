@@ -19,7 +19,7 @@ class ChatModel extends RefreshListViewState<Message>{
   ScrollController scrollController = ScrollController();
 
   ChatModel({@required this.conversation}){
-    inputModel = ChatInputModel(onTapSend:_onTapSend,onPickImage: _onPickImage);
+    inputModel = ChatInputModel(onTapSend:_onTapSend,onPickImage: _onPickImage,onRecordVoice: _onRecordVoice);
   }
   Future<void> _sendMessage({@required String msg,@required String msgType,Map attribute}) async {
     await ChatManager.instance.sendMsg(convId:conversation.convId,msg:msg,msgType:msgType,attribute:attribute);
@@ -41,6 +41,9 @@ class ChatModel extends RefreshListViewState<Message>{
       'path': image.path
     };
     return _sendMessage(msg:image.path,msgType:MessageType.image,attribute:attribute);
+  }
+  void _onRecordVoice(String path,double duration){
+    print('_onRecordVoice:$path,$duration');
   }
 
   @override
