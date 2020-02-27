@@ -34,19 +34,22 @@ class ConversationItemWidget extends StatelessWidget{
                 builder: (context,user,child) => Row(children: <Widget>[
                   UserAvatar(user: user,width: 48,height: 48),
                   Padding(padding: EdgeInsets.only(right:12)),
-                  Column(children: <Widget>[
-                    UserNickName(
-                      user: user,
-                      style: TextStyle(fontSize: 16.0, color: Color(0xFF353535))
-                    ),
-                    Padding(padding: EdgeInsets.only(top:8)),
-                    Text(
-                      conversation.lastMessage.msg,
-                      style: TextStyle(fontSize: 14.0, color: Color(0xFFa9a9a9)),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis
-                    )
-                  ])
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      UserNickName(
+                        user: user,
+                        style: TextStyle(fontSize: 16.0, color: Color(0xFF353535))
+                      ),
+                      Padding(padding: EdgeInsets.only(top:8)),
+                      Text(
+                        conversation.lastMessage.des,
+                        style: TextStyle(fontSize: 14.0, color: Color(0xFFa9a9a9)),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis
+                      )
+                    ]
+                  )
                 ])
               )
             ),

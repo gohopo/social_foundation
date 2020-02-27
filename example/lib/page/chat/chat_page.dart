@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/model/conversation.dart';
 import 'package:social_foundation_example/view_model/chat_model.dart';
 import 'package:social_foundation_example/widget/chat_input.dart';
 import 'package:social_foundation_example/widget/message_item.dart';
-import 'package:social_foundation_example/widget/provider_widget.dart';
 
 class ChatPage extends StatelessWidget {
   final Conversation conversation;
@@ -18,13 +18,17 @@ class ChatPage extends StatelessWidget {
       body: ProviderWidget<ChatModel>(
         model: ChatModel(conversation: conversation),
         onModelReady: (model) => model.initData(),
-        builder: (context,model,child) => Column(
-          children: <Widget>[
-            Expanded(
-              child: buildMessages(context,model)
-            ),
-            buildInput(context,model)
-          ]
+        builder: (context,model,child) => GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => model.inputModel.changeAccessory(-2),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: buildMessages(context,model)
+              ),
+              buildInput(context,model)
+            ]
+          ),
         ),
       )
     );

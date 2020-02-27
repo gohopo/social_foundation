@@ -4,8 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_foundation/social_foundation.dart';
-import 'package:social_foundation_example/state/view_state.dart';
-import 'package:social_foundation_example/widget/provider_widget.dart';
 
 class ChatInput extends StatelessWidget {
   final ChatInputModel model;
@@ -39,7 +37,7 @@ class ChatInput extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           GestureDetector(
-            child: Icon(Icons.keyboard_voice),
+            child: Icon(Icons.keyboard_voice,color: model.curAccessory==0?Colors.blue:Colors.black),
             onTap: () => model.changeAccessory(0),
           ),
           GestureDetector(
@@ -79,8 +77,9 @@ class ChatInput extends StatelessWidget {
         ),
       );
     }
-    return Container(
-      height: accessory!=null ? 250 : 0,
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 200),
+      height: accessory!=null ? 260 : 0,
       child: accessory
     );
   }
@@ -118,7 +117,7 @@ class ChatInputModel extends ViewState {
   String recorderTips = '按住 说话';
   VoidCallback onTapSend;
   final void Function(File image) onPickImage;
-  final void Function(String path,double duration) onRecordVoice;
+  final void Function(String path,int duration) onRecordVoice;
   ChatInputModel({
     this.onTapSend,
     this.onPickImage,
@@ -129,11 +128,11 @@ class ChatInputModel extends ViewState {
 
   int get curAccessory => _curAccessory;
   void changeAccessory(int curAccessory){
-    if(_curAccessory == curAccessory){
-      curAccessory = -1;
-    }
-    else if(curAccessory>=0 && focusNode.hasFocus){
+    if(curAccessory!=-1 && focusNode.hasFocus){
       focusNode.unfocus();
+    }
+    else if(_curAccessory == curAccessory){
+      curAccessory = -1;
     }
     _curAccessory = curAccessory;
     notifyListeners();
@@ -142,7 +141,7 @@ class ChatInputModel extends ViewState {
     recorderTips = '松开 结束';
     notifyListeners();
   }
-  void onStopRecord(String path,double duration){
+  void onStopRecord(String path,int duration){
     recorderTips = '按住 说话';
     notifyListeners();
     onRecordVoice(path,duration);

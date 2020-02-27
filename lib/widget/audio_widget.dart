@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_record/index.dart';
+import 'package:social_foundation/index.dart';
 
 class AudioRecorderConsumer extends StatefulWidget {
   final Widget child;
   final Function() onStartRecord;
-  final Function(String path,double duration) onStopRecord;
+  final Function(String path,int duration) onStopRecord;
   AudioRecorderConsumer({
     Key key,
     this.child,
@@ -91,7 +92,7 @@ class _AudioRecorderConsumerState extends State<AudioRecorderConsumer> {
           widget.onStartRecord?.call();
         }
         else if(data.msg == 'onStop'){
-          widget.onStopRecord?.call(data.path,data.audioTimeLength);
+          widget.onStopRecord?.call(data.path,data.audioTimeLength.toInt()*1000);
         }
       })
       ..responseFromAmplitude.listen((data){
@@ -145,6 +146,57 @@ class _AudioRecorderConsumerState extends State<AudioRecorderConsumer> {
         });
       },
       child: widget.child
+    );
+  }
+}
+
+
+class AudioPlayerWidget extends StatelessWidget {
+  final String path;
+  final int duration;
+  final double width;
+  final double height;
+  final Color color;
+  final Color borderColor;
+  AudioPlayerWidget({
+    Key key,
+    this.path,
+    this.duration,
+    this.width,
+    this.height,
+    this.color,
+    this.borderColor
+  }) : super(key:key);
+
+  _onTap(AudioPlayerModel model){
+    if(model.position < 0){
+      model.play(path);
+    }
+    else{
+      model.stop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return ProviderWidget<AudioPlayerModel>(
+      model: AudioPlayerModel(),
+      builder: (context,model,child) => GestureDetector(
+        onTap: () => _onTap(model),
+        child: Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: color,
+            border: Border.all(width:0.5,color:borderColor),
+            borderRadius: BorderRadius.circular(5)
+          ),
+          child: Row(children: <Widget>[
+            Icon(Icons.music_note),
+            Text('${duration ~/1000}"')
+          ]),
+        ),
+      ),
     );
   }
 }

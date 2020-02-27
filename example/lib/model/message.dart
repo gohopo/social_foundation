@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation_example/service/chat_manager.dart';
 import 'package:social_foundation_example/service/storage_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -23,6 +24,22 @@ class Message extends ChatMessage {
     return map;
   }
   bool get fromOwner => fromId==ownerId;
+  String get des{
+    var des = '';
+    switch(msgType){
+      case MessageType.text:
+        des = msg;
+        break;
+      case MessageType.image:
+        des = '[图片]';
+        break;
+      case MessageType.voice:
+        des = '[声音]';
+        break;
+    }
+    if(status == ChatMessageStatus.Sending) des += '  [发送中...]';
+    return des;
+  }
   static Future<Message> query(String id) async {
     var database = await StorageManager.instance.getDatabase();
     var result = await database.query('message',where: 'id=?',whereArgs: [id],limit: 1);
@@ -33,13 +50,15 @@ class Message extends ChatMessage {
     var result = await database.query('message',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId],orderBy: 'timestamp desc',limit: limit,offset: offset);
     return result.map(Message.fromDB).toList();
   }
-  Future<Message> insert() async {
+  Future<void> insert() async {
     var database = await StorageManager.instance.getDatabase();
     this.id = await database.insert('message',toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
-    return this;
   }
-  Future<int> update() async {
+  Future<void> update() async {
     var database = await StorageManager.instance.getDatabase();
     return database.update('message', toMap(),where: 'id=?',whereArgs: [id]);
+  }
+  Future<void> save(bool isNew){
+    return isNew ? insert() : update();
   }
 }

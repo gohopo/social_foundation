@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/model/user.dart';
 import 'package:social_foundation_example/state/user_state.dart';
-import 'package:social_foundation_example/widget/provider_widget.dart';
 
 class UserConsumer extends StatelessWidget {
   final String userId;

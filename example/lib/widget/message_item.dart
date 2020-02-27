@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -56,17 +57,14 @@ class MessageItemWidget extends StatelessWidget{
     );
   }
   Widget buildText(){
-    return Row(children: <Widget>[
-      Container(
-        padding: EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: message.fromOwner ? Colors.grey[300] : Colors.blue,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Text(message.msg)
+    return Container(
+      padding: EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: message.fromOwner ? Colors.grey[300] : Colors.blue,
+        borderRadius: BorderRadius.circular(4),
       ),
-
-    ]);
+      child: Text(message.msg)
+    );
   }
   Widget buildImage(BuildContext context){
     var chatModel = Provider.of<ChatModel>(context);
@@ -89,32 +87,51 @@ class MessageItemWidget extends StatelessWidget{
     );
   }
   Widget buildVoice(){
+    var voice = json.decode(message.msg);
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-
+        AudioPlayerWidget(
+          path: message.attribute['path'],
+          duration: voice['duration'],
+          width: 100,
+          height: 30,
+          color: Colors.grey[350],
+          borderColor: Color(0xFFd9d9d9),
+        )
       ]
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    var textDirection = message.fromOwner ? TextDirection.rtl : TextDirection.ltr;
     return UserConsumer(
       userId: message.fromId,
       builder: (context,user,child) => Container(
         padding: EdgeInsets.symmetric(horizontal:15,vertical: 10),
         child: Row(
-          textDirection: message.fromOwner ? TextDirection.rtl : TextDirection.ltr,
+          textDirection: textDirection,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             buildAvatar(user),
-            Column(
-              crossAxisAlignment: message.fromOwner ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-              children: <Widget>[
-                buildNickName(user),
-                buildContent(context)
-              ]
-            ),
-            buildStatus()
+            Expanded(
+              child: Column(
+                crossAxisAlignment: message.fromOwner ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: <Widget>[
+                  buildNickName(user),
+                  Row(
+                    textDirection: textDirection,
+                    children: <Widget>[
+                      Flexible(
+                        child: buildContent(context),
+                      ),
+                      buildStatus()
+                    ]
+                  )
+                ]
+              ),
+            )
           ]
         ),
       ) 

@@ -29,29 +29,33 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
     message['timestamp'] = DateTime.now().millisecondsSinceEpoch;
     message['status'] = ChatMessageStatus.Sending;
     message['attribute'] = attribute;
-    var result = await saveMessage(Message(message));
+    var result = await saveMessage(Message(message),true);
     //发送
     sendMessage(convId, json.encode(data)).then((data){
       result.msgId = data.msgId;
       result.status = data.status;
-      updateMessage(result);
+      saveMessage(result,false);
     }).catchError((data){
       result.status = ChatMessageStatus.Failed;
-      updateMessage(result);
+      saveMessage(result,false);
     });
     return result;
   }
   saveConversation(Conversation conversation){
     ChatState.instance.saveConversation(conversation);
   }
-  Future<Message> saveMessage(Message message) async {
-    await message.insert();
-    MessageEvent.emit(message: message);
+  Future<Message> saveMessage(Message message,bool isNew) async {
+    await message.save(isNew);
+    MessageEvent.emit(message: message,isNew:isNew);
+    if(message.fromOwner || !isNew){
+      var conversation = await ChatState.instance.queryConversation(message.convId);
+      if(isNew || conversation.lastMessage.id==message.id){
+        conversation.lastMessage = message;
+        conversation.lastMessageAt = message.timestamp;
+        saveConversation(conversation);
+      }
+    }
     return message;
-  }
-  Future<void> updateMessage(Message message) async {
-    await message.update();
-    MessageEvent.emit(message: message,isNew: false);
   }
 
   @override
@@ -67,7 +71,7 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
   @override
   void onMessageReceived(Conversation conversation,Message message){
     saveConversation(conversation);
-    saveMessage(message);
+    saveMessage(message,true);
   }
   @override
   void onLastDeliveredAtUpdated(Conversation conversation, Message message) {
@@ -92,7 +96,7 @@ class ChatManager extends ChatEventManager<Conversation,Message> {
 }
 
 class MessageType {
-  static final String text = 'text';
-  static final String image = 'image';
-  static final String voice = 'voice';
+  static const String text = 'text';
+  static const String image = 'image';
+  static const String voice = 'voice';
 }

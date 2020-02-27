@@ -19,7 +19,7 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
   }
   @protected Future<TMessage> sendMessage(String conversationId,String message) async {
     var result = await _channel.invokeMethod('sendMessage',{'conversationId':conversationId,'message':message});
-    return convertMessage(result);
+    return _convertMessage(result);
   }
   Future<TConversation> convCreate(String name,List<String> members,bool isUnique,Map attributes,bool isTransient) async {
     try{

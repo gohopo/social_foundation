@@ -1,4 +1,4 @@
-import 'package:social_foundation_example/state/view_state.dart';
+import 'package:social_foundation/social_foundation.dart';
 
 class MessageModel extends ViewState {
   

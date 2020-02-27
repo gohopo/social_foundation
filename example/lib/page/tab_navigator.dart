@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:social_foundation_example/page/forum/forum_page.dart';
 import 'package:social_foundation_example/page/settings/settings_page.dart';
+import 'package:social_foundation_example/state/chat_state.dart';
 
 import 'chat/message_page.dart';
 
@@ -24,6 +25,7 @@ class _TabNavigatorState extends State<TabNavigator> {
   @override
   void initState(){
     _pageController = PageController(initialPage: _selectedIndex);
+    ChatState.instance.initData();
     super.initState();
   }
   @override

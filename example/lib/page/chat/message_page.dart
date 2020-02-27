@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/state/chat_state.dart';
 import 'package:social_foundation_example/view_model/message_model.dart';
 import 'package:social_foundation_example/widget/conversation_item.dart';
-import 'package:social_foundation_example/widget/provider_widget.dart';
 
 class MessagePage extends StatelessWidget {
 

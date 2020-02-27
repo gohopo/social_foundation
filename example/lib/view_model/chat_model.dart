@@ -1,15 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/model/conversation.dart';
 import 'package:social_foundation_example/model/message.dart';
 import 'package:social_foundation_example/service/chat_manager.dart';
 import 'package:social_foundation_example/service/event_manager.dart';
 import 'package:social_foundation_example/state/user_state.dart';
-import 'package:social_foundation_example/state/view_state.dart';
 import 'package:social_foundation_example/widget/chat_input.dart';
 
 class ChatModel extends RefreshListViewState<Message>{
@@ -37,13 +38,20 @@ class ChatModel extends RefreshListViewState<Message>{
     inputModel.textEditingController.clear();
   }
   void _onPickImage(File image) async {
-    Map attribute = {
+    var attribute = {
       'path': image.path
     };
     return _sendMessage(msg:image.path,msgType:MessageType.image,attribute:attribute);
   }
-  void _onRecordVoice(String path,double duration){
-    print('_onRecordVoice:$path,$duration');
+  void _onRecordVoice(String path,int duration) async {
+    var data = {
+      'url': '',
+      'duration': duration
+    };
+    var attribute = {
+      'path': path,
+    };
+    return _sendMessage(msg:json.encode(data),msgType:MessageType.voice,attribute:attribute);
   }
 
   @override
