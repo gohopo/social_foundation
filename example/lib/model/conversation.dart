@@ -11,7 +11,7 @@ class Conversation extends ChatConversation<Message> {
   static Conversation fromDB(Map data){
     data = Map.from(data);
     data['members'] = json.decode(data['members']).cast<String>();
-    data['lastMessage'] = Message(json.decode(data['lastMessage']));
+    data['lastMessage'] = Message.fromDB(json.decode(data['lastMessage']));
     return Conversation(data);
   }
   @override

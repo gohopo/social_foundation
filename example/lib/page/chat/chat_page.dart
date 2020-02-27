@@ -18,17 +18,17 @@ class ChatPage extends StatelessWidget {
       body: ProviderWidget<ChatModel>(
         model: ChatModel(conversation: conversation),
         onModelReady: (model) => model.initData(),
-        builder: (context,model,child) => GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () => model.inputModel.changeAccessory(-2),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: buildMessages(context,model)
-              ),
-              buildInput(context,model)
-            ]
-          ),
+        builder: (context,model,child) => Column(
+          children: <Widget>[
+            Expanded(
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () => model.inputModel.changeAccessory(-2),
+                child: buildMessages(context,model),
+              )
+            ),
+            buildInput(context,model)
+          ]
         ),
       )
     );
