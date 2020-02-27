@@ -8,6 +8,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  social_foundation:
+      path: ../
   cupertino_icons: ^0.1.2
   get_it: ^3.1.0
   event_bus: ^1.1.1
@@ -15,13 +17,10 @@ dependencies:
   path_provider: ^1.6.0
   date_format: ^1.0.8
   image_picker: ^0.6.3+4
-  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  social_foundation:
-    path: ../
 
 flutter:
   uses-material-design: true

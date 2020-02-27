@@ -83,7 +83,19 @@ class _LoginPageState extends State<LoginPage> {
     ),
   );
   void login() async {
-    await UserState.instance.login(_usernameController.text);
-    Navigator.pushReplacementNamed(context, RouteName.Tab);
+    try{
+      if(_usernameController.text.isEmpty) throw '请填写用户名!';
+      await UserState.instance.login(_usernameController.text);
+      Navigator.pushReplacementNamed(context, RouteName.Tab);
+    }
+    catch(e){
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('提示'),
+          content: Text(e.toString()),
+        )
+      );
+    }
   }
 }

@@ -8,6 +8,7 @@ import com.gohopo.social_foundation.SocialFoundationPlugin;
 import java.util.List;
 import java.util.Map;
 
+import cn.leancloud.AVInstallation;
 import cn.leancloud.AVLogger;
 import cn.leancloud.AVOSCloud;
 import cn.leancloud.im.AVIMOptions;
@@ -36,6 +37,7 @@ public class LeancloudFunction {
         AVIMClient.setClientEventHandler(new ClientEventHandler());
         AVIMMessageManager.setConversationEventHandler(new ConversationEventHandler());
         AVIMMessageManager.registerMessageHandler(AVIMTypedMessage.class,new MessageHandler());
+        AVInstallation.getCurrentInstallation().saveInBackground();
     }
     public static AVIMClient getClient(){
         if(!TextUtils.isEmpty(curUserId)){
