@@ -9,3 +9,4 @@ export './widget/page_route.dart';
 export './widget/photo_viewer.dart';
 export './widget/avatar.dart';
 export './widget/audio_widget.dart';
+export './widget/badge.dart';

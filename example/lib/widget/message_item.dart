@@ -22,7 +22,7 @@ class MessageItemWidget extends StatelessWidget{
   Widget buildAvatar(User user){
     return Container(
       margin: EdgeInsets.symmetric(horizontal:5),
-      child: UserAvatar(user: user)
+      child: UserAvatar(user: user),
     );
   }
   Widget buildNickName(User user){

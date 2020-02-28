@@ -148,6 +148,7 @@ public class ChatMethodHandler implements MethodChannel.MethodCallHandler {
             case Constants.Method_convRead:{
                 String conversationId = call.argument("conversationId");
                 LeancloudFunction.convRead(conversationId);
+                result.success("");
                 break;
             }
             default:{

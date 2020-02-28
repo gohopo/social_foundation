@@ -42,8 +42,8 @@ abstract class ChatEventManager<TConversation extends ChatConversation,TMessage 
   Future<void> convKick(String conversationId,List<String> members){
     return _channel.invokeMethod('convKick',{'conversationId':conversationId,'members':members});
   }
-  void convRead(String conversationId) {
-    _channel.invokeMethod('convRead');
+  Future<void> convRead(String conversationId) {
+    return _channel.invokeMethod('convRead',{'conversationId':conversationId});
   }
   TConversation convertConversation(Map data);
   TMessage convertMessage(Map data);

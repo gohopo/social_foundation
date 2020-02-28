@@ -10,6 +10,7 @@ import 'package:social_foundation_example/model/conversation.dart';
 import 'package:social_foundation_example/model/message.dart';
 import 'package:social_foundation_example/service/chat_manager.dart';
 import 'package:social_foundation_example/service/event_manager.dart';
+import 'package:social_foundation_example/state/chat_state.dart';
 import 'package:social_foundation_example/state/user_state.dart';
 import 'package:social_foundation_example/widget/chat_input.dart';
 
@@ -56,6 +57,9 @@ class ChatModel extends RefreshListViewState<Message>{
 
   @override
   void initData(){
+    if(conversation.unreadMessagesCount > 0){
+      ChatState.instance.convRead(conversation);
+    }
     _messageSubscription = GetIt.instance<EventBus>().on<MessageEvent>().listen(_onMessageEvent);
     super.initData();
   }

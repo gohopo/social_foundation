@@ -1,5 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:social_foundation/index.dart';
 import 'package:social_foundation_example/service/router_manager.dart';
 import 'package:social_foundation_example/model/conversation.dart';
 import 'package:social_foundation_example/widget/user_widget.dart';
@@ -32,7 +33,12 @@ class ConversationItemWidget extends StatelessWidget{
               child: UserConsumer(
                 userId: conversation.otherId,
                 builder: (context,user,child) => Row(children: <Widget>[
-                  UserAvatar(user: user,width: 48,height: 48),
+                  SfBadge(
+                    text: conversation.unreadMessagesCount.toString(),
+                    visible: conversation.unreadMessagesCount>0,
+                    right: -4,
+                    child: UserAvatar(user: user,width: 48,height: 48),
+                  ),
                   Padding(padding: EdgeInsets.only(right:12)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
