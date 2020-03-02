@@ -1,12 +1,12 @@
 //service
-export './service/chat_service.dart';
+export './services/chat_manager.dart';
 //viewmodel
-export './view_model/audio_model.dart';
+export './view_models/audio_model.dart';
 //widget
-export './widget/provider_widget.dart';
-export './widget/view_state.dart';
-export './widget/page_route.dart';
-export './widget/photo_viewer.dart';
-export './widget/avatar.dart';
-export './widget/audio_widget.dart';
-export './widget/badge.dart';
+export './widgets/provider_widget.dart';
+export './widgets/view_state.dart';
+export './widgets/page_route.dart';
+export './widgets/photo_viewer.dart';
+export './widgets/avatar.dart';
+export './widgets/audio_widget.dart';
+export './widgets/badge.dart';
