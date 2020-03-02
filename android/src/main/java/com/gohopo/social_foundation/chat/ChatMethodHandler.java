@@ -4,15 +4,18 @@ import com.alibaba.fastjson.JSON;
 import com.gohopo.social_foundation.chat.leancloud.LeancloudFunction;
 import com.gohopo.social_foundation.chat.utils.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import cn.leancloud.im.v2.AVIMClient;
 import cn.leancloud.im.v2.AVIMConversation;
 import cn.leancloud.im.v2.AVIMException;
+import cn.leancloud.im.v2.AVIMMessage;
 import cn.leancloud.im.v2.callback.AVIMClientCallback;
 import cn.leancloud.im.v2.callback.AVIMConversationCallback;
 import cn.leancloud.im.v2.callback.AVIMConversationCreatedCallback;
+import cn.leancloud.im.v2.callback.AVIMMessagesQueryCallback;
 import cn.leancloud.im.v2.callback.AVIMOperationFailure;
 import cn.leancloud.im.v2.callback.AVIMOperationPartiallySucceededCallback;
 import io.flutter.plugin.common.MethodCall;
@@ -62,6 +65,23 @@ public class ChatMethodHandler implements MethodChannel.MethodCallHandler {
                 final String conversationId = call.argument("conversationId");
                 final String message = call.argument("message");
                 LeancloudFunction.sendMessage(conversationId, message, result);
+                break;
+            }
+            case Constants.Method_queryMessages:{
+                final String conversationId = call.argument("conversationId");
+                final int limit = call.argument("limit");
+                AVIMConversation conversation = LeancloudFunction.getConversation(conversationId);
+                LeancloudFunction.queryMessages(conversation, "", 0, limit, new ArrayList<AVIMMessage>(), new AVIMMessagesQueryCallback() {
+                    @Override
+                    public void done(List<AVIMMessage> messages, AVIMException e) {
+                        if(e != null){
+                            result.error("",e.getMessage(),null);
+                        }
+                        else{
+                            result.success(JSON.toJSONString(messages));
+                        }
+                    }
+                });
                 break;
             }
             case Constants.Method_convCreate:{

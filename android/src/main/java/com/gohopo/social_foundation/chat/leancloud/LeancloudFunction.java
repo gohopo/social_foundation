@@ -15,12 +15,14 @@ import cn.leancloud.im.AVIMOptions;
 import cn.leancloud.im.v2.AVIMClient;
 import cn.leancloud.im.v2.AVIMConversation;
 import cn.leancloud.im.v2.AVIMException;
+import cn.leancloud.im.v2.AVIMMessage;
 import cn.leancloud.im.v2.AVIMMessageManager;
 import cn.leancloud.im.v2.AVIMMessageOption;
 import cn.leancloud.im.v2.AVIMTypedMessage;
 import cn.leancloud.im.v2.callback.AVIMClientCallback;
 import cn.leancloud.im.v2.callback.AVIMConversationCallback;
 import cn.leancloud.im.v2.callback.AVIMConversationCreatedCallback;
+import cn.leancloud.im.v2.callback.AVIMMessagesQueryCallback;
 import cn.leancloud.im.v2.callback.AVIMOperationPartiallySucceededCallback;
 import cn.leancloud.im.v2.messages.AVIMTextMessage;
 import io.flutter.plugin.common.MethodChannel;
@@ -82,6 +84,26 @@ public class LeancloudFunction {
                 }
                 else{
                     result.success(JSON.parse(JSON.toJSONString(msg)));
+                }
+            }
+        });
+    }
+    public static void queryMessages(final AVIMConversation conversation, String msgId, long timestamp, final int limit, final List<AVIMMessage> result, final AVIMMessagesQueryCallback callback){
+        conversation.queryMessages(msgId, timestamp, Math.min(limit, 1000), new AVIMMessagesQueryCallback() {
+            @Override
+            public void done(List<AVIMMessage> messages, AVIMException e) {
+                if(e != null){
+                    callback.internalDone(result,e);
+                }
+                else{
+                    result.addAll(0,messages);
+                    if(result.size()==limit || messages.size()<1000){
+                        callback.internalDone(result,e);
+                    }
+                    else{
+                        AVIMMessage message = messages.get(0);
+                        queryMessages(conversation,message.getMessageId(),message.getTimestamp(),limit-1000,result,callback);
+                    }
                 }
             }
         });

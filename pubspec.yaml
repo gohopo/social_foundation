@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^4.0.4
+  sqflite: ^1.2.0
+  path_provider: ^1.6.0
   pull_to_refresh: ^1.5.8
   photo_view: ^0.9.2
   flutter_plugin_record: ^0.1.2

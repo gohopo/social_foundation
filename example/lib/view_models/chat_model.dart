@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class ChatModel extends SfRefreshListViewState<Message>{
   void _onMessageEvent(MessageEvent event){
     if(event.isNew){
       list.insert(0,event.message);
+      ChatState.instance.convRead(conversation);
     }
     notifyListeners();
   }
@@ -56,20 +58,27 @@ class ChatModel extends SfRefreshListViewState<Message>{
   }
 
   @override
-  void initData(){
+  Future<void> initData() async {
+    await super.initData();
     if(conversation.unreadMessagesCount > 0){
+      var messages = await ChatManager.instance.queryMessages(conversation.convId, conversation.unreadMessagesCount);
+      messages = messages.where((message) => list.every((data) => data.msgId!=message.msgId)).toList();
+      list.insertAll(0,messages);
+      list.sort((a,b) => b.timestamp-a.timestamp);
+      notifyListeners();
+      
+      await Message.insertAll(messages);
       ChatState.instance.convRead(conversation);
     }
     _messageSubscription = GetIt.instance<EventBus>().on<MessageEvent>().listen(_onMessageEvent);
-    super.initData();
   }
   @override
   Future<List<Message>> loadData(bool refresh) {
-    return Message.queryAll(UserState.instance.curUserId,conversation.convId, 20, refresh ? 0 : list.length);
+    return Message.queryAll(UserState.instance.curUserId,conversation.convId, max(conversation.unreadMessagesCount, 20), refresh ? 0 : list.length);
   }
   @override
   void dispose(){
-    _messageSubscription.cancel();
+    _messageSubscription?.cancel();
     super.dispose();
   }
 }

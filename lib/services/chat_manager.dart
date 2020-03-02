@@ -21,6 +21,11 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     var result = await _channel.invokeMethod('sendMessage',{'conversationId':conversationId,'message':message});
     return _convertMessage(result);
   }
+  Future<List<TMessage>> queryMessages(String conversationId,int limit) async {
+    var result = await _channel.invokeMethod('queryMessages',{'conversationId':conversationId,'limit':limit});
+    List<dynamic> messages = json.decode(result);
+    return messages.map((data) => _convertMessage(data)).toList();
+  }
   Future<TConversation> convCreate(String name,List<String> members,bool isUnique,Map attributes,bool isTransient) async {
     try{
       var result = await _channel.invokeMethod('convCreate',{'name':name,'members':members,'isUnique':isUnique,'attributes':attributes,'isTransient':isTransient});

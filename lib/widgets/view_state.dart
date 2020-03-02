@@ -14,7 +14,7 @@ abstract class SfViewState extends ChangeNotifier {
   bool _disposed = false;
 
   SfViewState({SfViewStatus viewStatus : SfViewStatus.idle}) : _viewStatus = viewStatus;
-  void initData(){}
+  Future<void> initData() async {}
   SfViewStatus get viewStatus => _viewStatus;
   set viewStatus(SfViewStatus viewStatus){
     _viewStatus = viewStatus;
@@ -79,7 +79,7 @@ abstract class SfListViewState<T> extends SfViewState {
   void onCompleted(List<T> data){}
 
   @override
-  void initData() async {
+  Future<void> initData() async {
     setBusy();
     await refresh();
   }

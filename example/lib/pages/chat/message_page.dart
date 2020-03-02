@@ -15,13 +15,12 @@ class MessagePage extends StatelessWidget {
       onLoading: model1.loadMore,
       enablePullDown: false,
       enablePullUp: true,
-      child: ListView.separated(
+      child: ListView.builder(
         itemCount: model1.list.length,
         itemBuilder: (context,index){
           var conv = model1.list[index];
           return ConversationItemWidget(conversation: conv);
-        },
-        separatorBuilder: (context,index) => Divider(color: Colors.green)
+        }
       )
     );
   }

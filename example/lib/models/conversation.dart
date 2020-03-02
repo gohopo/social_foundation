@@ -37,7 +37,7 @@ class Conversation extends SfConversation<Message> {
   }
   Future<int> update() async {
     var database = await StorageManager.instance.getDatabase();
-    return database.update('conversation', {'lastMessage':json.encode(lastMessage.toMap()),'lastMessageAt':lastMessageAt},where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
+    return database.update('conversation', {'unreadMessagesCount':unreadMessagesCount,'lastMessage':json.encode(lastMessage.toMap()),'lastMessageAt':lastMessageAt},where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
   }
   Future<int> save() async {
     var conversation = await query(ownerId,convId);

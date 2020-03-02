@@ -5,6 +5,7 @@ public class Constants {
     public static final String Method_login = "login";
     public static final String Method_close = "close";
     public static final String Method_sendMessage = "sendMessage";
+    public static final String Method_queryMessages = "queryMessages";
     public static final String Method_convCreate = "convCreate";
     public static final String Method_convJoin = "convJoin";
     public static final String Method_convQuit = "convQuit";

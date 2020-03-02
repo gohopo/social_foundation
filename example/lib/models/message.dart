@@ -61,4 +61,13 @@ class Message extends SfMessage {
   Future<void> save(bool isNew){
     return isNew ? insert() : update();
   }
+  static Future<void> insertAll(List<Message> messages) async {
+    var database = await StorageManager.instance.getDatabase();
+    var batch = database.batch();
+    messages.forEach((message) => batch.insert('message',message.toMap(),conflictAlgorithm: ConflictAlgorithm.replace));
+    var results = await batch.commit();
+    for(var i=0;i<messages.length;++i){
+      messages[i].id = results[i];
+    }
+  }
 }

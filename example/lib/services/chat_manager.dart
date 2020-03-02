@@ -91,7 +91,7 @@ class ChatManager extends SfChatManager<Conversation,Message> {
   }
   @override
   void onUnreadMessagesCountUpdated(Conversation conversation, Message message) {
-
+    saveConversation(conversation);
   }
 }
 

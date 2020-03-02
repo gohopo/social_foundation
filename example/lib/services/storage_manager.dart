@@ -1,30 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:social_foundation/index.dart';
 import 'package:sqflite/sqflite.dart';
 
-class StorageManager {
+class StorageManager extends SfStorageManager{
   static StorageManager get instance => GetIt.instance<StorageManager>();
-  StorageManager() {
-    _init();
-  }
-  Directory temporaryDirectory;
-  Database _database;
 
-  void _init() async {
-    temporaryDirectory = await getTemporaryDirectory();
-  }
-  Future<Database> getDatabase() async {
-    if(_database == null){
-      _database = await openDatabase('social.db',version: getDatabaseVersion(),onCreate: onCreateDatabase,onUpgrade: onUpgradeDatabase);
-    }
-    return _database;
-  }
-  int getDatabaseVersion(){
-    return 1;
-  }
   @protected
   void onCreateDatabase(Database database,int version) async {
     database.execute('create table user(userId text primary key,nickName text,icon text)');

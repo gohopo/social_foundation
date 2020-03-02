@@ -1,4 +1,5 @@
 //service
+export './services/storage_manager.dart';
 export './services/chat_manager.dart';
 //viewmodel
 export './view_models/audio_model.dart';
