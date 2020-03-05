@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:social_foundation/utils/aliyun_oss.dart';
+import 'package:social_foundation/widgets/cached_image_provider.dart';
 
 abstract class SfChatManager<TConversation extends SfConversation,TMessage extends SfMessage> {
   final MethodChannel _channel = MethodChannel('social_foundation/chat');
@@ -178,6 +182,16 @@ class SfMessage {
       default:
         return '';
     }
+  }
+  String resolveFileUri(){
+    if(attribute!=null && attribute['filePath']!=null) return attribute['filePath'];
+    if(msgExtra!=null && msgExtra['fileKey']!=null) return SfAliyunOss.getImageUrl(msgExtra['fileKey']);
+    return '';
+  }
+  ImageProvider resolveImage(){
+    if(attribute!=null && attribute['filePath']!=null) return FileImage(File(attribute['filePath']));
+    if(msgExtra!=null && msgExtra['fileKey']!=null) return SfCachedImageProvider(SfAliyunOss.getImageUrl(msgExtra['fileKey']));
+    return null;
   }
 }
 

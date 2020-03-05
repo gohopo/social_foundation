@@ -152,7 +152,7 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
 
 
 class SfAudioPlayerWidget extends StatelessWidget {
-  final String path;
+  final String uri;
   final int duration;
   final double width;
   final double height;
@@ -160,7 +160,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
   final Color borderColor;
   SfAudioPlayerWidget({
     Key key,
-    this.path,
+    this.uri,
     this.duration,
     this.width,
     this.height,
@@ -170,7 +170,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
 
   _onTap(SfAudioPlayerModel model){
     if(model.position < 0){
-      model.play(path);
+      model.play(uri);
     }
     else{
       model.stop();

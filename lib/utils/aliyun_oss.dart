@@ -17,13 +17,13 @@ class SfAliyunOss {
   static String signature;
   static initialize(int accountId,String _accessKeyId,String accessKeySecret,String region,String bucket){
     accessKeyId = _accessKeyId;
-    endPoint = '$bucket.oss-$region.aliyuncs.com';
+    endPoint = 'http://$bucket.oss-$region.aliyuncs.com';
     String policyText = '{"expiration": "2222-01-01T12:00:00.000Z","conditions": [["content-length-range", 0, 1048576000]]}';
     policy = base64.encode(utf8.encode(policyText));
     signature = base64.encode(Hmac(sha1,utf8.encode(accessKeySecret)).convert(utf8.encode(policy)).bytes);
   }
   static String generateFileKey(String filePath,{String prefix,int encrypt=0}){
-    var fileKey = '${Utils.uuid()}_$encrypt';
+    var fileKey = '${SfUtils.uuid()}_$encrypt';
     if(prefix.isNotEmpty) fileKey = '${prefix}_$fileKey';
     return fileKey += SfFileHelper.getFileExt(filePath);
   }
@@ -73,7 +73,8 @@ class SfAliyunOss {
       file = await MultipartFile.fromFile(filePath,filename: fileName);
     }
     else if(encrypt == 1){
-      file = MultipartFile.fromString(await SfFileHelper.file2Base64(filePath),filename: fileName);
+      var bytes = await File(filePath).readAsBytes();
+      file = MultipartFile.fromBytes(SfUtils.encrypt(bytes),filename: fileName);
     }
     else{
       throw '不支持的加密方式!';

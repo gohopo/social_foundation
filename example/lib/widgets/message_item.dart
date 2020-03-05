@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_foundation/social_foundation.dart';
@@ -50,8 +47,11 @@ class MessageItemWidget extends StatelessWidget{
     if(message.status == SfMessageStatus.Sending){
       child = Text('发送中'); 
     }
+    else if(message.status == SfMessageStatus.Failed){
+      child = Icon(Icons.error,color: Colors.red);
+    }
     return Container(
-      margin: EdgeInsets.symmetric(horizontal:5),
+      margin: EdgeInsets.symmetric(horizontal:7),
       child: child,
     );
   }
@@ -70,7 +70,7 @@ class MessageItemWidget extends StatelessWidget{
     return GestureDetector(
       onTap: (){
         var list = chatModel.list.where((data) => data.msgType==SfMessageType.image).toList().reversed.toList();
-        var images = list.map((data) => FileImage(File(data.attribute['filePath']))).toList();
+        var images = list.map((data) => data.resolveImage()).toList();
         var index = list.indexWhere((data) => data.id==message.id);
         Navigator.pushNamed(context, RouteName.PhotoViewer,arguments: {'images':images,'index':index});
       },
@@ -78,9 +78,7 @@ class MessageItemWidget extends StatelessWidget{
         constraints: BoxConstraints(maxWidth: 120),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(5),
-          child: Image.file(
-            File(message.attribute['filePath'])
-          ),
+          child: Image(image: message.resolveImage()),
         ),
       )
     );
@@ -90,7 +88,7 @@ class MessageItemWidget extends StatelessWidget{
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         SfAudioPlayerWidget(
-          path: message.attribute['filePath'],
+          uri: message.resolveFileUri(),
           duration: message.msgExtra['duration'],
           width: 100,
           height: 30,

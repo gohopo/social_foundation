@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SfBadge extends StatelessWidget {
   SfBadge({
     Key key,
-    @required this.child,
+    this.child,
     this.visible = true,
     this.left,
     this.top = 0,
@@ -32,6 +32,9 @@ class SfBadge extends StatelessWidget {
   final String text;
   final TextStyle textStyle;
 
+  Widget buildChild(){
+    return child ?? SizedBox(width: 1,height: 1);
+  }
   Widget buildBadge(){
     return Positioned(
       left: left,
@@ -57,7 +60,7 @@ class SfBadge extends StatelessWidget {
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
-        child,
+        buildChild(),
         if(visible) buildBadge()
       ],
     );
