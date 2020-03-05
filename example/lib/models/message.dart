@@ -1,43 +1,21 @@
 import 'dart:convert';
 
 import 'package:social_foundation/social_foundation.dart';
-import 'package:social_foundation_example/services/chat_manager.dart';
 import 'package:social_foundation_example/services/storage_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Message extends SfMessage {
-  Message(Map data) : ownerId = data['ownerId'],id = data['id'],attribute = data['attribute'],super(data);
-  String ownerId;
-  int id;
-  Map attribute;
-
+  Message(Map data) : super(data);
   static Message fromDB(Map data){
     data = Map.from(data);
     if(data['attribute'] != null) data['attribute'] = json.decode(data['attribute']);
+    if(data['msgExtra'] != null) data['msgExtra'] = json.decode(data['msgExtra']);
     return Message(data);
   }
   @override
-  Map<String,dynamic> toMap(){
-    var map = super.toMap();
-    map['ownerId'] = ownerId;
-    map['attribute'] = attribute!=null ? json.encode(attribute) : null;
-    return map;
-  }
-  bool get fromOwner => fromId==ownerId;
   String get des{
-    var des = '';
-    switch(msgType){
-      case MessageType.text:
-        des = msg;
-        break;
-      case MessageType.image:
-        des = '[图片]';
-        break;
-      case MessageType.voice:
-        des = '[声音]';
-        break;
-    }
-    if(status == SfMessageStatus.Sending) des += '  [发送中...]';
+    var des = super.des;
+    if(status == SfMessageStatus.Sending) des = '[发送中...]  ' + des;
     return des;
   }
   static Future<Message> query(String id) async {
@@ -50,16 +28,14 @@ class Message extends SfMessage {
     var result = await database.query('message',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId],orderBy: 'timestamp desc',limit: limit,offset: offset);
     return result.map(Message.fromDB).toList();
   }
-  Future<void> insert() async {
+  Future<void> save() async {
     var database = await StorageManager.instance.getDatabase();
-    this.id = await database.insert('message',toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
-  }
-  Future<void> update() async {
-    var database = await StorageManager.instance.getDatabase();
-    return database.update('message', toMap(),where: 'id=?',whereArgs: [id]);
-  }
-  Future<void> save(bool isNew){
-    return isNew ? insert() : update();
+    if(id != null){
+      await database.update('message', toMap(),where: 'id=?',whereArgs: [id]);
+    }
+    else{
+      this.id = await database.insert('message',toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
+    }
   }
   static Future<void> insertAll(List<Message> messages) async {
     var database = await StorageManager.instance.getDatabase();

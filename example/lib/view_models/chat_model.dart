@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -11,7 +10,6 @@ import 'package:social_foundation_example/models/conversation.dart';
 import 'package:social_foundation_example/models/message.dart';
 import 'package:social_foundation_example/services/chat_manager.dart';
 import 'package:social_foundation_example/services/event_manager.dart';
-import 'package:social_foundation_example/states/chat_state.dart';
 import 'package:social_foundation_example/states/user_state.dart';
 import 'package:social_foundation_example/widgets/chat_input.dart';
 
@@ -24,37 +22,43 @@ class ChatModel extends SfRefreshListViewState<Message>{
   ChatModel({@required this.conversation}){
     inputModel = ChatInputModel(onTapSend:_onTapSend,onPickImage: _onPickImage,onRecordVoice: _onRecordVoice);
   }
-  Future<void> _sendMessage({@required String msg,@required String msgType,Map attribute}) async {
-    await ChatManager.instance.sendMsg(convId:conversation.convId,msg:msg,msgType:msgType,attribute:attribute);
+  Future<void> _sendMessage({String msg,@required String msgType,Map msgExtra,Map attribute}) async {
+    await ChatManager.instance.sendMsg(convId:conversation.convId,msg:msg,msgType:msgType,msgExtra:msgExtra,attribute:attribute);
     scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
   void _onMessageEvent(MessageEvent event){
+    if(event.message.convId != conversation.convId) return;
     if(event.isNew){
       list.insert(0,event.message);
-      ChatState.instance.convRead(conversation);
+      ChatManager.instance.convRead(conversation.convId);
     }
     notifyListeners();
   }
   void _onTapSend() async {
     if(inputModel.textEditingController.text.isEmpty) return;
-    await _sendMessage(msg:inputModel.textEditingController.text,msgType: MessageType.text);
+    await _sendMessage(msg:inputModel.textEditingController.text,msgType: SfMessageType.text);
     inputModel.textEditingController.clear();
   }
   void _onPickImage(File image) async {
-    var attribute = {
-      'path': image.path
+    var map = await SfAliyunOss.cacheFile(image.path,dir:SfMessageType.image,prefix: 'chat',encrypt: 1);
+    var msgExtra = {
+      'fileKey': map['fileKey']
     };
-    return _sendMessage(msg:image.path,msgType:MessageType.image,attribute:attribute);
+    var attribute = {
+      'filePath': map['filePath']
+    };
+    return _sendMessage(msgType:SfMessageType.image,msgExtra:msgExtra,attribute:attribute);
   }
   void _onRecordVoice(String path,int duration) async {
-    var data = {
-      'url': '',
+    var map = await SfAliyunOss.cacheFile(path,dir:SfMessageType.voice,prefix:'chat');
+    var msgExtra = {
+      'fileKey': map['fileKey'],
       'duration': duration
     };
     var attribute = {
-      'path': path,
+      'filePath': map['filePath']
     };
-    return _sendMessage(msg:json.encode(data),msgType:MessageType.voice,attribute:attribute);
+    return _sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
   }
 
   @override
@@ -68,7 +72,7 @@ class ChatModel extends SfRefreshListViewState<Message>{
       notifyListeners();
       
       await Message.insertAll(messages);
-      ChatState.instance.convRead(conversation);
+      ChatManager.instance.convRead(conversation.convId);
     }
     _messageSubscription = GetIt.instance<EventBus>().on<MessageEvent>().listen(_onMessageEvent);
   }

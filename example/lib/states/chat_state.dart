@@ -1,7 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/models/conversation.dart';
-import 'package:social_foundation_example/services/chat_manager.dart';
 import 'package:social_foundation_example/states/user_state.dart';
 
 class ChatState extends SfRefreshListViewState<Conversation> {
@@ -16,11 +15,6 @@ class ChatState extends SfRefreshListViewState<Conversation> {
     list.removeWhere((e) => e.convId==conversation.convId);
     list.insert(0,conversation);
     notifyListeners();
-  }
-  void convRead(Conversation conversation) async {
-    await ChatManager.instance.convRead(conversation.convId);
-    conversation.unreadMessagesCount = 0;
-    saveConversation(conversation);
   }
 
   @override

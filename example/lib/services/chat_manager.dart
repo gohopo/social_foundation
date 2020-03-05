@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
@@ -10,42 +8,55 @@ import '../models/conversation.dart';
 import '../states/chat_state.dart';
 
 class ChatManager extends SfChatManager<Conversation,Message> {
-  static ChatManager get instance => GetIt.instance<ChatManager>();
+  static ChatManager get instance => GetIt.instance<SfChatManager>();
 
   ChatManager(String appId, String appKey, String serverURL) : super(appId,appKey,serverURL);
   Future<Message> sendTextMsg({@required String convId,String msg,Map attribute}){
-    return sendMsg(convId: convId,msg:msg,msgType:MessageType.text,attribute:attribute);
+    return sendMsg(convId: convId,msg:msg,msgType:SfMessageType.text,attribute:attribute);
   }
-  Future<Message> sendMsg({@required String convId,String msg,@required String msgType,Map attribute}) async {
-    var data = {
+  Future<Message> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute}) async {
+    var message = Message({
+      'ownerId': UserState.instance.curUserId,
+      'convId': convId,
+      'fromId': UserState.instance.curUserId,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+      'status': SfMessageStatus.Sending,
+      'attribute': attribute,
       'msg': msg,
-      'msgType': msgType
-    };
-    //保存
-    Map message = Map.from(data);
-    message['ownerId'] = UserState.instance.curUserId;
-    message['convId'] = convId;
-    message['fromId'] = UserState.instance.curUserId;
-    message['timestamp'] = DateTime.now().millisecondsSinceEpoch;
-    message['status'] = SfMessageStatus.Sending;
-    message['attribute'] = attribute;
-    var result = await saveMessage(Message(message),true);
-    //发送
-    sendMessage(convId, json.encode(data)).then((data){
-      result.msgId = data.msgId;
-      result.status = data.status;
-      saveMessage(result,false);
-    }).catchError((data){
-      result.status = SfMessageStatus.Failed;
-      saveMessage(result,false);
+      'msgType': msgType,
+      'msgExtra': msgExtra
     });
-    return result;
+    resendMessage(message);
+    return message;
+  }
+  Future<Message> resendMessage(Message message) async {
+    try{
+      //保存
+      message.status = SfMessageStatus.Sending;
+      message = await saveMessage(message);
+      //上传
+      if(message.attribute != null){
+        String filePath = message.attribute['filePath'];
+        if(filePath.isNotEmpty){
+          await SfAliyunOss.uploadFile(dir:message.msgType,filePath: filePath);
+        }
+      }
+      //发送
+      var data = await sendMessage(message.convId, message.origin);
+      message.msgId = data.msgId;
+      message.status = data.status;
+    }
+    catch(e){
+      message.status = SfMessageStatus.Failed;
+    }
+    return saveMessage(message);
   }
   saveConversation(Conversation conversation){
     ChatState.instance.saveConversation(conversation);
   }
-  Future<Message> saveMessage(Message message,bool isNew) async {
-    await message.save(isNew);
+  Future<Message> saveMessage(Message message) async {
+    var isNew = message.id==null;
+    await message.save();
     MessageEvent.emit(message: message,isNew:isNew);
     if(message.fromOwner || !isNew){
       var conversation = await ChatState.instance.queryConversation(message.convId);
@@ -71,7 +82,7 @@ class ChatManager extends SfChatManager<Conversation,Message> {
   @override
   void onMessageReceived(Conversation conversation,Message message){
     saveConversation(conversation);
-    saveMessage(message,true);
+    saveMessage(message);
   }
   @override
   void onLastDeliveredAtUpdated(Conversation conversation, Message message) {
@@ -93,10 +104,4 @@ class ChatManager extends SfChatManager<Conversation,Message> {
   void onUnreadMessagesCountUpdated(Conversation conversation, Message message) {
     saveConversation(conversation);
   }
-}
-
-class MessageType {
-  static const String text = 'text';
-  static const String image = 'image';
-  static const String voice = 'voice';
 }

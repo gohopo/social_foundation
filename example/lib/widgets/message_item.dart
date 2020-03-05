@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/models/message.dart';
 import 'package:social_foundation_example/models/user.dart';
-import 'package:social_foundation_example/services/chat_manager.dart';
 import 'package:social_foundation_example/services/router_manager.dart';
 import 'package:social_foundation_example/view_models/chat_model.dart';
 import 'package:social_foundation_example/widgets/user_widget.dart';
@@ -33,13 +32,13 @@ class MessageItemWidget extends StatelessWidget{
   }
   Widget buildContent(BuildContext context){
     Widget content;
-    if(message.msgType == MessageType.text){
+    if(message.msgType == SfMessageType.text){
       content = buildText();
     }
-    else if(message.msgType == MessageType.image){
+    else if(message.msgType == SfMessageType.image){
       content = buildImage(context);
     }
-    else if(message.msgType == MessageType.voice){
+    else if(message.msgType == SfMessageType.voice){
       content = buildVoice();
     }
     return Container(
@@ -70,8 +69,8 @@ class MessageItemWidget extends StatelessWidget{
     var chatModel = Provider.of<ChatModel>(context);
     return GestureDetector(
       onTap: (){
-        var list = chatModel.list.where((data) => data.msgType==MessageType.image).toList().reversed.toList();
-        var images = list.map((data) => FileImage(File(data.attribute['path']))).toList();
+        var list = chatModel.list.where((data) => data.msgType==SfMessageType.image).toList().reversed.toList();
+        var images = list.map((data) => FileImage(File(data.attribute['filePath']))).toList();
         var index = list.indexWhere((data) => data.id==message.id);
         Navigator.pushNamed(context, RouteName.PhotoViewer,arguments: {'images':images,'index':index});
       },
@@ -80,20 +79,19 @@ class MessageItemWidget extends StatelessWidget{
         child: ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: Image.file(
-            File(message.attribute['path'])
+            File(message.attribute['filePath'])
           ),
         ),
       )
     );
   }
   Widget buildVoice(){
-    var voice = json.decode(message.msg);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         SfAudioPlayerWidget(
-          path: message.attribute['path'],
-          duration: voice['duration'],
+          path: message.attribute['filePath'],
+          duration: message.msgExtra['duration'],
           width: 100,
           height: 30,
           color: Colors.grey[350],

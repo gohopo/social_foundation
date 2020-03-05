@@ -108,15 +108,18 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
 }
 
 class SfConversation<TMessage extends SfMessage> {
+  int id;
+  String ownerId;
   String convId;
   String creator;
   List<String> members;
   int unreadMessagesCount;
   TMessage lastMessage;
   int lastMessageAt;
-  SfConversation(Map data) : convId = data['convId'],creator = data['creator'],members = data['members'],unreadMessagesCount = data['unreadMessagesCount'],lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'];
+  SfConversation(Map data) : id = data['id'],ownerId = data['ownerId'],convId = data['convId'],creator = data['creator'],members = data['members'],unreadMessagesCount = data['unreadMessagesCount'],lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'];
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
+    map['ownerId'] = ownerId;
     map['convId'] = convId;
     map['creator'] = creator;
     map['members'] = json.encode(members);
@@ -125,20 +128,27 @@ class SfConversation<TMessage extends SfMessage> {
     map['lastMessageAt'] = lastMessageAt;
     return map;
   }
+  String get otherId => members.firstWhere((userId) => userId!=ownerId,orElse: ()=>null);
 }
 
 class SfMessage {
+  int id;
+  String ownerId;
   String msgId;
   String convId;
   String fromId;
   int timestamp;
   String status;
   int receiptTimestamp;
+  Map attribute;
   String msg;
   String msgType;
-  SfMessage(Map data) : msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],timestamp = data['timestamp'],status = data['status'],receiptTimestamp = data['receiptTimestamp'],msg = data['msg'],msgType = data['msgType'];
+  Map msgExtra;
+  SfMessage(Map data) : id = data['id'],ownerId = data['ownerId'],msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],timestamp = data['timestamp'],status = data['status'],receiptTimestamp = data['receiptTimestamp'],attribute = data['attribute'],msg = data['msg'],msgType = data['msgType'],msgExtra = data['msgExtra'];
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
+    map['ownerId'] = ownerId;
+    map['attribute'] = attribute!=null ? json.encode(attribute) : null;
     map['msgId'] = msgId;
     map['convId'] = convId;
     map['fromId'] = fromId;
@@ -147,7 +157,27 @@ class SfMessage {
     map['receiptTimestamp'] = receiptTimestamp;
     map['msg'] = msg;
     map['msgType'] = msgType;
+    map['msgExtra'] = msgExtra!=null ? json.encode(msgExtra) : null;
     return map;
+  }
+  bool get fromOwner => fromId==ownerId;
+  String get origin{
+    Map<String,dynamic> map = {'msgType':msgType};
+    if(msg != null) map['msg'] = msg;
+    if(msgExtra != null) map['msgExtra'] = msgExtra;
+    return json.encode(map);
+  }
+  String get des{
+    switch(msgType){
+      case SfMessageType.text:
+        return msg;
+      case SfMessageType.image:
+        return '[图片]';
+      case SfMessageType.voice:
+        return '[声音]';
+      default:
+        return '';
+    }
   }
 }
 
@@ -157,4 +187,10 @@ class SfMessageStatus {
   static const String Sent = 'AVIMMessageStatusSent'; //发送成功
   static const String Receipt = 'AVIMMessageStatusReceipt'; //被接收
   static const String Failed = 'AVIMMessageStatusFailed'; //失败
+}
+
+class SfMessageType {
+  static const String text = 'text';
+  static const String image = 'image';
+  static const String voice = 'voice';
 }
