@@ -8,8 +8,8 @@ class Message extends SfMessage {
   Message(Map data) : super(data);
   static Message fromDB(Map data){
     data = Map.from(data);
-    if(data['attribute'] != null) data['attribute'] = json.decode(data['attribute']);
-    if(data['msgExtra'] != null) data['msgExtra'] = json.decode(data['msgExtra']);
+    data['attribute'] = json.decode(data['attribute']);
+    data['msgExtra'] = json.decode(data['msgExtra']);
     return Message(data);
   }
   @override

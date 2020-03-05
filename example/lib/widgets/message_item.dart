@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/models/message.dart';
 import 'package:social_foundation_example/models/user.dart';
+import 'package:social_foundation_example/services/chat_manager.dart';
 import 'package:social_foundation_example/services/router_manager.dart';
 import 'package:social_foundation_example/view_models/chat_model.dart';
 import 'package:social_foundation_example/widgets/user_widget.dart';
@@ -84,18 +85,27 @@ class MessageItemWidget extends StatelessWidget{
     );
   }
   Widget buildVoice(){
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        SfAudioPlayerWidget(
-          uri: message.resolveFileUri(),
-          duration: message.msgExtra['duration'],
-          width: 100,
-          height: 30,
-          color: Colors.grey[350],
-          borderColor: Color(0xFFd9d9d9),
-        )
-      ]
+    var read = message.fromOwner || (message.attribute['read'] ?? false);
+    return SfBadge(
+      visible: !read,
+      width: 10,
+      height: 10,
+      top: 10,
+      right: -20,
+      child: SfAudioPlayerWidget(
+        uri: message.resolveFileUri(),
+        duration: message.msgExtra['duration'],
+        width: 100,
+        height: 30,
+        color: Colors.grey[350],
+        borderColor: Color(0xFFd9d9d9),
+        onTap: (){
+          if(!read){
+            message.attribute['read'] = true;
+            ChatManager.instance.saveMessage(message);
+          }
+        },
+      ),
     );
   }
 

@@ -35,11 +35,9 @@ class ChatManager extends SfChatManager<Conversation,Message> {
       message.status = SfMessageStatus.Sending;
       message = await saveMessage(message);
       //上传
-      if(message.attribute != null){
-        String filePath = message.attribute['filePath'];
-        if(filePath.isNotEmpty){
-          await SfAliyunOss.uploadFile(dir:message.msgType,filePath: filePath);
-        }
+      String filePath = message.attribute['filePath'];
+      if(filePath.isNotEmpty){
+        await SfAliyunOss.uploadFile(dir:message.msgType,filePath: filePath);
       }
       //发送
       var data = await sendMessage(message.convId, message.origin);

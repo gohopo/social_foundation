@@ -33,7 +33,7 @@ class SfBadge extends StatelessWidget {
   final TextStyle textStyle;
 
   Widget buildChild(){
-    return child ?? SizedBox(width: 1,height: 1);
+    return child ?? Container();
   }
   Widget buildBadge(){
     return Positioned(

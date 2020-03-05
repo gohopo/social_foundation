@@ -52,8 +52,8 @@ class SfAliyunOss {
   static Future<Response> uploadVoice({String filePath,ProgressCallback onSendProgress}){
     return uploadFile(dir: SfMessageType.voice,filePath: filePath,onSendProgress: onSendProgress);
   }
-  static String getImageUrl(String key,{String mode,int width,int height,int short,int long,int limit,int percent}){
-    String url = '$endPoint/image/$key';
+  static String getImageUrl(String fileKey,{String mode,int width,int height,int short,int long,int limit,int percent}){
+    String url = getFileUrl('image',fileKey);
     String resize = '';
     if(mode != null) resize += ',m_$mode';
     if(width != null) resize += ',w_$width';
@@ -65,6 +65,7 @@ class SfAliyunOss {
     if(resize.isNotEmpty) url += '?x-oss-process=image/resize,' + resize;
     return url;
   }
+  static String getFileUrl(String dir,String fileKey) => '$endPoint/$dir/$fileKey';
   static Future<Response> uploadFile({String dir,String filePath,ProgressCallback onSendProgress}) async {
     var fileName = SfFileHelper.getFileName(filePath);
     var encrypt = isEncryptFile(filePath);

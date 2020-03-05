@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/models/message.dart';
 import 'package:social_foundation_example/services/storage_manager.dart';
-import 'package:sqflite/sqflite.dart';
 
 class Conversation extends SfConversation<Message> {
   Conversation(Map data) : super(data);
@@ -24,12 +23,13 @@ class Conversation extends SfConversation<Message> {
     return result.map(Conversation.fromDB).toList();
   }
   Future<void> save() async {
+    var conversation = await query(ownerId,convId);
     var database = await StorageManager.instance.getDatabase();
-    if(id != null){
-      await database.update('conversation', {'unreadMessagesCount':unreadMessagesCount,'lastMessage':json.encode(lastMessage.toMap()),'lastMessageAt':lastMessageAt},where: 'id=?',whereArgs: [id]);
+    if(conversation != null){
+      await database.update('conversation', {'unreadMessagesCount':unreadMessagesCount,'lastMessage':json.encode(lastMessage.toMap()),'lastMessageAt':lastMessageAt},where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
     }
     else{
-      this.id = await database.insert('conversation',toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
+      await database.insert('conversation',toMap());
     }
   }
 }

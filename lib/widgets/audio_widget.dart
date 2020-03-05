@@ -158,6 +158,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
   final double height;
   final Color color;
   final Color borderColor;
+  final VoidCallback onTap;
   SfAudioPlayerWidget({
     Key key,
     this.uri,
@@ -165,7 +166,8 @@ class SfAudioPlayerWidget extends StatelessWidget {
     this.width,
     this.height,
     this.color,
-    this.borderColor
+    this.borderColor,
+    this.onTap
   }) : super(key:key);
 
   _onTap(SfAudioPlayerModel model){
@@ -175,6 +177,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
     else{
       model.stop();
     }
+    onTap?.call();
   }
 
   @override

@@ -112,7 +112,6 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
 }
 
 class SfConversation<TMessage extends SfMessage> {
-  int id;
   String ownerId;
   String convId;
   String creator;
@@ -120,7 +119,7 @@ class SfConversation<TMessage extends SfMessage> {
   int unreadMessagesCount;
   TMessage lastMessage;
   int lastMessageAt;
-  SfConversation(Map data) : id = data['id'],ownerId = data['ownerId'],convId = data['convId'],creator = data['creator'],members = data['members'],unreadMessagesCount = data['unreadMessagesCount'],lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'];
+  SfConversation(Map data) : ownerId = data['ownerId'],convId = data['convId'],creator = data['creator'],members = data['members'],unreadMessagesCount = data['unreadMessagesCount'],lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'];
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
     map['ownerId'] = ownerId;
@@ -148,11 +147,11 @@ class SfMessage {
   String msg;
   String msgType;
   Map msgExtra;
-  SfMessage(Map data) : id = data['id'],ownerId = data['ownerId'],msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],timestamp = data['timestamp'],status = data['status'],receiptTimestamp = data['receiptTimestamp'],attribute = data['attribute'],msg = data['msg'],msgType = data['msgType'],msgExtra = data['msgExtra'];
+  SfMessage(Map data) : id = data['id'],ownerId = data['ownerId'],msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],timestamp = data['timestamp'],status = data['status'],receiptTimestamp = data['receiptTimestamp'],attribute = data['attribute']??{},msg = data['msg'],msgType = data['msgType'],msgExtra = data['msgExtra']??{};
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
     map['ownerId'] = ownerId;
-    map['attribute'] = attribute!=null ? json.encode(attribute) : null;
+    map['attribute'] = json.encode(attribute);
     map['msgId'] = msgId;
     map['convId'] = convId;
     map['fromId'] = fromId;
@@ -161,16 +160,15 @@ class SfMessage {
     map['receiptTimestamp'] = receiptTimestamp;
     map['msg'] = msg;
     map['msgType'] = msgType;
-    map['msgExtra'] = msgExtra!=null ? json.encode(msgExtra) : null;
+    map['msgExtra'] = json.encode(msgExtra);
     return map;
   }
   bool get fromOwner => fromId==ownerId;
-  String get origin{
-    Map<String,dynamic> map = {'msgType':msgType};
-    if(msg != null) map['msg'] = msg;
-    if(msgExtra != null) map['msgExtra'] = msgExtra;
-    return json.encode(map);
-  }
+  String get origin => json.encode({
+    'msg': msg,
+    'msgType': msgType,
+    'msgExtra': msgExtra
+  });
   String get des{
     switch(msgType){
       case SfMessageType.text:
@@ -183,16 +181,8 @@ class SfMessage {
         return '';
     }
   }
-  String resolveFileUri(){
-    if(attribute!=null && attribute['filePath']!=null) return attribute['filePath'];
-    if(msgExtra!=null && msgExtra['fileKey']!=null) return SfAliyunOss.getImageUrl(msgExtra['fileKey']);
-    return '';
-  }
-  ImageProvider resolveImage(){
-    if(attribute!=null && attribute['filePath']!=null) return FileImage(File(attribute['filePath']));
-    if(msgExtra!=null && msgExtra['fileKey']!=null) return SfCachedImageProvider(SfAliyunOss.getImageUrl(msgExtra['fileKey']));
-    return null;
-  }
+  String resolveFileUri() => attribute['filePath'] ?? (msgExtra['fileKey']!=null ? SfAliyunOss.getFileUrl(msgType,msgExtra['fileKey']) : '');
+  ImageProvider resolveImage() => attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : (msgExtra['fileKey']!=null ? SfCachedImageProvider(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) : null);
 }
 
 class SfMessageStatus {
