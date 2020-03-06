@@ -16,7 +16,7 @@ abstract class SfStorageManager {
   final int dbVersion;
   Database _database;
 
-  Future<Directory> getCacheDirectory() => getTemporaryDirectory();
+  Future<Directory> getCacheDirectory() => getApplicationDocumentsDirectory();
   Future<String> getFileDirectory(String dir) async {
     var cache = await getCacheDirectory();
     return p.join(cache.path,dir);

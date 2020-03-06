@@ -1,33 +1,37 @@
 import 'dart:async';
 
-import 'package:flutter_sound/flutter_sound.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfAudioPlayerModel extends SfViewState {
-  FlutterSound _flutterSound = new FlutterSound();
-  StreamSubscription _playerSubscription;
+  AudioPlayer _player = new AudioPlayer();
+  StreamSubscription _stateSubscription;
+  StreamSubscription _positionSubscription;
   int position = -1;
   
-  Future<void> play(String uri) async {
-    await _flutterSound.startPlayer(uri);
-    position = 0;
-    _playerSubscription = _flutterSound.onPlayerStateChanged.listen((data){
-      position = data?.currentPosition?.toInt() ?? -1;
-      notifyListeners();
-    });
-    notifyListeners();
+  Future<void> play(String uri){
+    return _player.play(uri);
   }
-  Future<void> stop() async {
-    if(position == -1) return;
-    await _flutterSound.stopPlayer();
-    position = -1;
-    _playerSubscription.cancel();
-    notifyListeners();
+  Future<void> stop(){
+    return _player.stop();
   }
 
   @override
+  Future<void> initData() async {
+    _stateSubscription = _player.onPlayerStateChanged.listen((s){
+      position = -1;
+      notifyListeners();
+    });
+    _positionSubscription = _player.onAudioPositionChanged.listen((p){
+      position = p.inMilliseconds;
+      notifyListeners();
+    });
+  }
+  @override
   void dispose(){
-    stop();
+    _player.stop();
+    _stateSubscription.cancel();
+    _positionSubscription.cancel();
     super.dispose();
   }
 }

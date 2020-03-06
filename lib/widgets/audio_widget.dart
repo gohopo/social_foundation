@@ -184,6 +184,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
   Widget build(BuildContext context){
     return SfProviderWidget<SfAudioPlayerModel>(
       model: SfAudioPlayerModel(),
+      onModelReady: (model) => model.initData(),
       builder: (context,model,child) => GestureDetector(
         onTap: () => _onTap(model),
         child: Container(

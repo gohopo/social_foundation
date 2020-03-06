@@ -17,7 +17,7 @@ class SfAliyunOss {
   static String signature;
   static initialize(int accountId,String _accessKeyId,String accessKeySecret,String region,String bucket){
     accessKeyId = _accessKeyId;
-    endPoint = 'http://$bucket.oss-$region.aliyuncs.com';
+    endPoint = 'https://$bucket.oss-$region.aliyuncs.com';
     String policyText = '{"expiration": "2222-01-01T12:00:00.000Z","conditions": [["content-length-range", 0, 1048576000]]}';
     policy = base64.encode(utf8.encode(policyText));
     signature = base64.encode(Hmac(sha1,utf8.encode(accessKeySecret)).convert(utf8.encode(policy)).bytes);
@@ -27,11 +27,11 @@ class SfAliyunOss {
     if(prefix.isNotEmpty) fileKey = '${prefix}_$fileKey';
     return fileKey += SfFileHelper.getFileExt(filePath);
   }
-  static Future<Map> cacheFile(String srcFilePath,{String dir,String prefix,int encrypt=0}) async {
+  static Future<String> cacheFile(String srcFilePath,{String dir,String prefix,int encrypt=0}) async {
     var fileKey = generateFileKey(srcFilePath,prefix:prefix,encrypt:encrypt);
     var filePath = await getFilePath(dir,fileKey);
     await File(srcFilePath).copy(filePath);
-    return {'fileKey':fileKey,'filePath':filePath};
+    return filePath;
   }
   static int isEncryptFile(String path){
     var name = SfFileHelper.getFileNameWithoutExt(path);

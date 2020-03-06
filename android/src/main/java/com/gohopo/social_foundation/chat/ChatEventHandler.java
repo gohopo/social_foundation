@@ -14,6 +14,7 @@ import cn.leancloud.im.v2.AVIMConversationEventHandler;
 import cn.leancloud.im.v2.AVIMMessage;
 import cn.leancloud.im.v2.AVIMTypedMessage;
 import cn.leancloud.im.v2.AVIMTypedMessageHandler;
+import io.flutter.Log;
 import io.flutter.plugin.common.EventChannel;
 
 public class ChatEventHandler implements EventChannel.StreamHandler {

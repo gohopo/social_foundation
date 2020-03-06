@@ -40,23 +40,19 @@ class ChatModel extends SfRefreshListViewState<Message>{
     inputModel.textEditingController.clear();
   }
   void _onPickImage(File image) async {
-    var map = await SfAliyunOss.cacheFile(image.path,dir:SfMessageType.image,prefix: 'chat',encrypt: 1);
-    var msgExtra = {
-      'fileKey': map['fileKey']
-    };
+    var filePath = await SfAliyunOss.cacheFile(image.path,dir:SfMessageType.image,prefix: 'chat',encrypt: 1);
     var attribute = {
-      'filePath': map['filePath']
+      'filePath': filePath
     };
-    return _sendMessage(msgType:SfMessageType.image,msgExtra:msgExtra,attribute:attribute);
+    return _sendMessage(msgType:SfMessageType.image,attribute:attribute);
   }
   void _onRecordVoice(String path,int duration) async {
-    var map = await SfAliyunOss.cacheFile(path,dir:SfMessageType.voice,prefix:'chat');
-    var msgExtra = {
-      'fileKey': map['fileKey'],
+    var filePath = await SfAliyunOss.cacheFile(path,dir:SfMessageType.voice,prefix:'chat');
+    Map msgExtra = {
       'duration': duration
     };
-    var attribute = {
-      'filePath': map['filePath']
+    Map attribute = {
+      'filePath': filePath
     };
     return _sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
   }

@@ -181,8 +181,8 @@ class SfMessage {
         return '';
     }
   }
-  String resolveFileUri() => attribute['filePath'] ?? (msgExtra['fileKey']!=null ? SfAliyunOss.getFileUrl(msgType,msgExtra['fileKey']) : '');
-  ImageProvider resolveImage() => attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : (msgExtra['fileKey']!=null ? SfCachedImageProvider(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) : null);
+  String resolveFileUri() => msgExtra['fileKey']!=null ? SfAliyunOss.getFileUrl(msgType,msgExtra['fileKey']) : (attribute['filePath'] ?? '');
+  ImageProvider resolveImage() => msgExtra['fileKey']!=null ? SfCachedImageProvider(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) :(attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : null);
 }
 
 class SfMessageStatus {
