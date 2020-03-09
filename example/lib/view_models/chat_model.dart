@@ -9,7 +9,6 @@ import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/models/conversation.dart';
 import 'package:social_foundation_example/models/message.dart';
 import 'package:social_foundation_example/services/chat_manager.dart';
-import 'package:social_foundation_example/services/event_manager.dart';
 import 'package:social_foundation_example/states/user_state.dart';
 import 'package:social_foundation_example/widgets/chat_input.dart';
 
