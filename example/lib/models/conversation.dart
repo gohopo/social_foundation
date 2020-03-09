@@ -6,11 +6,21 @@ import 'package:social_foundation_example/services/storage_manager.dart';
 
 class Conversation extends SfConversation<Message> {
   Conversation(Map data) : super(data);
-  static Conversation fromDB(Map data){
+  static fromDB(Map data){
     data = Map.from(data);
     data['members'] = json.decode(data['members']).cast<String>();
     data['lastMessage'] = Message.fromDB(json.decode(data['lastMessage']));
-    return Conversation(data);
+  }
+  @override
+  Future<void> save() async {
+    var conversation = await query(ownerId,convId);
+    var database = await StorageManager.instance.getDatabase();
+    if(conversation != null){
+      await database.update('conversation', {'unreadMessagesCount':unreadMessagesCount,'lastMessage':json.encode(lastMessage.toMap()),'lastMessageAt':lastMessageAt},where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
+    }
+    else{
+      await database.insert('conversation',toMap());
+    }
   }
   static Future<Conversation> query(String ownerId,String convId) async {
     var database = await StorageManager.instance.getDatabase();
@@ -21,15 +31,5 @@ class Conversation extends SfConversation<Message> {
     var database = await StorageManager.instance.getDatabase();
     var result = await database.query('conversation',where: 'ownerId=?',whereArgs: [ownerId],orderBy: 'lastMessageAt desc',limit: limit,offset: offset);
     return result.map(Conversation.fromDB).toList();
-  }
-  Future<void> save() async {
-    var conversation = await query(ownerId,convId);
-    var database = await StorageManager.instance.getDatabase();
-    if(conversation != null){
-      await database.update('conversation', {'unreadMessagesCount':unreadMessagesCount,'lastMessage':json.encode(lastMessage.toMap()),'lastMessageAt':lastMessageAt},where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
-    }
-    else{
-      await database.insert('conversation',toMap());
-    }
   }
 }

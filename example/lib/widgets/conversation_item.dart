@@ -1,6 +1,6 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:social_foundation/index.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/services/router_manager.dart';
 import 'package:social_foundation_example/models/conversation.dart';
 import 'package:social_foundation_example/widgets/user_widget.dart';

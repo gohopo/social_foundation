@@ -2,11 +2,10 @@ import 'dart:convert';
 
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/services/storage_manager.dart';
-import 'package:sqflite/sqflite.dart';
 
 class Message extends SfMessage {
   Message(Map data) : super(data);
-  static Message fromDB(Map data){
+  static fromDB(Map data){
     data = Map.from(data);
     data['attribute'] = json.decode(data['attribute']);
     data['msgExtra'] = json.decode(data['msgExtra']);
@@ -27,23 +26,5 @@ class Message extends SfMessage {
     var database = await StorageManager.instance.getDatabase();
     var result = await database.query('message',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId],orderBy: 'timestamp desc',limit: limit,offset: offset);
     return result.map(Message.fromDB).toList();
-  }
-  Future<void> save() async {
-    var database = await StorageManager.instance.getDatabase();
-    if(id != null){
-      await database.update('message', toMap(),where: 'id=?',whereArgs: [id]);
-    }
-    else{
-      this.id = await database.insert('message',toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
-    }
-  }
-  static Future<void> insertAll(List<Message> messages) async {
-    var database = await StorageManager.instance.getDatabase();
-    var batch = database.batch();
-    messages.forEach((message) => batch.insert('message',message.toMap(),conflictAlgorithm: ConflictAlgorithm.replace));
-    var results = await batch.commit();
-    for(var i=0;i<messages.length;++i){
-      messages[i].id = results[i];
-    }
   }
 }

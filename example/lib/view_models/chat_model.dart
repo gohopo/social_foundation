@@ -26,7 +26,7 @@ class ChatModel extends SfRefreshListViewState<Message>{
     await ChatManager.instance.sendMsg(convId:conversation.convId,msg:msg,msgType:msgType,msgExtra:msgExtra,attribute:attribute);
     scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
-  void _onMessageEvent(MessageEvent event){
+  void _onMessageEvent(SfMessageEvent event){
     if(event.message.convId != conversation.convId) return;
     if(event.isNew){
       list.insert(0,event.message);
@@ -67,10 +67,10 @@ class ChatModel extends SfRefreshListViewState<Message>{
       list.sort((a,b) => b.timestamp-a.timestamp);
       notifyListeners();
       
-      await Message.insertAll(messages);
+      await SfMessage.insertAll(messages);
       ChatManager.instance.convRead(conversation.convId);
     }
-    _messageSubscription = GetIt.instance<EventBus>().on<MessageEvent>().listen(_onMessageEvent);
+    _messageSubscription = GetIt.instance<EventBus>().on<SfMessageEvent>().listen(_onMessageEvent);
   }
   @override
   Future<List<Message>> loadData(bool refresh) {

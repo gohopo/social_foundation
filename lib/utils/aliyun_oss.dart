@@ -5,7 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' as p;
-import 'package:social_foundation/services/chat_manager.dart';
+import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/storage_manager.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 import 'package:social_foundation/utils/utils.dart';

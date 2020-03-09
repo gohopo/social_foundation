@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import 'package:social_foundation/index.dart';
+import 'package:social_foundation/services/storage_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
 class StorageManager extends SfStorageManager{

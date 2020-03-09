@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_record/index.dart';
-import 'package:social_foundation/index.dart';
+import 'package:social_foundation/view_models/audio_model.dart';
+import 'package:social_foundation/widgets/provider_widget.dart';
 
 class SfAudioRecorderConsumer extends StatefulWidget {
   final Widget child;
