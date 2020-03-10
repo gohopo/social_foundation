@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:social_foundation_example/services/router_manager.dart';
-import 'package:social_foundation_example/states/user_state.dart';
+import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation_example/view_models/signin_model.dart';
 
-class LoginPage extends StatefulWidget {
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
-
+class SigninPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[renderHeader(),renderFields()],
+      body: SfProviderWidget<SigninModel>(
+        model: SigninModel(),
+        builder: (context,model,child) => Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                renderHeader(),
+                renderFields(model)
+              ],
+            )
           )
-        )
+        ),
       )
     );
   }
@@ -46,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     ],
   );
-  renderFields() => Container(
+  renderFields(SigninModel model) => Container(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       mainAxisSize: MainAxisSize.min,
@@ -54,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
         Container(
           padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 30.0),
           child: TextField(
-            controller: _usernameController,
+            controller: model.phoneController,
             maxLines: 1,
             decoration: InputDecoration(
               labelText: '用户名',
@@ -76,26 +75,10 @@ class _LoginPageState extends State<LoginPage> {
               style: TextStyle(color: Colors.white),
             ),
             color: Colors.green,
-            onPressed: login
+            onPressed: model.signin
           ),
         ),
       ]
     ),
   );
-  void login() async {
-    try{
-      if(_usernameController.text.isEmpty) throw '请填写用户名!';
-      await UserState.instance.login(_usernameController.text);
-      Navigator.pushReplacementNamed(context, RouteName.Tab);
-    }
-    catch(e){
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('提示'),
-          content: Text(e.toString()),
-        )
-      );
-    }
-  }
 }

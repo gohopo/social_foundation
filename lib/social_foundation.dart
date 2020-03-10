@@ -14,17 +14,20 @@ export './models/user.dart';
 export './widgets/view_state.dart';
 export './widgets/provider_widget.dart';
 export './widgets/page_route.dart';
-export './widgets/photo_viewer.dart';
 export './widgets/avatar.dart';
 export './widgets/audio_widget.dart';
 export './widgets/badge.dart';
 export './widgets/cached_image_provider.dart';
+export './widgets/user_widget.dart';
+//pages
+export './pages/photo_viewer.dart';
 //viewmodels
 export './view_models/audio_model.dart';
 //services
 export './services/storage_manager.dart';
 export './services/chat_manager.dart';
 export './services/event_manager.dart';
+export './services/router_manager.dart';
 //states
 export './states/chat_state.dart';
 export './states/user_state.dart';

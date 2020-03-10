@@ -1,36 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/models/user.dart';
-import 'package:social_foundation_example/states/user_state.dart';
 
-class UserConsumer extends StatelessWidget {
-  final String userId;
-  final User user;
-  final ValueWidgetBuilder<User> builder;
-  final Widget child;
-
+class UserConsumer extends SfUserConsumer<User>{
   UserConsumer({
     Key key,
-    this.userId,
-    this.user,
-    this.builder,
-    this.child
-  }) : super(key:key);
-
-  @override
-  Widget build(BuildContext context){
-    return SfProviderWidget<UserState>(
-      model: UserState.instance,
-      onModelReady: (model){
-        if(this.user==null && this.userId.isNotEmpty){
-          model.queryUser(this.userId);
-        }
-      },
-      builder: (context,model,child) => builder(context,this.user??model[this.userId],child),
-      child: this.child,
-      autoDispose: false,
-    );
-  }
+    String userId,
+    User user,
+    ValueWidgetBuilder<User> builder,
+    Widget child
+  }) : super(key:key,userId:userId,user:user,builder:builder,child:child);
 }
 
 class UserAvatar extends SfAvatar {

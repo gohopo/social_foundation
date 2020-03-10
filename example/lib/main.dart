@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -21,14 +22,17 @@ class App extends StatelessWidget {
       providers: providers,
       child: RefreshConfiguration(
         shouldFooterFollowWhenNotFull: (status) => false,
-        child: MaterialApp(
-          title: 'social foundation',
-          localizationsDelegates: [
-            RefreshLocalizations.delegate
-          ],
-          onGenerateRoute: Router.generateRoute,
-          initialRoute: RouteName.Login,
-        ),
+        child: BotToastInit(
+          child: MaterialApp(
+            title: 'social foundation',
+            localizationsDelegates: [
+              RefreshLocalizations.delegate
+            ],
+            navigatorObservers: [RouterManager.instance,BotToastNavigatorObserver()],
+            onGenerateRoute: RouterManager.instance.generateRoute,
+            initialRoute: RouteName.Signin,
+          ),
+        )
       )
     );
   }
@@ -44,6 +48,7 @@ void main() async {
 void configureServices(){
   GetIt.instance.registerSingleton(EventBus());
   GetIt.instance.registerSingleton<SfStorageManager>(StorageManager());
+  GetIt.instance.registerSingleton<SfRouterManager>(RouterManager());
   GetIt.instance.registerSingleton(AppState());
   GetIt.instance.registerSingleton<SfUserState>(UserState());
   GetIt.instance.registerSingleton<SfChatState>(ChatState());
