@@ -15,7 +15,7 @@ class SfAliyunOss {
   static String endPoint;
   static String policy;
   static String signature;
-  static initialize(int accountId,String _accessKeyId,String accessKeySecret,String region,String bucket){
+  static void initialize(int accountId,String _accessKeyId,String accessKeySecret,String region,String bucket){
     accessKeyId = _accessKeyId;
     endPoint = 'https://$bucket.oss-$region.aliyuncs.com';
     String policyText = '{"expiration": "2222-01-01T12:00:00.000Z","conditions": [["content-length-range", 0, 1048576000]]}';
@@ -29,7 +29,7 @@ class SfAliyunOss {
   }
   static Future<String> cacheFile(String srcFilePath,{String dir,String prefix,int encrypt=0}) async {
     var fileKey = generateFileKey(srcFilePath,prefix:prefix,encrypt:encrypt);
-    var filePath = await getFilePath(dir,fileKey);
+    var filePath = getFilePath(dir,fileKey);
     await File(srcFilePath).copy(filePath);
     return filePath;
   }
@@ -42,10 +42,7 @@ class SfAliyunOss {
     }
     return 0;
   }
-  static Future<String> getFilePath(String dir,String fileKey) async {
-    var path = await GetIt.instance<SfStorageManager>().getFileDirectory(dir);
-    return p.join(path,fileKey);
-  }
+  static String getFilePath(String dir,String fileKey) => p.join(GetIt.instance<SfStorageManager>().getFileDirectory(dir),fileKey);
   static Future<Response> uploadImage({String filePath,ProgressCallback onSendProgress}){
     return uploadFile(dir: SfMessageType.image,filePath: filePath,onSendProgress: onSendProgress);
   }

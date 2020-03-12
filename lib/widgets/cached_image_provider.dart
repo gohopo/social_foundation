@@ -22,8 +22,8 @@ class SfCacheManager extends BaseCacheManager {
   static const key = "libCachedImageData";
   static SfCacheManager _instance;
 
-  Future<String> getFilePath() {
-    return GetIt.instance<SfStorageManager>().getImageDirectory();
+  Future<String> getFilePath() async {
+    return GetIt.instance<SfStorageManager>().imageDirectory;
   }
   static Future<FileFetcherResponse> _fileFetcher(String url,{Map<String, String> headers}) async {
     var httpResponse = await http.get(url, headers: headers);

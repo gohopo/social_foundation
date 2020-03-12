@@ -29,6 +29,7 @@ export './services/chat_manager.dart';
 export './services/event_manager.dart';
 export './services/router_manager.dart';
 //states
+export './states/app_state.dart';
 export './states/chat_state.dart';
 export './states/user_state.dart';
 
