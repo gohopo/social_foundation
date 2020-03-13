@@ -36,42 +36,14 @@ class SfAppState extends SfViewState{
   }
   ThemeData themeData({bool platformDarkMode: false}){
     var isDark = platformDarkMode || _userDarkMode;
-    Brightness brightness = isDark ? Brightness.dark : Brightness.light;
-    var accentColor = isDark ? _themeColor[700] : _themeColor;
-    var themeData = ThemeData(
-      brightness: brightness,
+    return onThemeData(ThemeData(
+      brightness: isDark ? Brightness.dark : Brightness.light,
       primaryColorBrightness: Brightness.dark,
       accentColorBrightness: Brightness.dark,
       primarySwatch: _themeColor,
-      accentColor: accentColor,
+      accentColor: isDark ? _themeColor[700] : _themeColor,
       fontFamily: fontList[fontIndex]
-    );
-    return themeData.copyWith(
-      brightness: brightness,
-      accentColor: accentColor,
-      cupertinoOverrideTheme: CupertinoThemeData(
-        primaryColor: _themeColor,
-        brightness: brightness,
-      ),
-      appBarTheme: themeData.appBarTheme.copyWith(elevation: 0),
-      splashColor: _themeColor.withAlpha(50),
-      hintColor: themeData.hintColor.withAlpha(90),
-      errorColor: Colors.red,
-      cursorColor: accentColor,
-      textTheme: themeData.textTheme.copyWith(
-        subhead: themeData.textTheme.subhead.copyWith(textBaseline: TextBaseline.alphabetic)
-      ),
-      textSelectionColor: accentColor.withAlpha(60),
-      textSelectionHandleColor: accentColor.withAlpha(60),
-      toggleableActiveColor: accentColor,
-      chipTheme: themeData.chipTheme.copyWith(
-        pressElevation: 0,
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        labelStyle: themeData.textTheme.caption,
-        backgroundColor: themeData.chipTheme.backgroundColor.withOpacity(0.1),
-      ),
-      inputDecorationTheme: inputDecorationTheme(themeData),
-    );
+    ));
   }
   Future<void> saveTheme(bool userDarkMode, MaterialColor themeColor) async {
     var index = Colors.primaries.indexOf(themeColor);
@@ -103,6 +75,34 @@ class SfAppState extends SfViewState{
   }
   String fontName(index) {
     return fontList[index];
+  }
+  ThemeData onThemeData(ThemeData themeData){
+    return themeData.copyWith(
+      brightness: themeData.brightness,
+      accentColor: themeData.accentColor,
+      cupertinoOverrideTheme: CupertinoThemeData(
+        primaryColor: _themeColor,
+        brightness: themeData.brightness,
+      ),
+      appBarTheme: themeData.appBarTheme.copyWith(elevation: 0),
+      splashColor: _themeColor.withAlpha(50),
+      hintColor: themeData.hintColor.withAlpha(90),
+      errorColor: Colors.red,
+      cursorColor: themeData.accentColor,
+      textTheme: themeData.textTheme.copyWith(
+        subtitle1: themeData.textTheme.subtitle1.copyWith(textBaseline: TextBaseline.alphabetic)
+      ),
+      textSelectionColor: themeData.accentColor.withAlpha(60),
+      textSelectionHandleColor: themeData.accentColor.withAlpha(60),
+      toggleableActiveColor: themeData.accentColor,
+      chipTheme: themeData.chipTheme.copyWith(
+        pressElevation: 0,
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        labelStyle: themeData.textTheme.caption,
+        backgroundColor: themeData.chipTheme.backgroundColor.withOpacity(0.1),
+      ),
+      inputDecorationTheme: inputDecorationTheme(themeData),
+    );
   }
 
   @override
