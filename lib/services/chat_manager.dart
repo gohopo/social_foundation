@@ -22,6 +22,24 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   }
   TConversation convertConversation(Map data);
   TMessage convertMessage(Map data);
+  Future<TMessage> sendTextMsg({@required String convId,String msg,Map attribute}){
+    return sendMsg(convId: convId,msg:msg,msgType:SfMessageType.text,attribute:attribute);
+  }
+  Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute}) async {
+    var message = convertMessage({
+      'ownerId': GetIt.instance<SfUserState>().curUserId,
+      'convId': convId,
+      'fromId': GetIt.instance<SfUserState>().curUserId,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+      'status': SfMessageStatus.Sending,
+      'attribute': attribute,
+      'msg': msg,
+      'msgType': msgType,
+      'msgExtra': msgExtra
+    });
+    resendMessage(message);
+    return message;
+  }
   Future<TMessage> resendMessage(TMessage message) async {
     try{
       //保存
