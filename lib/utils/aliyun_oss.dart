@@ -22,12 +22,12 @@ class SfAliyunOss {
     policy = base64.encode(utf8.encode(policyText));
     signature = base64.encode(Hmac(sha1,utf8.encode(accessKeySecret)).convert(utf8.encode(policy)).bytes);
   }
-  static String generateFileKey(String filePath,{String prefix,int encrypt=0}){
+  static String generateFileKey(String filePath,{String prefix='',int encrypt=0}){
     var fileKey = '${SfUtils.uuid()}_$encrypt';
     if(prefix.isNotEmpty) fileKey = '${prefix}_$fileKey';
     return fileKey += SfFileHelper.getFileExt(filePath);
   }
-  static Future<String> cacheFile(String srcFilePath,{String dir,String prefix,int encrypt=0}) async {
+  static Future<String> cacheFile(String dir,String srcFilePath,{String prefix='',int encrypt=0}) async {
     var fileKey = generateFileKey(srcFilePath,prefix:prefix,encrypt:encrypt);
     var filePath = getFilePath(dir,fileKey);
     await File(srcFilePath).copy(filePath);
@@ -43,11 +43,11 @@ class SfAliyunOss {
     return 0;
   }
   static String getFilePath(String dir,String fileKey) => p.join(GetIt.instance<SfStorageManager>().getFileDirectory(dir),fileKey);
-  static Future<Response> uploadImage({String filePath,ProgressCallback onSendProgress}){
-    return uploadFile(dir: SfMessageType.image,filePath: filePath,onSendProgress: onSendProgress);
+  static Future<Response> uploadImage(String filePath,{String fileName,ProgressCallback onSendProgress}){
+    return uploadFile(SfMessageType.image,filePath,fileName:fileName,onSendProgress: onSendProgress);
   }
-  static Future<Response> uploadVoice({String filePath,ProgressCallback onSendProgress}){
-    return uploadFile(dir: SfMessageType.voice,filePath: filePath,onSendProgress: onSendProgress);
+  static Future<Response> uploadVoice(String filePath,{String fileName,ProgressCallback onSendProgress}){
+    return uploadFile(SfMessageType.voice,filePath,fileName:fileName,onSendProgress: onSendProgress);
   }
   static String getImageUrl(String fileKey,{String mode,int width,int height,int short,int long,int limit,int percent}){
     String url = getFileUrl('image',fileKey);
@@ -63,8 +63,8 @@ class SfAliyunOss {
     return url;
   }
   static String getFileUrl(String dir,String fileKey) => '$endPoint/$dir/$fileKey';
-  static Future<Response> uploadFile({String dir,String filePath,ProgressCallback onSendProgress}) async {
-    var fileName = SfFileHelper.getFileName(filePath);
+  static Future<Response> uploadFile(String dir,String filePath,{String fileName,ProgressCallback onSendProgress}) async {
+    fileName = fileName ?? SfFileHelper.getFileName(filePath);
     var encrypt = isEncryptFile(filePath);
     MultipartFile file;
     if(encrypt == 0){

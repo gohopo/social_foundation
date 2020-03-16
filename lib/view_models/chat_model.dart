@@ -39,14 +39,14 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     inputModel.textEditingController.clear();
   }
   void onPickImage(File image) async {
-    var filePath = await SfAliyunOss.cacheFile(image.path,dir:SfMessageType.image,prefix: 'chat',encrypt: 1);
+    var filePath = await SfAliyunOss.cacheFile(SfMessageType.image,image.path,prefix: 'chat',encrypt: 1);
     var attribute = {
       'filePath': filePath
     };
     return _sendMessage(msgType:SfMessageType.image,attribute:attribute);
   }
   void onRecordVoice(String path,int duration) async {
-    var filePath = await SfAliyunOss.cacheFile(path,dir:SfMessageType.voice,prefix:'chat');
+    var filePath = await SfAliyunOss.cacheFile(SfMessageType.voice,path,prefix:'chat');
     Map msgExtra = {
       'duration': duration
     };

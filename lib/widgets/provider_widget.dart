@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-export 'package:provider/provider.dart';
 
 class SfProviderWidget<T extends ChangeNotifier> extends StatefulWidget {
   final T model;

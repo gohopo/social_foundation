@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+export 'package:image_picker/image_picker.dart';
+export 'package:provider/provider.dart';
 //utils
 export './utils/utils.dart';
 export './utils/file_helper.dart';
@@ -19,10 +21,12 @@ export './widgets/audio_widget.dart';
 export './widgets/badge.dart';
 export './widgets/cached_image_provider.dart';
 export './widgets/user_widget.dart';
+export './widgets/image_picker.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels
 export './view_models/audio_model.dart';
+export './view_models/chat_model.dart';
 //services
 export './services/storage_manager.dart';
 export './services/chat_manager.dart';

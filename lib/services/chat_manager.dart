@@ -48,7 +48,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       //上传
       String filePath = message.attribute['filePath'];
       if(filePath.isNotEmpty && !message.msgExtra.containsKey('fileKey')){
-        await SfAliyunOss.uploadFile(dir:message.msgType,filePath: filePath);
+        await SfAliyunOss.uploadFile(message.msgType,filePath);
         message.msgExtra['fileKey'] = SfFileHelper.getFileName(filePath);
         await saveMessage(message);
       }
