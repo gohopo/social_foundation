@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.0.6
+version: 0.0.7
 homepage: https://github.com/gohopo/social_foundation
 
 environment:
@@ -28,6 +28,7 @@ dependencies:
   flutter_plugin_record: ^0.1.2
   audioplayers: ^0.14.0
   image_picker: ^0.6.3+4
+  bot_toast: ^2.3.0
 
 dev_dependencies:
   flutter_test:

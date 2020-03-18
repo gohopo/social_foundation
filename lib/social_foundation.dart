@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+export 'package:bot_toast/bot_toast.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:provider/provider.dart';
 //utils
