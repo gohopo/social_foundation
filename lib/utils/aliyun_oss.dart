@@ -34,7 +34,7 @@ class SfAliyunOss {
     return filePath;
   }
   static int isEncryptFile(String path){
-    var name = SfFileHelper.getFileNameWithoutExt(path);
+    var name = SfFileHelper.getUrlNameWithoutExt(path);
     var index = name.lastIndexOf('_');
     if(index != -1){
       var encrypt = name.substring(index+1,name.length);
@@ -59,7 +59,7 @@ class SfAliyunOss {
     if(long != null) resize += ',l_$long';
     if(limit != null) resize += ',limit_$limit';
     if(percent != null) resize += ',p_$percent';
-    if(resize.isNotEmpty) url += '?x-oss-process=image/resize,' + resize;
+    if(resize.isNotEmpty) url += '?x-oss-process=image/resize' + resize;
     return url;
   }
   static String getFileUrl(String dir,String fileKey) => '$endPoint/$dir/$fileKey';

@@ -4,10 +4,12 @@ import 'package:sqflite/sqflite.dart';
 
 class SfUser{
   String userId;
-  SfUser(Map data) : userId = data['userId'];
+  String icon;
+  SfUser(Map data) : userId=data['userId'],icon=data['icon'];
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
     map['userId'] = userId;
+    map['icon'] = icon;
     return map;
   }
   Future<void> save() async {

@@ -1,63 +1,54 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:social_foundation/models/user.dart';
+import 'package:social_foundation/utils/aliyun_oss.dart';
+import 'package:social_foundation/widgets/cached_image_provider.dart';
 
 class SfAvatar extends StatelessWidget{
   SfAvatar({
     Key key,
-    this.width,
-    this.height,
-    this.decoration,
-    this.borderRadius,
-    this.radius,
-    this.image,
-    this.child,
+    @required this.user,
+    this.width = 45,
+    this.height = 45,
     this.onTap,
-  }) : super(key: key);
-
+    this.borderRadius,
+    this.defaultImage,
+    this.fit = BoxFit.cover,
+    this.builder
+  }) : super(key:key);
+  final SfUser user;
   final double width;
   final double height;
-  final Decoration decoration;
-  final BorderRadiusGeometry borderRadius;
-  final double radius;
-  final ImageProvider image;
-  final Widget child;
   final VoidCallback onTap;
-  
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: buildContainer(context),
-    );
+  final BorderRadiusGeometry borderRadius;
+  final ImageProvider defaultImage;
+  final BoxFit fit;
+  final Widget Function(BuildContext context,SfAvatar avatar,ImageProvider image) builder;
+
+  onTapOverride(){
+    onTap?.call();
   }
-  @protected
-  Widget buildContainer(BuildContext context){
-    return Container(
+  Widget buildImage(BuildContext context){
+    return builder!=null ? builder(context,this,buildImageProvider()) : Image(
       width: width,
       height: height,
-      decoration: buildDecoration(),
-      child: child,
+      image: buildImageProvider(),
+      fit: this.fit
     );
   }
-  @protected
-  Decoration buildDecoration(){
-    return decoration ?? BoxDecoration(
-      image: buildImage(),
-      borderRadius: buildBorderRadius()
+  ImageProvider buildImageProvider(){
+    return user?.icon!=null ? SfCachedImageProvider(SfAliyunOss.getImageUrl(user?.icon)) : defaultImage;
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return GestureDetector(
+      onTap: onTapOverride,
+      child: borderRadius==null ? ClipOval(
+        child: buildImage(context),
+      ) : ClipRRect(
+        borderRadius: borderRadius,
+        child: buildImage(context)
+      ),
     );
-  }
-  @protected
-  DecorationImage buildImage(){
-    return image!=null ? DecorationImage(
-      image: image,
-      fit: BoxFit.cover
-    ) : null;
-  }
-  @protected
-  BorderRadiusGeometry buildBorderRadius(){
-    if(borderRadius != null) return borderRadius;
-    double r = radius ?? (width!=null ? max(width/2,1) : 1);
-    return BorderRadius.all(Radius.circular(r));
   }
 }

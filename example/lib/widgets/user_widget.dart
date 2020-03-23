@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/models/user.dart';
+import 'package:social_foundation_example/services/router_manager.dart';
 
 class UserConsumer extends SfUserConsumer<User>{
   UserConsumer({
@@ -12,23 +13,25 @@ class UserConsumer extends SfUserConsumer<User>{
   }) : super(key:key,userId:userId,user:user,builder:builder,child:child);
 }
 
-class UserAvatar extends SfAvatar {
-  final User user;
-  final String defaultIcon;
-
+class UserAvatar extends SfAvatar{
   UserAvatar({
     Key key,
-    @required this.user,
-    double width : 45,
-    double height : 45,
-    Decoration decoration,
-    BorderRadiusGeometry borderRadius,
-    double radius,
-    ImageProvider image,
-    Widget child,
+    @required User user,
+    double width = 45,
+    double height = 45,
     VoidCallback onTap,
-    this.defaultIcon : 'assets/images/bird.png'
-  }) : super(key:key,width:width,height:height,decoration:decoration,borderRadius:borderRadius,radius:radius,image:image??AssetImage(user!=null?user.icon:defaultIcon),child:child,onTap:onTap);
+    BorderRadiusGeometry borderRadius,
+    ImageProvider defaultImage = const AssetImage('assets/images/head_1.png'),
+    BoxFit fit = BoxFit.cover,
+    Widget Function(BuildContext context,UserAvatar avatar,ImageProvider image) builder
+  }) : super(key:key,user:user,width:width,height:height,onTap:onTap,borderRadius:borderRadius,defaultImage:defaultImage,fit:fit,builder:builder);
+
+  @override
+  void onTapOverride(){
+    if(onTap != null) return onTap();
+    if(user == null) return;
+    RouterManager.instance.navigator.pushNamed(RouteName.user_profile,arguments:{'userId':user.userId});
+  }
 }
 
 class UserNickName extends StatelessWidget {

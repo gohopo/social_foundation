@@ -14,6 +14,7 @@ class RouteName {
   static const String Message = 'message';
   static const String Chat = 'chat';
   static const String Settings = 'settings';
+  static const String user_profile = 'user_profile';
   static const String PhotoViewer = 'photo_viewer';
 }
 
