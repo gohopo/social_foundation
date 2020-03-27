@@ -49,7 +49,7 @@ class ConversationItemWidget extends StatelessWidget{
                       ),
                       Padding(padding: EdgeInsets.only(top:8)),
                       Text(
-                        conversation.lastMessage.des,
+                        conversation.lastMessage?.des ?? '',
                         style: TextStyle(fontSize: 14.0, color: Color(0xFFa9a9a9)),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis
@@ -63,7 +63,7 @@ class ConversationItemWidget extends StatelessWidget{
               Container(
                 margin: const EdgeInsets.only(top: 4),
                 child: Text(
-                  formatDate(DateTime.fromMillisecondsSinceEpoch(conversation.lastMessageAt), [HH, ':', nn, ':', ss]).toString(),
+                  conversation.lastMessageAt!=null ? formatDate(DateTime.fromMillisecondsSinceEpoch(conversation.lastMessageAt), [HH, ':', nn, ':', ss]).toString() : '',
                   style: TextStyle(fontSize: 14.0, color: Color(0xFFa9a9a9)),
                 ),
               )

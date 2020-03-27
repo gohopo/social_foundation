@@ -9,14 +9,14 @@ class Conversation extends SfConversation<Message> {
   static fromDB(Map data){
     data = Map.from(data);
     data['members'] = json.decode(data['members']).cast<String>();
-    data['lastMessage'] = Message.fromDB(json.decode(data['lastMessage']));
+    data['lastMessage'] = data['lastMessage']!=null ? Message.fromDB(json.decode(data['lastMessage'])) : null;
   }
   @override
   Future<void> save() async {
     var conversation = await query(ownerId,convId);
     var database = await StorageManager.instance.getDatabase();
     if(conversation != null){
-      await database.update('conversation', {'unreadMessagesCount':unreadMessagesCount,'lastMessage':json.encode(lastMessage.toMap()),'lastMessageAt':lastMessageAt},where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
+      await database.update('conversation', toMap(),where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
     }
     else{
       await database.insert('conversation',toMap());

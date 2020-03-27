@@ -18,7 +18,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
     map['creator'] = creator;
     map['members'] = json.encode(members);
     map['unreadMessagesCount'] = unreadMessagesCount;
-    map['lastMessage'] = json.encode(lastMessage.toMap());
+    map['lastMessage'] = lastMessage!=null ? json.encode(lastMessage.toMap()) : null;
     map['lastMessageAt'] = lastMessageAt;
     return map;
   }

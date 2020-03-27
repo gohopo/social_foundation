@@ -10,10 +10,10 @@ class UserState extends SfUserState<User>{
     setCurUser(user);
     return user;
   }
-  Future<User> queryUser(String userId) async {
-    var user = await super.queryUser(userId);
+  Future<User> queryUser(String userId,bool fetch) async {
+    var user = fetch ? await super.queryUser(userId,fetch) : null;
     if(user == null){
-      user = await User.queryUser(userId);
+      user = await User.queryUser(userId,fetch);
       setUser(user);
     }
     return user;

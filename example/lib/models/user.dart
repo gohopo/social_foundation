@@ -22,12 +22,17 @@ class User extends SfUser{
     await user.save();
     return user;
   }
-  static Future<User> queryUser(String userId) async {
-    var database = await StorageManager.instance.getDatabase();
-    var result = await database.query('user',where:'userId=?',whereArgs:[userId]);
-    if(result.length > 0) return User(result[0]);
-    var user = User({'userId':userId});
+  static Future<User> queryUser(String userId,bool fetch) async {
+    if(!fetch){
+      var database = await StorageManager.instance.getDatabase();
+      var result = await database.query('user',where:'userId=?',whereArgs:[userId]);
+      if(result.length > 0) return User(result[0]);
+    }
+    var user = await fetchUser(userId);
     await user.save();
     return user;
+  }
+  static Future<User> fetchUser(String userId) async {
+    return null;
   }
 }

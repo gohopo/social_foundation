@@ -71,7 +71,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     SfMessageEvent.emit(message: message,isNew:isNew);
     if(message.fromOwner || !isNew){
       var conversation = await GetIt.instance<SfChatState>().queryConversation(message.convId);
-      if(isNew || conversation.lastMessage.id==message.id){
+      if(conversation!=null && (isNew || conversation.lastMessage==null || conversation.lastMessage.id==message.id)){
         conversation.lastMessage = message;
         conversation.lastMessageAt = message.timestamp;
         saveConversation(conversation);
@@ -111,7 +111,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     map['creator'] = data['creator'];
     map['members'] = data['members'].cast<String>();
     map['unreadMessagesCount'] = data['unreadMessagesCount'];
-    map['lastMessage'] = _convertMessage(data['lastMessage']);
+    map['lastMessage'] = data['lastMessage']!=null ? _convertMessage(data['lastMessage']) : null;
     map['lastMessageAt'] = data['lastMessageAt'];
     return convertConversation(map);
   }

@@ -10,13 +10,15 @@ class SfUserConsumer<TUser extends SfUser> extends StatelessWidget {
     this.userId,
     this.user,
     this.builder,
-    this.child
+    this.child,
+    this.fetch = false
   }) : super(key:key);
 
   final String userId;
   final TUser user;
   final ValueWidgetBuilder<TUser> builder;
   final Widget child;
+  final bool fetch;
 
   @override
   Widget build(BuildContext context){
@@ -24,7 +26,7 @@ class SfUserConsumer<TUser extends SfUser> extends StatelessWidget {
       model: GetIt.instance<SfUserState>(),
       onModelReady: (model){
         if(this.user==null && this.userId.isNotEmpty){
-          model.queryUser(this.userId);
+          model.queryUser(this.userId,this.fetch);
         }
       },
       builder: (context,model,child) => builder(context,this.user??model[this.userId],child),

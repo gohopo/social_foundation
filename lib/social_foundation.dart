@@ -23,6 +23,7 @@ export './widgets/badge.dart';
 export './widgets/cached_image_provider.dart';
 export './widgets/user_widget.dart';
 export './widgets/image_picker.dart';
+export './widgets/keep_alive.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels

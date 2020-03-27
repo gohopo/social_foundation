@@ -8,14 +8,14 @@ class SfUserState<TUser extends SfUser> with ChangeNotifier{
   TUser operator [](String userId) => _users[userId];
   String get curUserId => _curUserId;
   TUser get curUser => _users[_curUserId];
-  Future<TUser> queryUser(String userId) async => this[userId];
+  Future<TUser> queryUser(String userId,bool fetch) async => this[userId];
   @protected
   void setCurUser(TUser user){
-    _curUserId = user.userId;
+    _curUserId = user?.userId;
     setUser(user);
   }
   @protected void setUser(TUser user){
-    _users[user.userId] = user;
+    if(user != null) _users[user.userId] = user;
     notifyListeners();
   }
 }

@@ -18,7 +18,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   SfChatInputModel inputModel;
   ScrollController scrollController = ScrollController();
 
-  SfChatModel({@required this.conversation}){
+  SfChatModel(Map args) : conversation=args['conversation']{
     inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage: onPickImage,onRecordVoice: onRecordVoice);
   }
   Future<void> _sendMessage({String msg,@required String msgType,Map msgExtra,Map attribute}) async {
@@ -60,7 +60,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   Future<void> initData() async {
     await super.initData();
     if(conversation.unreadMessagesCount > 0){
-      var messages = await GetIt.instance<SfChatManager<TConversation,TMessage>>().queryMessages(conversation.convId, conversation.unreadMessagesCount);
+      List<TMessage> messages = await GetIt.instance<SfChatManager>().queryMessages(conversation.convId, conversation.unreadMessagesCount);
       messages = messages.where((message) => list.every((data) => data.msgId!=message.msgId)).toList();
       list.insertAll(0,messages);
       list.sort((a,b) => b.timestamp-a.timestamp);
