@@ -2,14 +2,10 @@ package com.gohopo.social_foundation;
 
 import android.app.Activity;
 
-import com.gohopo.social_foundation.chat.ChatEventHandler;
-import com.gohopo.social_foundation.chat.ChatMethodHandler;
-
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
 /** SocialFoundationPlugin */
@@ -20,11 +16,6 @@ public class SocialFoundationPlugin implements FlutterPlugin, ActivityAware {
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
       final MethodChannel channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "social_foundation");
       channel.setMethodCallHandler(new SfMethodHandler());
-      //chat
-      final MethodChannel chatChannel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "social_foundation/chat");
-      chatChannel.setMethodCallHandler(new ChatMethodHandler());
-      final EventChannel chatEventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "social_foundation/chat/events");
-      chatEventChannel.setStreamHandler(ChatEventHandler.getInstance());
   }
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {

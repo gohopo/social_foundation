@@ -118,6 +118,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.2"
+  flutter_screenutil:
+    dependency: "direct main"
+    description:
+      name: flutter_screenutil
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -163,6 +170,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.6.3+4"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.16.1"
+  leancloud_official_plugin:
+    dependency: "direct main"
+    description:
+      name: leancloud_official_plugin
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.0-beta.1"
   matcher:
     dependency: transitive
     description:

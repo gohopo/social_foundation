@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 export 'package:bot_toast/bot_toast.dart';
+export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:provider/provider.dart';
 //utils
@@ -47,5 +48,8 @@ class SocialFoundation {
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
+  }
+  static void initialize(String appId, String appKey, String serverURL){
+    _channel.invokeMethod('initialize', {'appId': appId, 'appKey': appKey, 'serverURL': serverURL});
   }
 }

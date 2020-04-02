@@ -3,22 +3,21 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:leancloud_official_plugin/leancloud_plugin.dart';
 import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/event_manager.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation/states/chat_state.dart';
 import 'package:social_foundation/states/user_state.dart';
 import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 
 abstract class SfChatManager<TConversation extends SfConversation,TMessage extends SfMessage> {
-  final MethodChannel _channel = MethodChannel('social_foundation/chat');
-  final EventChannel _eventChannel = EventChannel("social_foundation/chat/events");
+  Client _client;
   SfChatManager(String appId, String appKey, String serverURL){
-    _channel.invokeMethod('initialize', {'appId': appId, 'appKey': appKey, 'serverURL': serverURL});
-    _eventChannel.receiveBroadcastStream().listen(_handleEvent);
+    SocialFoundation.initialize(appId, appKey, serverURL);
   }
   TConversation convertConversation(Map data);
   TMessage convertMessage(Map data);
@@ -79,103 +78,84 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     }
     return message;
   }
-  void _handleEvent(data){
-    String event = data['event'];
-    var conversation = data['conversation']==null ? null : _convertConversation(json.decode(data['conversation']));
-    var message = data['message']==null ? null : _convertMessage(json.decode(data['message']));
-    switch(event){
-        case 'onMessageReceived':
-          onMessageReceived(conversation,message);
-          break;
-        case 'onUnreadMessagesCountUpdated':
-          onUnreadMessagesCountUpdated(conversation,message);
-          break;
-        case 'onLastDeliveredAtUpdated':
-          onLastDeliveredAtUpdated(conversation,message);
-          break;
-        case 'onLastReadAtUpdated':
-          onLastReadAtUpdated(conversation,message);
-          break;
-        case 'onMessageUpdated':
-          onMessageUpdated(conversation,message);
-          break;
-        case 'onMessageRecalled':
-          onMessageRecalled(conversation,message);
-          break;
-      }
-  }
-  TConversation _convertConversation(Map data){
+  TConversation _convertConversation(Conversation conversation){
     var map = Map();
     map['ownerId'] = GetIt.instance<SfUserState>().curUserId;
-    map['convId'] = data['conversationId'];
-    map['creator'] = data['creator'];
-    map['members'] = data['members'].cast<String>();
-    map['unreadMessagesCount'] = data['unreadMessagesCount'];
-    map['lastMessage'] = data['lastMessage']!=null ? _convertMessage(data['lastMessage']) : null;
-    map['lastMessageAt'] = data['lastMessageAt'];
+    map['convId'] = conversation.id;
+    map['creator'] = conversation.creator;
+    map['members'] = conversation.members;
+    map['unreadMessagesCount'] = conversation.unreadMessageCount;
+    map['lastMessage'] = conversation.lastMessage!=null ? _convertMessage(conversation.lastMessage) : null;
+    map['lastMessageAt'] = conversation.lastDeliveredAt;
     return convertConversation(map);
   }
-  TMessage _convertMessage(Map data){
+  TMessage _convertMessage(Message message){
     var map = Map();
     map['ownerId'] = GetIt.instance<SfUserState>().curUserId;
-    map['msgId'] = data['messageId'];
-    map['convId'] = data['conversationId'];
-    map['fromId'] = data['from'];
-    map['timestamp'] = data['timestamp'];
-    map['status'] = data['messageStatus'];
-    map['receiptTimestamp'] = data['receiptTimestamp'];
-    map.addAll(json.decode(data['text']));
+    map['msgId'] = message.id;
+    map['convId'] = message.conversationID;
+    map['fromId'] = message.fromClientID;
+    map['timestamp'] = message.sentTimestamp;
+    map['status'] = SfMessageStatus.Sent;
+    map['receiptTimestamp'] = message.deliveredTimestamp;
+    var text = (message as TextMessage).text;
+    map.addAll(json.decode(text));
     return convertMessage(map);
   }
   //sdk
-  Future<String> login(String userId) {
-    return _channel.invokeMethod('login', {'userId': userId});
+  Future<void> login(String userId) {
+    _client = Client(id:userId);
+    _client.onMessage = ({client,conversation,message}) => onMessageReceived(null,null);
+    //_client.onUnreadMessageCountUpdated
+    return _client.open();
   }
-  Future<String> close() {
-    return _channel.invokeMethod('close');
+  Future<void> close() async {
+    await _client?.close();
+    _client = null;
+  }
+  Future<TConversation> getConversation(String conversationId) async {
+    var conversation = await _client.getConversation(conversationID:conversationId);
+    return conversation!=null ? _convertConversation(conversation) : null;
   }
   @protected Future<TMessage> sendMessage(String conversationId,String message) async {
-    var result = await _channel.invokeMethod('sendMessage',{'conversationId':conversationId,'message':message});
+    var conversation = await _client.getConversation(conversationID:conversationId);
+    var result = await conversation.send(message:TextMessage.from(text:message));
     return _convertMessage(result);
   }
   Future<List<TMessage>> queryMessages(String conversationId,int limit) async {
-    var result = await _channel.invokeMethod('queryMessages',{'conversationId':conversationId,'limit':limit});
-    List<dynamic> messages = json.decode(result);
-    return messages.map((data) => _convertMessage(data)).toList();
+    var conversation = await _client.getConversation(conversationID:conversationId);
+    var result = await conversation.queryMessage(limit:limit);
+    return result.map((data) => _convertMessage(data)).toList();
   }
-  Future<TConversation> convCreate(String name,List<String> members,bool isUnique,Map attributes,bool isTransient) async {
-    try{
-      var result = await _channel.invokeMethod('convCreate',{'name':name,'members':members,'isUnique':isUnique,'attributes':attributes,'isTransient':isTransient});
-      return _convertConversation(json.decode(result));
-    }
-    catch(e){
-      return null;
-    }
+  Future<TConversation> convCreate(String name,List<String> members,bool isUnique,Map attributes) async {
+    var result = await _client.createConversation(name:name,members:members.toSet(),isUnique:isUnique,attributes:attributes);
+    return _convertConversation(result);
   }
-  Future<void> convJoin(String conversationId){
-    return _channel.invokeMethod('convJoin',{'conversationId':conversationId});
+  Future<void> convJoin(String conversationId) async {
+    var conversation = await _client.getConversation(conversationID:conversationId);
+    await conversation.join();
   }
-  Future<void> convQuit(String conversationId){
-    return _channel.invokeMethod('convQuit',{'conversationId':conversationId});
+  Future<void> convQuit(String conversationId) async {
+    var conversation = await _client.getConversation(conversationID:conversationId);
+    await conversation.quit();
   }
-  Future<void> convInvite(String conversationId,List<String> members){
-    return _channel.invokeMethod('convInvite',{'conversationId':conversationId,'members':members});
+  Future<void> convInvite(String conversationId,List<String> members) async {
+    var conversation = await _client.getConversation(conversationID:conversationId);
+    await conversation.addMembers(members: members.toSet());
   }
-  Future<void> convKick(String conversationId,List<String> members){
-    return _channel.invokeMethod('convKick',{'conversationId':conversationId,'members':members});
+  Future<void> convKick(String conversationId,List<String> members) async {
+    var conversation = await _client.getConversation(conversationID:conversationId);
+    await conversation.removeMembers(members: members.toSet());
   }
-  Future<void> convRead(String conversationId) {
-    return _channel.invokeMethod('convRead',{'conversationId':conversationId});
+  Future<void> convRead(String conversationId) async {
+    var conversation = await _client.getConversation(conversationID:conversationId);
+    return conversation.read();
   }
   void onMessageReceived(TConversation conversation,TMessage message){
     saveConversation(conversation);
     saveMessage(message);
   }
-  void onUnreadMessagesCountUpdated(TConversation conversation, TMessage message) {
+  void onUnreadMessagesCountUpdated(TConversation conversation) {
     saveConversation(conversation);
   }
-  void onLastDeliveredAtUpdated(TConversation conversation,TMessage message){}
-  void onLastReadAtUpdated(TConversation conversation,TMessage message){}
-  void onMessageUpdated(TConversation conversation,TMessage message){}
-  void onMessageRecalled(TConversation conversation,TMessage message){}
 }

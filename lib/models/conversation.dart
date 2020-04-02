@@ -6,7 +6,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
   String ownerId;
   String convId;
   String creator;
-  List<String> members;
+  List members;
   int unreadMessagesCount;
   TMessage lastMessage;
   int lastMessageAt;

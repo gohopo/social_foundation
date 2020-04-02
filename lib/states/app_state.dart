@@ -90,7 +90,7 @@ class SfAppState extends SfViewState{
       errorColor: Colors.red,
       cursorColor: themeData.accentColor,
       textTheme: themeData.textTheme.copyWith(
-        subhead: themeData.textTheme.subhead.copyWith(textBaseline: TextBaseline.alphabetic)
+        //subhead: themeData.textTheme.subhead.copyWith(textBaseline: TextBaseline.alphabetic)
       ),
       textSelectionColor: themeData.accentColor.withAlpha(60),
       textSelectionHandleColor: themeData.accentColor.withAlpha(60),
