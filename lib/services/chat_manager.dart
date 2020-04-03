@@ -105,8 +105,8 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   //sdk
   Future<void> login(String userId) {
     _client = Client(id:userId);
-    _client.onMessage = ({client,conversation,message}) => onMessageReceived(null,null);
-    //_client.onUnreadMessageCountUpdated
+    _client.onMessage = ({client,conversation,message}) => onMessageReceived(_convertConversation(conversation),_convertMessage(message));
+    _client.onUnreadMessageCountUpdated = ({client,conversation}) => onUnreadMessagesCountUpdated(_convertConversation(conversation));
     return _client.open();
   }
   Future<void> close() async {

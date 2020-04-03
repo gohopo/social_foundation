@@ -16,7 +16,8 @@ class Conversation extends SfConversation<Message> {
     var conversation = await query(ownerId,convId);
     var database = await StorageManager.instance.getDatabase();
     if(conversation != null){
-      await database.update('conversation', toMap(),where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
+      var map = toMap();
+      await database.update('conversation', {'lastMessage':map['lastMessage'],'lastMessageAt':map['lastMessageAt']}, where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
     }
     else{
       await database.insert('conversation',toMap());
@@ -29,7 +30,7 @@ class Conversation extends SfConversation<Message> {
   }
   static Future<List<Conversation>> queryAll(String ownerId,int limit,int offset) async {
     var database = await StorageManager.instance.getDatabase();
-    var result = await database.query('conversation',where: 'ownerId=?',whereArgs: [ownerId],orderBy: 'lastMessageAt desc',limit: limit,offset: offset);
+    var result = await database.query('conversation',where: 'ownerId=?',whereArgs: [ownerId],orderBy: 'top desc,lastMessageAt desc',limit: limit,offset: offset);
     return result.map(Conversation.fromDB).toList();
   }
 }
