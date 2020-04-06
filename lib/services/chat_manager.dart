@@ -114,16 +114,16 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     _client = null;
   }
   Future<TConversation> getConversation(String conversationId) async {
-    var conversation = await _client.getConversation(conversationID:conversationId);
+    var conversation = await _getConversation(conversationId);
     return conversation!=null ? _convertConversation(conversation) : null;
   }
   @protected Future<TMessage> sendMessage(String conversationId,String message) async {
-    var conversation = await _client.getConversation(conversationID:conversationId);
+    var conversation = await _getConversation(conversationId);
     var result = await conversation.send(message:TextMessage.from(text:message));
     return _convertMessage(result);
   }
   Future<List<TMessage>> queryMessages(String conversationId,int limit) async {
-    var conversation = await _client.getConversation(conversationID:conversationId);
+    var conversation = await _getConversation(conversationId);
     var result = await conversation.queryMessage(limit:limit);
     return result.map((data) => _convertMessage(data)).toList();
   }
@@ -132,23 +132,23 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     return _convertConversation(result);
   }
   Future<void> convJoin(String conversationId) async {
-    var conversation = await _client.getConversation(conversationID:conversationId);
+    var conversation = await _getConversation(conversationId);
     await conversation.join();
   }
   Future<void> convQuit(String conversationId) async {
-    var conversation = await _client.getConversation(conversationID:conversationId);
+    var conversation = await _getConversation(conversationId);
     await conversation.quit();
   }
   Future<void> convInvite(String conversationId,List<String> members) async {
-    var conversation = await _client.getConversation(conversationID:conversationId);
+    var conversation = await _getConversation(conversationId);
     await conversation.addMembers(members: members.toSet());
   }
   Future<void> convKick(String conversationId,List<String> members) async {
-    var conversation = await _client.getConversation(conversationID:conversationId);
+    var conversation = await _getConversation(conversationId);
     await conversation.removeMembers(members: members.toSet());
   }
   Future<void> convRead(String conversationId) async {
-    var conversation = await _client.getConversation(conversationID:conversationId);
+    var conversation = await _getConversation(conversationId);
     return conversation.read();
   }
   void onMessageReceived(TConversation conversation,TMessage message){
@@ -157,5 +157,15 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   }
   void onUnreadMessagesCountUpdated(TConversation conversation) {
     saveConversation(conversation);
+  }
+  Future<Conversation> _getConversation(String conversationId) async {
+    var query = _client.conversationQuery();
+    query.whereString = jsonEncode({
+      'objectId': conversationId,
+    });
+    query.limit = 1;
+    var result = await query.find();
+    if(result.length == 0) throw '未查询到会话!';
+    return result[0];
   }
 }
