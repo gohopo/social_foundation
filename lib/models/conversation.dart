@@ -13,7 +13,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
   TMessage lastMessage;
   int lastMessageAt;
   int top;
-  SfConversation(Map data) : ownerId = data['ownerId'],convId = data['convId'],creator = data['creator'],members = data['members'],unreadMessagesCount = data['unreadMessagesCount'],lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'],top=data['top']??0;
+  SfConversation(Map data) : ownerId = data['ownerId'],convId = data['convId'],creator = data['creator'],members = data['members'],unreadMessagesCount = data['unreadMessagesCount']??0,lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'],top=data['top']??0;
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
     map['ownerId'] = ownerId;

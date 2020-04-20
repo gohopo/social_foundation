@@ -84,7 +84,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     map['convId'] = conversation.id;
     map['creator'] = conversation.creator;
     map['members'] = conversation.members;
-    map['unreadMessagesCount'] = conversation.unreadMessageCount;
+    map['unreadMessagesCount'] = conversation.unreadMessageCount ?? 0;
     map['lastMessage'] = conversation.lastMessage!=null ? _convertMessage(conversation.lastMessage) : null;
     map['lastMessageAt'] = conversation.lastDeliveredAt;
     return convertConversation(map);
@@ -96,7 +96,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     map['convId'] = message.conversationID;
     map['fromId'] = message.fromClientID;
     map['timestamp'] = message.sentTimestamp;
-    map['status'] = SfMessageStatus.Sent;
+    map['status'] = message.status;
     map['receiptTimestamp'] = message.deliveredTimestamp;
     var text = (message as TextMessage).text;
     map.addAll(json.decode(text));

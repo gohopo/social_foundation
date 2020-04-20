@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 
 export 'package:bot_toast/bot_toast.dart';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
+export 'package:get_it/get_it.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:provider/provider.dart';
+export 'package:pull_to_refresh/pull_to_refresh.dart';
 //utils
 export './utils/utils.dart';
 export './utils/file_helper.dart';
