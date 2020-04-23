@@ -9,6 +9,7 @@ class SfUserState<TUser extends SfUser> with ChangeNotifier{
   String get curUserId => _curUserId;
   TUser get curUser => _users[_curUserId];
   Future<TUser> queryUser(String userId,bool fetch) async => this[userId];
+  void updateStateUser(dynamic user) => setUser(user);
   @protected
   void setCurUser(TUser user){
     _curUserId = user?.userId;

@@ -12,6 +12,7 @@ export 'package:pull_to_refresh/pull_to_refresh.dart';
 export './utils/utils.dart';
 export './utils/file_helper.dart';
 export './utils/aliyun_oss.dart';
+export './utils/date_helper.dart';
 //models
 export './models/message.dart';
 export './models/conversation.dart';
@@ -27,6 +28,7 @@ export './widgets/cached_image_provider.dart';
 export './widgets/user_widget.dart';
 export './widgets/image_picker.dart';
 export './widgets/keep_alive.dart';
+export './widgets/rolling_number.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels
