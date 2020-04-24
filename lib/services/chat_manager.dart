@@ -30,7 +30,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       'convId': convId,
       'fromId': GetIt.instance<SfUserState>().curUserId,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'status': SfMessageStatus.Sending,
+      'status': MessageStatus.sending,
       'attribute': attribute,
       'msg': msg,
       'msgType': msgType,
@@ -42,7 +42,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   Future<TMessage> resendMessage(TMessage message) async {
     try{
       //保存
-      message.status = SfMessageStatus.Sending;
+      message.status = SfMessageStatus.sending;
       message = await saveMessage(message);
       //上传
       String filePath = message.attribute['filePath'];
@@ -57,7 +57,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       message.status = data.status;
     }
     catch(e){
-      message.status = SfMessageStatus.Failed;
+      message.status = SfMessageStatus.failed;
     }
     return saveMessage(message);
   }
@@ -96,7 +96,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     map['convId'] = message.conversationID;
     map['fromId'] = message.fromClientID;
     map['timestamp'] = message.sentTimestamp;
-    map['status'] = message.status;
+    map['status'] = message.status.index;
     map['receiptTimestamp'] = message.deliveredTimestamp;
     var text = (message as TextMessage).text;
     map.addAll(json.decode(text));

@@ -10,7 +10,7 @@ class StorageManager extends SfStorageManager{
   void onCreateDatabase(Database database,int version) async {
     database.execute('create table user(userId text primary key,nickName text,icon text)');
     database.execute('create table conversation(ownerId text,convId text,creator text,members text,unreadMessagesCount integer,lastMessage text,lastMessageAt integer,top integer)');
-    database.execute('create table message(id integer primary key autoincrement,ownerId text,msgId text,convId text,fromId text,timestamp integer,status text,receiptTimestamp integer,attribute text,msg text,msgType text,msgExtra text)');
+    database.execute('create table message(id integer primary key autoincrement,ownerId text,msgId text,convId text,fromId text,timestamp integer,status integer,receiptTimestamp integer,attribute text,msg text,msgType text,msgExtra text)');
   }
   @protected
   void onUpgradeDatabase(Database database,int oldVersion, int newVersion) async {

@@ -14,7 +14,7 @@ class Message extends SfMessage {
   @override
   String get des{
     var des = super.des;
-    if(status == SfMessageStatus.Sending) des = '[发送中...]  ' + des;
+    if(status == SfMessageStatus.sending) des = '[发送中...]  ' + des;
     return des;
   }
   static Future<Message> query(String id) async {

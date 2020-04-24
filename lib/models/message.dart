@@ -15,7 +15,7 @@ class SfMessage {
   String convId;
   String fromId;
   int timestamp;
-  String status;
+  int status;
   int receiptTimestamp;
   Map attribute;
   String msg;
@@ -25,13 +25,13 @@ class SfMessage {
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
     map['ownerId'] = ownerId;
-    map['attribute'] = json.encode(attribute);
     map['msgId'] = msgId;
     map['convId'] = convId;
     map['fromId'] = fromId;
     map['timestamp'] = timestamp;
     map['status'] = status;
     map['receiptTimestamp'] = receiptTimestamp;
+    map['attribute'] = json.encode(attribute);
     map['msg'] = msg;
     map['msgType'] = msgType;
     map['msgExtra'] = json.encode(msgExtra);
@@ -77,12 +77,13 @@ class SfMessage {
   }
 }
 
-class SfMessageStatus {
-  static const String None = 'AVIMMessageStatusNone'; //未知
-  static const String Sending = 'AVIMMessageStatusSending'; //发送中
-  static const String Sent = 'AVIMMessageStatusSent'; //发送成功
-  static const String Receipt = 'AVIMMessageStatusReceipt'; //被接收
-  static const String Failed = 'AVIMMessageStatusFailed'; //失败
+class SfMessageStatus{
+  static const int failed = 0;//失败
+  static const int none = 1;//未知
+  static const int sending = 2;//发送中
+  static const int sent = 3;//发送成功
+  static const int delivered = 4;//被接收
+  static const int read = 5;//已读
 }
 
 class SfMessageType {

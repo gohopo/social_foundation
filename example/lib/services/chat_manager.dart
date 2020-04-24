@@ -18,7 +18,7 @@ class ChatManager extends SfChatManager<Conversation,Message> {
       'convId': convId,
       'fromId': UserState.instance.curUserId,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'status': SfMessageStatus.Sending,
+      'status': SfMessageStatus.sending,
       'attribute': attribute,
       'msg': msg,
       'msgType': msgType,

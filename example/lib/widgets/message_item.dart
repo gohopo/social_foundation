@@ -45,10 +45,10 @@ class MessageItemWidget extends StatelessWidget{
   }
   Widget buildStatus(){
     Widget child;
-    if(message.status == SfMessageStatus.Sending){
+    if(message.status == SfMessageStatus.sending){
       child = Text('发送中'); 
     }
-    else if(message.status == SfMessageStatus.Failed){
+    else if(message.status == SfMessageStatus.failed){
       child = Icon(Icons.error,color: Colors.red);
     }
     return Container(
