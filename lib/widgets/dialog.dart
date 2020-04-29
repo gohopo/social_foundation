@@ -124,7 +124,7 @@ class SfAlertDialog extends SfDialog{
   }
 }
 
-class SfSimpleDialog{
+class SfSimpleAlert{
   Future alert(String title,String content,String action) => confirm(title:title,content:content,actions:[action]);
   Future<int> confirm({String title,String content,List<String> actions}) => SfAlertDialog.showAsync(
     builder: hook(),
