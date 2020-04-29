@@ -12,10 +12,12 @@ enum SfViewStatus {
 abstract class SfViewState extends ChangeNotifier {
   SfViewStatus _viewStatus;
   bool _disposed = false;
+  dynamic _error;
 
   SfViewState({SfViewStatus viewStatus : SfViewStatus.idle}) : _viewStatus = viewStatus;
   Future<void> initData() async {}
   SfViewStatus get viewStatus => _viewStatus;
+  dynamic get error => _error;
   set viewStatus(SfViewStatus viewStatus){
     _viewStatus = viewStatus;
     notifyListeners();
@@ -34,8 +36,9 @@ abstract class SfViewState extends ChangeNotifier {
   void setEmpty(){
     viewStatus = SfViewStatus.empty;
   }
-  void setError(){
+  void setError(error){
     viewStatus = SfViewStatus.error;
+    _error = error;
   }
   void setUnAuthorized(){
     viewStatus = SfViewStatus.unAuthorized;
@@ -73,7 +76,7 @@ abstract class SfListViewState<T> extends SfViewState {
       }
     }
     catch(e){
-      setError();
+      setError(e);
     }
   }
   void onCompleted(List<T> data){}
@@ -140,7 +143,7 @@ abstract class SfRefreshListViewState<T> extends SfListViewState<T> {
     }
     catch(e){
       refreshController.refreshFailed();
-      setError();
+      setError(e);
     }
   }
   @override

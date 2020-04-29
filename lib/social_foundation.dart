@@ -29,6 +29,7 @@ export './widgets/user_widget.dart';
 export './widgets/image_picker.dart';
 export './widgets/keep_alive.dart';
 export './widgets/rolling_number.dart';
+export './widgets/dialog.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels
