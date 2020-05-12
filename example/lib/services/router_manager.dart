@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
-import 'package:social_foundation_example/models/conversation.dart';
 import 'package:social_foundation_example/pages/account/signin_page.dart';
 import 'package:social_foundation_example/pages/chat/chat_page.dart';
 import 'package:social_foundation_example/pages/tab_navigator.dart';
@@ -29,7 +28,7 @@ class RouterManager extends SfRouterManager{
       case RouteName.Tab:
         return MaterialPageRoute(builder: (_) => TabNavigator());
       case RouteName.Chat:
-        return MaterialPageRoute(builder: (_) => ChatPage(conversation: settings.arguments as Conversation));
+        return MaterialPageRoute(builder: (_) => ChatPage(settings.arguments));
       case RouteName.PhotoViewer:
         var map = settings.arguments as Map;
         return SfFadeRoute(page: SfPhotoGalleryViewer(images:map['images'],index:map['index'],heroTag: map['heroTag']));

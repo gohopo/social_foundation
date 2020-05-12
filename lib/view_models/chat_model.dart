@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/conversation.dart';
@@ -14,7 +13,7 @@ import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatModel<TConversation extends SfConversation,TMessage extends SfMessage> extends SfRefreshListViewState<TMessage>{
   TConversation conversation;
-  StreamSubscription _messageSubscription;
+  SfMessageEvent _messageEvent;
   SfChatInputModel inputModel;
   ScrollController scrollController = ScrollController();
 
@@ -69,11 +68,11 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       await SfMessage.insertAll(messages);
       GetIt.instance<SfChatManager>().convRead(conversation.convId);
     }
-    _messageSubscription = GetIt.instance<EventBus>().on<SfMessageEvent>().listen(onMessageEvent);
+    _messageEvent.listen(onMessageEvent);
   }
   @override
   void dispose(){
-    _messageSubscription?.cancel();
+    _messageEvent?.dispose();
     super.dispose();
   }
 }

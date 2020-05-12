@@ -30,7 +30,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       'convId': convId,
       'fromId': GetIt.instance<SfUserState>().curUserId,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'status': MessageStatus.sending,
+      'status': MessageStatus.sending.index,
       'attribute': attribute,
       'msg': msg,
       'msgType': msgType,
@@ -67,7 +67,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   Future<TMessage> saveMessage(TMessage message) async {
     var isNew = message.id==null;
     await message.save();
-    SfMessageEvent.emit(message: message,isNew:isNew);
+    SfMessageEvent(message: message,isNew:isNew).emit();
     if(message.fromOwner || !isNew){
       var conversation = await GetIt.instance<SfChatState>().queryConversation(message.convId);
       if(conversation!=null && (isNew || conversation.lastMessage==null || conversation.lastMessage.id==message.id)){

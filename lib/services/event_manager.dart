@@ -1,11 +1,25 @@
+import 'dart:async';
+
 import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
 
-class SfMessageEvent<TMessage> {
-  TMessage message;
+class SfEvent<T>{
+  StreamSubscription _subscription;
+  
+  void listen(void onData(T event)){
+    _subscription = GetIt.instance<EventBus>().on<T>().listen(onData);
+  }
+  void emit(){
+    GetIt.instance<EventBus>().fire(this);
+  }
+  void dispose(){
+    _subscription?.cancel();
+    _subscription = null;
+  }
+}
+
+class SfMessageEvent extends SfEvent<SfMessageEvent>{
+  dynamic message;
   bool isNew;
   SfMessageEvent({this.message,this.isNew});
-  static void emit<TMessage>({TMessage message,bool isNew:true}){
-    GetIt.instance<EventBus>().fire(SfMessageEvent(message:message,isNew:isNew));
-  }
 }

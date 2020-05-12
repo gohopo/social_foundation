@@ -10,6 +10,7 @@ class Conversation extends SfConversation<Message> {
     data = Map.from(data);
     data['members'] = json.decode(data['members']).cast<String>();
     data['lastMessage'] = data['lastMessage']!=null ? Message.fromDB(json.decode(data['lastMessage'])) : null;
+    return Conversation(data);
   }
   @override
   Future<void> save() async {
@@ -31,6 +32,6 @@ class Conversation extends SfConversation<Message> {
   static Future<List<Conversation>> queryAll(String ownerId,int limit,int offset) async {
     var database = await StorageManager.instance.getDatabase();
     var result = await database.query('conversation',where: 'ownerId=?',whereArgs: [ownerId],orderBy: 'top desc,lastMessageAt desc',limit: limit,offset: offset);
-    return result.map(Conversation.fromDB).toList();
+    return result.map(Conversation.fromDB).cast<Conversation>().toList();
   }
 }
