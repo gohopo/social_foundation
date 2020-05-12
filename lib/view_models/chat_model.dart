@@ -13,7 +13,7 @@ import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatModel<TConversation extends SfConversation,TMessage extends SfMessage> extends SfRefreshListViewState<TMessage>{
   TConversation conversation;
-  SfMessageEvent _messageEvent;
+  SfMessageEvent _messageEvent = SfMessageEvent();
   SfChatInputModel inputModel;
   ScrollController scrollController = ScrollController();
 
