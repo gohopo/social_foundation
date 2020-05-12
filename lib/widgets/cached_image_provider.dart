@@ -1,14 +1,11 @@
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_cache_manager/src/compat/file_service_compat.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/services/storage_manager.dart';
 import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/utils/utils.dart';
-
-class SfCachedImageProvider extends CachedNetworkImageProvider{
-  SfCachedImageProvider(String url) : super(url,cacheManager:SfCacheManager());
-}
 
 class SfCacheManager extends BaseCacheManager {
   factory SfCacheManager() {
@@ -17,8 +14,9 @@ class SfCacheManager extends BaseCacheManager {
     }
     return _instance;
   }
-  SfCacheManager._() : super(key,fileFetcher:_fileFetcher);
+  SfCacheManager._() : super(key,fileService:FileServiceCompat(_fileFetcher));
 
+  static CachedNetworkImageProvider provder(String url) => CachedNetworkImageProvider(url,cacheManager:SfCacheManager());
   static const key = "libCachedImageData";
   static SfCacheManager _instance;
 

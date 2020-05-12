@@ -56,7 +56,7 @@ class SfMessage {
     }
   }
   String resolveFileUri() => msgExtra['fileKey']!=null ? SfAliyunOss.getFileUrl(msgType,msgExtra['fileKey']) : (attribute['filePath'] ?? '');
-  ImageProvider resolveImage() => msgExtra['fileKey']!=null ? SfCachedImageProvider(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) :(attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : null);
+  ImageProvider resolveImage() => msgExtra['fileKey']!=null ? SfCacheManager.provder(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) :(attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : null);
   Future<void> save() async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     if(id != null){

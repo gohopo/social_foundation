@@ -36,7 +36,7 @@ class SfAvatar extends StatelessWidget{
     );
   }
   ImageProvider buildImageProvider(){
-    return user?.icon!=null ? SfCachedImageProvider(SfAliyunOss.getImageUrl(user?.icon)) : defaultImage;
+    return user?.icon!=null ? SfCacheManager.provder(SfAliyunOss.getImageUrl(user?.icon)) : defaultImage;
   }
 
   @override
