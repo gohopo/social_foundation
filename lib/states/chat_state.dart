@@ -1,4 +1,6 @@
+import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/conversation.dart';
+import 'package:social_foundation/services/chat_manager.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatState<TConversation extends SfConversation> extends SfRefreshListViewState<TConversation> {
@@ -25,6 +27,12 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
     await conversation.delete();
     list.removeWhere((e) => e.convId==conversation.convId);
     notifyListeners();
+  }
+  void read(String convId) async {
+    var conv = await this.queryConversation(convId);
+    conv.unreadMessagesCount = 0;
+    this.saveConversation(conv);
+    GetIt.instance<SfChatManager>().convRead(convId);
   }
   Future<void> toggleTop(TConversation conversation) async {
     await conversation.toggleTop();

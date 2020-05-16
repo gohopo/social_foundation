@@ -7,6 +7,7 @@ import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/chat_manager.dart';
 import 'package:social_foundation/services/event_manager.dart';
+import 'package:social_foundation/states/chat_state.dart';
 import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/widgets/chat_input.dart';
 import 'package:social_foundation/widgets/view_state.dart';
@@ -28,7 +29,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     if(event.message.convId != conversation.convId) return;
     if(event.isNew){
       list.insert(0,event.message);
-      GetIt.instance<SfChatManager>().convRead(conversation.convId);
+      GetIt.instance<SfChatState>().read(conversation.convId);
     }
     notifyListeners();
   }
@@ -66,7 +67,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       notifyListeners();
       
       await SfMessage.insertAll(messages);
-      GetIt.instance<SfChatManager>().convRead(conversation.convId);
+      GetIt.instance<SfChatState>().read(conversation.convId);
     }
     _messageEvent.listen(onMessageEvent);
   }

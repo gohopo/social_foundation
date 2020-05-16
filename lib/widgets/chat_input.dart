@@ -39,18 +39,18 @@ class SfChatInput extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           GestureDetector(
-            child: Icon(Icons.keyboard_voice,color: model.curAccessory==0?Colors.blue:Colors.black),
+            child: Icon(Icons.keyboard_voice,color: model.curAccessory==0?Colors.blue:null),
             onTap: () => model.changeAccessory(0),
           ),
           GestureDetector(
-            child: Icon(Icons.photo_album),
+            child: Icon(Icons.photo_album,color: model.curAccessory==0?Colors.blue:null),
             onTap: () {
               model.changeAccessory(1);
               onTapPhoto(ImageSource.gallery);
             },
           ),
           GestureDetector(
-            child: Icon(Icons.photo_camera),
+            child: Icon(Icons.photo_camera,color: model.curAccessory==0?Colors.blue:null),
             onTap: () {
               model.changeAccessory(2);
               onTapPhoto(ImageSource.camera);
