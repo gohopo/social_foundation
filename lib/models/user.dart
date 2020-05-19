@@ -15,7 +15,7 @@ class SfUser{
     return map;
   }
   int get genderReverse => gender==2 ? 1 : 2;
-  Future<void> save() async {
+  Future save() async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     await database.insert('user', toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
   }

@@ -9,15 +9,15 @@ class SfAudioPlayerModel extends SfViewState {
   StreamSubscription _positionSubscription;
   int position = -1;
   
-  Future<void> play(String uri){
+  Future play(String uri){
     return _player.play(uri);
   }
-  Future<void> stop(){
+  Future stop(){
     return _player.stop();
   }
 
   @override
-  Future<void> initData() async {
+  Future initData() async {
     _stateSubscription = _player.onPlayerStateChanged.listen((s){
       position = -1;
       notifyListeners();

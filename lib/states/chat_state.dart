@@ -26,7 +26,7 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
     list.removeWhere((e) => e.convId==conversation.convId);
     notifyListeners();
   }
-  Future<void> toggleTop(TConversation conversation) async {
+  Future toggleTop(TConversation conversation) async {
     await conversation.toggleTop();
     saveConversation(conversation);
   }

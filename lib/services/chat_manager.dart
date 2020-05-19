@@ -103,13 +103,13 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     return convertMessage(map);
   }
   //sdk
-  Future<void> login(String userId) {
+  Future login(String userId) {
     _client = Client(id:userId);
     _client.onMessage = ({client,conversation,message}) => onMessageReceived(_convertConversation(conversation),_convertMessage(message));
     _client.onUnreadMessageCountUpdated = ({client,conversation}) => onUnreadMessagesCountUpdated(_convertConversation(conversation));
     return _client.open();
   }
-  Future<void> close() async {
+  Future close() async {
     await _client?.close();
     _client = null;
   }
@@ -131,23 +131,23 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     var result = await _client.createConversation(name:name,members:members.toSet(),isUnique:isUnique,attributes:attributes);
     return _convertConversation(result);
   }
-  Future<void> convJoin(String conversationId) async {
+  Future convJoin(String conversationId) async {
     var conversation = await _getConversation(conversationId);
     await conversation.join();
   }
-  Future<void> convQuit(String conversationId) async {
+  Future convQuit(String conversationId) async {
     var conversation = await _getConversation(conversationId);
     await conversation.quit();
   }
-  Future<void> convInvite(String conversationId,List<String> members) async {
+  Future convInvite(String conversationId,List<String> members) async {
     var conversation = await _getConversation(conversationId);
     await conversation.addMembers(members: members.toSet());
   }
-  Future<void> convKick(String conversationId,List<String> members) async {
+  Future convKick(String conversationId,List<String> members) async {
     var conversation = await _getConversation(conversationId);
     await conversation.removeMembers(members: members.toSet());
   }
-  Future<void> convRead(String conversationId) async {
+  Future convRead(String conversationId) async {
     var conversation = await _getConversation(conversationId);
     return conversation.read();
   }

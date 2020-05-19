@@ -13,7 +13,7 @@ class Conversation extends SfConversation<Message> {
     return Conversation(data);
   }
   @override
-  Future<void> save() async {
+  Future save() async {
     var conversation = await query(ownerId,convId);
     var database = await StorageManager.instance.getDatabase();
     if(conversation != null){

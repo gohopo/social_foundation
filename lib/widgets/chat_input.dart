@@ -150,7 +150,7 @@ class SfChatInputModel extends SfViewState {
   }
 
   @override
-  Future<void> initData() async {
+  Future initData() async {
     focusNode.addListener((){
       if(focusNode.hasFocus){
         changeAccessory(-1);

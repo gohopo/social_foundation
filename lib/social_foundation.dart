@@ -31,6 +31,7 @@ export './widgets/image_picker.dart';
 export './widgets/keep_alive.dart';
 export './widgets/rolling_number.dart';
 export './widgets/dialog.dart';
+export './widgets/ticker_provider.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels

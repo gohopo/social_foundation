@@ -12,10 +12,10 @@ class SfRollingNumber extends StatefulWidget{
   final Duration duration;
 
   @override
-  SfRollingNumberState createState() => SfRollingNumberState();
+  _SfRollingNumberState createState() => _SfRollingNumberState();
 }
 
-class SfRollingNumberState extends State<SfRollingNumber> with SingleTickerProviderStateMixin{
+class _SfRollingNumberState extends State<SfRollingNumber> with SingleTickerProviderStateMixin{
   AnimationController controller;
   List<String> oldNumbers;
   List<String> numbers;

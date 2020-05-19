@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class SfProviderWidget<T extends ChangeNotifier> extends StatefulWidget {
+class SfProviderWidget<T extends ChangeNotifier> extends StatefulWidget{
   final T model;
   final ValueWidgetBuilder<T> builder;
   final Widget child;
@@ -20,8 +20,7 @@ class SfProviderWidget<T extends ChangeNotifier> extends StatefulWidget {
   @override
   _SfProviderWidgetState<T> createState() => _SfProviderWidgetState<T>();
 }
-
-class _SfProviderWidgetState<T extends ChangeNotifier> extends State<SfProviderWidget<T>> {
+class _SfProviderWidgetState<T extends ChangeNotifier> extends State<SfProviderWidget<T>>{
   T model;
 
   @override
@@ -47,7 +46,7 @@ class _SfProviderWidgetState<T extends ChangeNotifier> extends State<SfProviderW
   }
 }
 
-class SfProviderWidget2<A extends ChangeNotifier,B extends ChangeNotifier> extends StatefulWidget {
+class SfProviderWidget2<A extends ChangeNotifier,B extends ChangeNotifier> extends StatefulWidget{
   final A model1;
   final B model2;
   final Widget Function(BuildContext context, A model1, B model2, Widget child) builder;
@@ -68,8 +67,7 @@ class SfProviderWidget2<A extends ChangeNotifier,B extends ChangeNotifier> exten
   @override
   _SfProviderWidget2State<A,B> createState() => _SfProviderWidget2State<A,B>();
 }
-
-class _SfProviderWidget2State<A extends ChangeNotifier,B extends ChangeNotifier> extends State<SfProviderWidget2<A,B>> {
+class _SfProviderWidget2State<A extends ChangeNotifier,B extends ChangeNotifier> extends State<SfProviderWidget2<A,B>>{
   A model1;
   B model2;
 

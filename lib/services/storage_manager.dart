@@ -17,7 +17,7 @@ abstract class SfStorageManager{
   SharedPreferences sharedPreferences;
   Database _database;
 
-  Future<void> init() async {
+  Future init() async {
     cacheDirectory = await getApplicationDocumentsDirectory();
     sharedPreferences = await SharedPreferences.getInstance();
     return onInit();
@@ -31,7 +31,7 @@ abstract class SfStorageManager{
     }
     return _database;
   }
-  @protected Future<void> onInit() async {
+  @protected Future onInit() async {
     await Directory(p.join(cacheDirectory.path,'image')).create(recursive:true);
     await Directory(p.join(cacheDirectory.path,'voice')).create(recursive:true);
   }

@@ -8,10 +8,10 @@ class SfKeepAlive extends StatefulWidget{
   final Widget child;
 
   @override
-  SfKeepAliveState createState() => SfKeepAliveState();
+  _SfKeepAliveState createState() => _SfKeepAliveState();
 }
 
-class SfKeepAliveState extends State<SfKeepAlive> with AutomaticKeepAliveClientMixin{
+class _SfKeepAliveState extends State<SfKeepAlive> with AutomaticKeepAliveClientMixin{
   @override
   Widget build(BuildContext context) {
     super.build(context);

@@ -15,7 +15,7 @@ abstract class SfViewState extends ChangeNotifier {
   dynamic _error;
 
   SfViewState({SfViewStatus viewStatus : SfViewStatus.idle}) : _viewStatus = viewStatus;
-  Future<void> initData() async {}
+  Future initData() async {}
   SfViewStatus get viewStatus => _viewStatus;
   dynamic get error => _error;
   set viewStatus(SfViewStatus viewStatus){
@@ -61,7 +61,7 @@ abstract class SfListViewState<T> extends SfViewState {
   List<T> list = [];
 
   Future<List<T>> loadData(bool refresh);
-  Future<void> refresh() async {
+  Future refresh() async {
     try{
       var data = await loadData(true);
       if(data.isEmpty){
@@ -82,7 +82,7 @@ abstract class SfListViewState<T> extends SfViewState {
   void onCompleted(List<T> data){}
 
   @override
-  Future<void> initData() async {
+  Future initData() async {
     setBusy();
     await refresh();
   }
@@ -119,7 +119,7 @@ abstract class SfRefreshListViewState<T> extends SfListViewState<T> {
   bool loadNoData(int length) => length<20;
 
   @override
-  Future<void> refresh() async {
+  Future refresh() async {
     try{
       var data = await loadData(true);
       if(data.isEmpty){

@@ -27,12 +27,12 @@ abstract class SfConversation<TMessage extends SfMessage>{
     return map;
   }
   String get otherId => members.firstWhere((userId) => userId!=ownerId,orElse: ()=>null);
-  Future<void> save();
-  Future<void> delete() async {
+  Future save();
+  Future delete() async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     await database.delete('conversation',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
   }
-  Future<void> toggleTop() async {
+  Future toggleTop() async {
     int top = this.top==0 ? 1 : 0;
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     await database.update('conversation', {'top':top}, where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);

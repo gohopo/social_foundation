@@ -58,7 +58,7 @@ void configureServices(){
   GetIt.instance.registerSingleton<SfChatManager>(ChatManager(LeancloudSecret.appId, LeancloudSecret.appKey, LeancloudSecret.serverURL));
 }
 
-Future<void> configure() async {
+Future configure() async {
   await StorageManager.instance.init();
   SfAliyunOss.initialize(AliyunSecret.accountId,AliyunSecret.accessKeyId,AliyunSecret.accessKeySecret,AliyunSecret.region,AliyunSecret.bucket);
 }

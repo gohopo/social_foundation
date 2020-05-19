@@ -45,14 +45,14 @@ class SfAppState extends SfViewState{
       fontFamily: fontList[fontIndex]
     ));
   }
-  Future<void> saveTheme(bool userDarkMode, MaterialColor themeColor) async {
+  Future saveTheme(bool userDarkMode, MaterialColor themeColor) async {
     var index = Colors.primaries.indexOf(themeColor);
     await Future.wait([
       GetIt.instance<SfStorageManager>().sharedPreferences.setBool(SfStorageManagerKey.themeUserDarkMode, userDarkMode),
       GetIt.instance<SfStorageManager>().sharedPreferences.setInt(SfStorageManagerKey.themeColorIndex, index)
     ]);
   }
-  Future<void> saveFontIndex(int index) async {
+  Future saveFontIndex(int index) async {
     await GetIt.instance<SfStorageManager>().sharedPreferences.setInt(SfStorageManagerKey.fontIndex, index);
   }
   InputDecorationTheme inputDecorationTheme(ThemeData theme){
@@ -106,7 +106,7 @@ class SfAppState extends SfViewState{
   }
 
   @override
-  Future<void> initData() async {
+  Future initData() async {
     _userDarkMode = GetIt.instance<SfStorageManager>().sharedPreferences.getBool(SfStorageManagerKey.themeUserDarkMode) ?? false;
     _themeColor = Colors.primaries[GetIt.instance<SfStorageManager>().sharedPreferences.getInt(SfStorageManagerKey.themeColorIndex) ?? 5];
     _fontIndex = GetIt.instance<SfStorageManager>().sharedPreferences.getInt(SfStorageManagerKey.fontIndex) ?? 0;
