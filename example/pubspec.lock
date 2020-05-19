@@ -303,6 +303,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.2+4"
+  shimmer:
+    dependency: transitive
+    description:
+      name: shimmer
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -314,7 +321,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.16-beta3"
+    version: "0.0.16-beta5"
   source_span:
     dependency: transitive
     description:

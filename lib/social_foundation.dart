@@ -9,6 +9,7 @@ export 'package:get_it/get_it.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:provider/provider.dart';
 export 'package:pull_to_refresh/pull_to_refresh.dart';
+export 'package:shimmer/shimmer.dart';
 //utils
 export './utils/utils.dart';
 export './utils/file_helper.dart';
@@ -32,6 +33,7 @@ export './widgets/keep_alive.dart';
 export './widgets/rolling_number.dart';
 export './widgets/dialog.dart';
 export './widgets/ticker_provider.dart';
+export './widgets/skeleton.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels
