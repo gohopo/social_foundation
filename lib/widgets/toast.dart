@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 typedef SfDialogBuilder = Widget Function(SfDialog dialog);
 
@@ -124,7 +125,7 @@ class SfAlertDialog extends SfDialog{
   }
 }
 
-class SfSimpleAlert{
+class SfEasyDialog{
   Future alert(String title,String content,String action) => confirm(title:title,content:content,actions:[action]);
   Future<int> confirm({String title,String content,List<String> actions}) => SfAlertDialog.showAsync(
     builder: hook(),
@@ -140,4 +141,27 @@ class SfSimpleAlert{
     child: Text(action),
   );
   @protected SfDialogBuilder hook() => null;
+}
+
+class SfToast{
+  void onShowText(String text) => onShowCustomText(text);
+  void onShowCustomText(String text,{Color backgroundColor,AlignmentGeometry align,EdgeInsetsGeometry contentPadding,Color contentColor,BorderRadiusGeometry borderRadius,TextStyle textStyle}) => BotToast.showText(
+    text: text,
+    backgroundColor: backgroundColor ?? Colors.transparent,
+    align: align ?? const Alignment(0, 0.8),
+    contentPadding: contentPadding ?? EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 7),
+    contentColor: contentColor ?? Colors.black54,
+    borderRadius: borderRadius ?? BorderRadius.all(Radius.circular(8)),
+    textStyle: textStyle ?? TextStyle(fontSize: 17, color: Colors.white)
+  );
+  void onShowLoading({double size,Color color}) => onShowCustomLoading(SpinKitCubeGrid(
+    size: size ?? 50.0,
+    color: color ?? Colors.white,
+  ));
+  void onShowCustomLoading(Widget loadingWidget,{Color backgroundColor,Alignment align}) => BotToast.showCustomLoading(
+    backgroundColor: backgroundColor ?? Colors.black26,
+    align: align ?? Alignment.center,
+    toastBuilder: (_) => loadingWidget,
+  );
+  void onCloseAllLoading() => BotToast.closeAllLoading();
 }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 export 'package:bot_toast/bot_toast.dart';
 export 'package:event_bus/event_bus.dart';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
+export 'package:flutter_spinkit/flutter_spinkit.dart';
 export 'package:get_it/get_it.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:provider/provider.dart';
@@ -31,7 +32,7 @@ export './widgets/user_widget.dart';
 export './widgets/image_picker.dart';
 export './widgets/keep_alive.dart';
 export './widgets/rolling_number.dart';
-export './widgets/dialog.dart';
+export './widgets/toast.dart';
 export './widgets/ticker_provider.dart';
 export './widgets/skeleton.dart';
 //pages

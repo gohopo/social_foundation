@@ -146,6 +146,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.1.0"
+  flutter_spinkit:
+    dependency: transitive
+    description:
+      name: flutter_spinkit
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.1.2+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -321,7 +328,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.16-beta5"
+    version: "0.0.16-beta6"
   source_span:
     dependency: transitive
     description:

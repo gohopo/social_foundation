@@ -142,8 +142,8 @@ class SfSkeletonItem extends StatelessWidget{
   }
 }
 
-class SfSimpleSkeletonList extends StatelessWidget{
-  SfSimpleSkeletonList({
+class SfEasySkeletonList extends StatelessWidget{
+  SfEasySkeletonList({
     this.length = 7,
     this.padding = const EdgeInsets.all(7),
   });
