@@ -23,7 +23,7 @@ public class SwiftSocialFoundationPlugin: NSObject, FlutterPlugin {
       }
       catch{
         print(error)
-        result(createFlutterError(error: error))
+        result( error)
       }
     }
   }

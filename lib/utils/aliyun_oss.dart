@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
@@ -44,10 +45,10 @@ class SfAliyunOss {
   }
   static String getFilePath(String dir,String fileKey) => p.join(GetIt.instance<SfStorageManager>().getFileDirectory(dir),fileKey);
   static Future<Response> uploadImage(String filePath,{String fileName,ProgressCallback onSendProgress}){
-    return uploadFile(SfMessageType.image,filePath,fileName:fileName,onSendProgress: onSendProgress);
+    return uploadFilePath(SfMessageType.image,filePath,fileName:fileName,onSendProgress: onSendProgress);
   }
   static Future<Response> uploadVoice(String filePath,{String fileName,ProgressCallback onSendProgress}){
-    return uploadFile(SfMessageType.voice,filePath,fileName:fileName,onSendProgress: onSendProgress);
+    return uploadFilePath(SfMessageType.voice,filePath,fileName:fileName,onSendProgress: onSendProgress);
   }
   static String getImageUrl(String fileKey,{String mode,int width,int height,int short,int long,int limit,int percent}){
     String url = getFileUrl('image',fileKey);
@@ -63,21 +64,24 @@ class SfAliyunOss {
     return url;
   }
   static String getFileUrl(String dir,String fileKey) => '$endPoint/$dir/$fileKey';
-  static Future<Response> uploadFile(String dir,String filePath,{String fileName,ProgressCallback onSendProgress}) async {
+  static Future<Response> uploadFilePath(String dir,String filePath,{String fileName,ProgressCallback onSendProgress}) async {
     fileName = fileName ?? SfFileHelper.getFileName(filePath);
     var encrypt = isEncryptFile(filePath);
-    MultipartFile file;
     if(encrypt == 0){
-      file = await MultipartFile.fromFile(filePath,filename: fileName);
+      var file = await MultipartFile.fromFile(filePath,filename: fileName);
+      return uploadFile(dir,file,fileName:fileName,onSendProgress:onSendProgress);
     }
     else if(encrypt == 1){
       var bytes = await File(filePath).readAsBytes();
-      file = MultipartFile.fromBytes(SfUtils.encrypt(bytes),filename: fileName);
+      return uploadBytes(dir,fileName,SfUtils.encrypt(bytes),onSendProgress:onSendProgress);
     }
-    else{
-      throw '不支持的加密方式!';
-    }
-    
+    throw '不支持的加密方式!';
+  }
+  static Future<Response> uploadBytes(String dir,String fileName,Uint8List bytes,{ProgressCallback onSendProgress}){
+    return uploadFile(dir,MultipartFile.fromBytes(bytes,filename:fileName),fileName:fileName,onSendProgress:onSendProgress);
+  }
+  static Future<Response> uploadFile(String dir,MultipartFile file,{String fileName,ProgressCallback onSendProgress}){
+    fileName = fileName ?? file.filename;
     FormData data = FormData.fromMap({
       'Filename': fileName,
       'key': '$dir/$fileName',

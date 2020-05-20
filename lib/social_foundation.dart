@@ -16,6 +16,7 @@ export './utils/utils.dart';
 export './utils/file_helper.dart';
 export './utils/aliyun_oss.dart';
 export './utils/date_helper.dart';
+export './utils/image_helper.dart';
 //models
 export './models/message.dart';
 export './models/conversation.dart';
