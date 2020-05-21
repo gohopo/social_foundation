@@ -5,7 +5,7 @@ import 'package:social_foundation_example/services/storage_manager.dart';
 
 class Message extends SfMessage {
   Message(Map data) : super(data);
-  static fromDB(Map data){
+  static Message fromDB(Map data){
     data = Map.from(data);
     data['attribute'] = json.decode(data['attribute']);
     data['msgExtra'] = json.decode(data['msgExtra']);

@@ -6,7 +6,7 @@ import 'package:social_foundation_example/services/storage_manager.dart';
 
 class Conversation extends SfConversation<Message> {
   Conversation(Map data) : super(data);
-  static fromDB(Map data){
+  static Conversation fromDB(Map data){
     data = Map.from(data);
     data['members'] = json.decode(data['members']).cast<String>();
     data['lastMessage'] = data['lastMessage']!=null ? Message.fromDB(json.decode(data['lastMessage'])) : null;
@@ -32,6 +32,6 @@ class Conversation extends SfConversation<Message> {
   static Future<List<Conversation>> queryAll(String ownerId,int limit,int offset) async {
     var database = await StorageManager.instance.getDatabase();
     var result = await database.query('conversation',where: 'ownerId=?',whereArgs: [ownerId],orderBy: 'top desc,lastMessageAt desc',limit: limit,offset: offset);
-    return result.map(Conversation.fromDB).cast<Conversation>().toList();
+    return result.map(Conversation.fromDB).toList();
   }
 }
