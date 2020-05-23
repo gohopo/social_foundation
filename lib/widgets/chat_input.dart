@@ -18,6 +18,8 @@ class SfChatInput extends StatelessWidget {
     return TextField(
       controller: model.textEditingController,
       focusNode: model.focusNode,
+      textInputAction: model.textInputAction,
+      onEditingComplete: model.onTapSend,
       decoration: InputDecoration(
         hintText: '请输入消息...'
       ),
@@ -115,6 +117,7 @@ class SfChatInput extends StatelessWidget {
 class SfChatInputModel extends SfViewState {
   TextEditingController textEditingController = TextEditingController();
   FocusNode focusNode = FocusNode();
+  TextInputAction textInputAction = TextInputAction.send;
   int _curAccessory = -1;
   String recorderTips = '按住 说话';
   VoidCallback onTapSend;
