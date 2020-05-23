@@ -25,7 +25,7 @@ class SfCacheManager extends BaseCacheManager {
   }
   static Future<FileFetcherResponse> _fileFetcher(String url,{Map<String, String> headers}) async {
     var httpResponse = await http.get(url, headers: headers);
-    var encrypt = SfAliyunOss.isEncryptFile(url);
+    var encrypt = SfAliyunOss.isEncryptFileUrl(url);
     if(encrypt == 1){
       SfUtils.encrypt(httpResponse.bodyBytes);
     }

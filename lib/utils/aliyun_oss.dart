@@ -37,8 +37,9 @@ class SfAliyunOss {
     await File(srcFilePath).copy(filePath);
     return filePath;
   }
-  static int isEncryptFile(String path){
-    var name = SfFileHelper.getUrlNameWithoutExt(path);
+  static int isEncryptFile(String path) => isEncryptFileName(SfFileHelper.getFileNameWithoutExt(path));
+  static int isEncryptFileUrl(String url) => isEncryptFileName(SfFileHelper.getUrlNameWithoutExt(url));
+  static int isEncryptFileName(String name){
     var index = name.lastIndexOf('_');
     if(index != -1){
       var encrypt = name.substring(index+1,name.length);
@@ -69,7 +70,7 @@ class SfAliyunOss {
   static String getFileUrl(String dir,String fileKey) => '$endPoint/$dir/$fileKey';
   static Future<Response> uploadFile(String dir,String filePath,{String fileName,ProgressCallback onSendProgress}) async {
     fileName = fileName ?? SfFileHelper.getFileName(filePath);
-    var encrypt = isEncryptFile(filePath);
+    var encrypt = isEncryptFileName(fileName);
     if(encrypt == 0){
       var file = await MultipartFile.fromFile(filePath,filename: fileName);
       return uploadMultipartFile(dir,file,fileName:fileName,onSendProgress:onSendProgress);
