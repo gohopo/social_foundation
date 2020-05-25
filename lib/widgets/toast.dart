@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
@@ -29,12 +30,38 @@ class SfDialog{
 }
 
 class SfEasyDialog extends SfDialog{
-  @protected Widget buildTitle(String title) => Text(title);
-  @protected Widget buildContent(String content) => Text(content);
+  @protected Widget buildDialog({Widget child,BoxConstraints constraints}){
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 10,
+          sigmaY: 10
+        ),
+        child: Container(
+          padding: EdgeInsets.all(5),
+          constraints: constraints,
+          decoration: BoxDecoration(
+            color: Colors.white10,
+          ),
+          child: child
+        )
+      ),
+    );
+  }
+  @protected Widget buildTitle(String title) => Text(title,style:TextStyle(fontSize:18,color:Colors.white));
+  @protected Widget buildContent(String content) => Container(
+    margin: EdgeInsets.only(bottom:10),
+    child: Text(content,style:TextStyle(fontSize:14,color:Colors.white70)),
+  );
   @protected Widget buildAction(String action) => Container(
-    padding: EdgeInsets.symmetric(horizontal:15,vertical:10),
-    color: Colors.grey,
-    child: Text(action),
+    margin: EdgeInsets.symmetric(horizontal:15),
+    padding: EdgeInsets.symmetric(horizontal:14,vertical:4),
+    decoration: BoxDecoration(
+      color: Colors.black26,
+      borderRadius: BorderRadius.circular(4)
+    ),
+    child: Text(action,style:TextStyle(fontSize:14,color:Colors.white)),
   );
 
   Future onShowAlert(String title,String content,String action) => onShowConfirm(title,content,[action]);
@@ -50,7 +77,9 @@ class SfEasyDialog extends SfDialog{
       close: Container(),
       body: content,
       footer: Container(
+        margin: EdgeInsets.only(top:10,bottom:3),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: actions.asMap().keys.map((index) => GestureDetector(
             onTap: (){
               this.close();
@@ -66,26 +95,36 @@ class SfEasyDialog extends SfDialog{
   }
   void onShowFrame({Widget title,Widget close,Widget body,Widget footer,VoidCallback onClose,Color backgroundColor}) => onShowCustomFrame(
     header: Container(
+      padding: EdgeInsets.only(bottom:3),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: title,
-          ),
+          title,
           close
         ],
       ),
     ),
     body:body,footer:footer,onClose:onClose,backgroundColor:backgroundColor
   );
-  void onShowCustomFrame({Widget header,Widget body,Widget footer,VoidCallback onClose,Color backgroundColor}) => onShowCustom(
-    child: Container(
-      child: Column(
-        children: [header,body,footer],
+  void onShowCustomFrame({Widget header,Widget body,Widget footer,BoxConstraints constraints,VoidCallback onClose,Color backgroundColor}) => onShowCustom(
+    child: Center(
+      child: buildDialog(
+        constraints: constraints ?? BoxConstraints.tightFor(width:250),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [header,body,footer],
+        )
       ),
     ),
     onClose:onClose,backgroundColor:backgroundColor
   );
-  void onShowCustom({Widget child,String groupKey,VoidCallback onClose,Color backgroundColor}) => onShow(groupKey:groupKey??'SfEasyDialog',onClose:onClose,backgroundColor:backgroundColor,child:child);
+  void onShowCustom({Widget child,String groupKey,VoidCallback onClose,Color backgroundColor}) => onShow(
+    child: child,
+    groupKey: groupKey??'SfEasyDialog',
+    onClose: onClose,
+    backgroundColor: backgroundColor
+  );
 }
 
 class SfToast{
