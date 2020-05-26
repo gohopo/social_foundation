@@ -90,4 +90,6 @@ class SfMessageType {
   static const String text = 'text';
   static const String image = 'image';
   static const String voice = 'voice';
+  static const String system = 'system';
+  static const String notify = 'notify';
 }

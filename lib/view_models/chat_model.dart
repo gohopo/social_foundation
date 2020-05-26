@@ -41,7 +41,8 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   void onPickImage(File image) async {
     var filePath = await SfAliyunOss.cacheFile(SfMessageType.image,image.path,prefix: 'chat',encrypt: 1);
     var attribute = {
-      'filePath': filePath
+      'filePath': filePath,
+      'fileDir': SfMessageType.image
     };
     return _sendMessage(msgType:SfMessageType.image,attribute:attribute);
   }
@@ -51,7 +52,8 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       'duration': duration
     };
     Map attribute = {
-      'filePath': filePath
+      'filePath': filePath,
+      'fileDir': SfMessageType.voice
     };
     return _sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
   }

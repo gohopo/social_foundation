@@ -40,6 +40,7 @@ class SfAliyunOss {
   static int isEncryptFile(String path) => isEncryptFileName(SfFileHelper.getFileNameWithoutExt(path));
   static int isEncryptFileUrl(String url) => isEncryptFileName(SfFileHelper.getUrlNameWithoutExt(url));
   static int isEncryptFileName(String name){
+    name = SfFileHelper.getFileNameWithoutExt(name);
     var index = name.lastIndexOf('_');
     if(index != -1){
       var encrypt = name.substring(index+1,name.length);

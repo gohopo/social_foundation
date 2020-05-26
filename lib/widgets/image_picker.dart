@@ -8,9 +8,11 @@ import 'package:image_picker/image_picker.dart';
 class SfImagePicker extends StatelessWidget{
   SfImagePicker({
     Key key,
-    @required this.onPickImage
+    @required this.onPickImage,
+    this.imageQuality = 75
   }) : super(key:key);
   final Function(File image) onPickImage;
+  final int imageQuality;
 
   static Future<File> pickImage(){
     var completer = Completer<File>();
@@ -42,26 +44,28 @@ class SfImagePicker extends StatelessWidget{
   _onPickImage(ImageSource source) async {
     var file;
     if(source != null){
-      file = await ImagePicker.pickImage(source: source);
+      file = await ImagePicker.pickImage(source:source,imageQuality:imageQuality);
     }
     onPickImage(file);
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _onPickImage(null),
-      child: Container(
-        color: Colors.black54,
-        child: Align(
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              buildItem(context,'相册',ImageSource.gallery),
-              Container(height: 1),
-              buildItem(context,'拍照',ImageSource.camera),
-            ],
+    return Material(
+      child: GestureDetector(
+        onTap: () => _onPickImage(null),
+        child: Container(
+          color: Colors.black54,
+          child: Align(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                buildItem(context,'相册',ImageSource.gallery),
+                Container(height: 1),
+                buildItem(context,'拍照',ImageSource.camera),
+              ],
+            )
           )
         )
       )

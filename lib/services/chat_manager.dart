@@ -22,7 +22,17 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   TConversation convertConversation(Map data);
   TMessage convertMessage(Map data);
   Future<TMessage> sendTextMsg({@required String convId,String msg,Map attribute}){
-    return sendMsg(convId: convId,msg:msg,msgType:SfMessageType.text,attribute:attribute);
+    return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.text,attribute:attribute);
+  }
+  Future<TMessage> sendSystem({@required String convId,@required String systemType,Map msgExtra}){
+    if(msgExtra == null) msgExtra = {};
+    msgExtra['systemType'] = systemType;
+    return sendMsg(convId:convId,msgType:SfMessageType.system,msgExtra:msgExtra);
+  }
+  Future<TMessage> sendNotify({@required String convId,@required String notifyType,Map msgExtra}){
+    if(msgExtra == null) msgExtra = {};
+    msgExtra['notifyType'] = notifyType;
+    return sendMsg(convId:convId,msgType:SfMessageType.notify,msgExtra:msgExtra);
   }
   Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute}) async {
     var message = convertMessage({
@@ -47,7 +57,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       //上传
       String filePath = message.attribute['filePath'];
       if(filePath!=null && !message.msgExtra.containsKey('fileKey')){
-        await SfAliyunOss.uploadFile(message.msgType,filePath);
+        await SfAliyunOss.uploadFile(message.attribute['fileDir'],filePath);
         message.msgExtra['fileKey'] = SfFileHelper.getFileName(filePath);
         await saveMessage(message);
       }
@@ -65,6 +75,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     GetIt.instance<SfChatState>().saveConversation(conversation);
   }
   Future<TMessage> saveMessage(TMessage message) async {
+    if(message.msgType == SfMessageType.notify) return message;
     var isNew = message.id==null;
     await message.save();
     SfMessageEvent(message: message,isNew:isNew).emit();
@@ -152,11 +163,15 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     return conversation.read();
   }
   void onMessageReceived(TConversation conversation,TMessage message){
+    if(message.msgType == SfMessageType.notify) return onNotifyReceived(message);
     saveConversation(conversation);
     saveMessage(message);
   }
   void onUnreadMessagesCountUpdated(TConversation conversation) {
     saveConversation(conversation);
+  }
+  void onNotifyReceived(TMessage message){
+
   }
   Future<Conversation> _getConversation(String conversationId) async {
     var query = _client.conversationQuery();
