@@ -1,6 +1,5 @@
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/conversation.dart';
-import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/chat_manager.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
@@ -9,7 +8,6 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
     return list.firstWhere((data) => data.convId==convId,orElse: ()=>null);
   }
   void saveConversation(TConversation conversation){
-    if(conversation?.lastMessage?.msgType == SfMessageType.notify) return;
     conversation.save();
     list.removeWhere((e) => e.convId==conversation.convId);
     int index = 0;

@@ -3,18 +3,17 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:social_foundation/models/app.dart';
 import 'package:social_foundation/services/storage_manager.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfAppState extends SfViewState{
-  //用户选择的明暗模式
-  bool _userDarkMode;
-  //当前主题颜色
-  MaterialColor _themeColor;
-  //当前字体索引
-  int _fontIndex;
+  //主题
+  bool _userDarkMode;//用户选择的明暗模式
+  MaterialColor _themeColor;//当前主题颜色
+  int _fontIndex;//当前字体索引
   List<String> fontList = ['system'];
-
   int get fontIndex => _fontIndex;
   void switchTheme({bool userDarkMode, MaterialColor color}) {
     _userDarkMode = userDarkMode ?? _userDarkMode;
@@ -103,6 +102,22 @@ class SfAppState extends SfViewState{
       ),
       inputDecorationTheme: inputDecorationTheme(themeData),
     );
+  }
+  //通知
+  List<String> notifyList = [];
+  bool isNotifyUnread(String notifyType) => notifyList.contains(notifyType);
+  Future queryNotifyList() async {
+    notifyList = await GetIt.instance.get<SfApp>().queryNotifyList(GetIt.instance.get<SfUserState>().curUserId);
+    notifyListeners();
+  }
+  void addNotify(String notifyType){
+    notifyList.add(notifyType);
+    notifyListeners();
+  }
+  void removeNotify(String notifyType){
+    GetIt.instance.get<SfApp>().removeNotify(GetIt.instance.get<SfUserState>().curUserId, notifyType);
+    notifyList.removeWhere((data) => data==notifyType);
+    notifyListeners();
   }
 
   @override

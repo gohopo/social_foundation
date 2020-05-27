@@ -24,16 +24,12 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   Future<TMessage> sendTextMsg({@required String convId,String msg,Map attribute}){
     return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.text,attribute:attribute);
   }
-  Future<TMessage> sendSystem({@required String convId,@required String systemType,Map msgExtra}){
+  Future<TMessage> sendSystemMsg({@required String convId,@required String systemType,Map msgExtra}){
     if(msgExtra == null) msgExtra = {};
     msgExtra['systemType'] = systemType;
     return sendMsg(convId:convId,msgType:SfMessageType.system,msgExtra:msgExtra);
   }
-  Future<TMessage> sendNotify({@required String convId,@required String notifyType,Map msgExtra}){
-    if(msgExtra == null) msgExtra = {};
-    msgExtra['notifyType'] = notifyType;
-    return sendMsg(convId:convId,msgType:SfMessageType.notify,msgExtra:msgExtra);
-  }
+  Future<TMessage> sendNotifyMsg({@required String convId,@required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType},transient:true);
   Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute}) async {
     var message = convertMessage({
       'ownerId': GetIt.instance<SfUserState>().curUserId,
@@ -62,7 +58,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
         await saveMessage(message);
       }
       //发送
-      var data = await sendMessage(message.convId, message.origin);
+      var data = await _sendMessage(message.convId,message.msg,message.msgType,message.msgExtra);
       message.msgId = data.msgId;
       message.status = data.status;
     }
@@ -75,7 +71,6 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     GetIt.instance<SfChatState>().saveConversation(conversation);
   }
   Future<TMessage> saveMessage(TMessage message) async {
-    if(message.msgType == SfMessageType.notify) return message;
     var isNew = message.id==null;
     await message.save();
     SfMessageEvent(message: message,isNew:isNew).emit();
@@ -128,11 +123,6 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     var conversation = await _getConversation(conversationId);
     return conversation!=null ? _convertConversation(conversation) : null;
   }
-  @protected Future<TMessage> sendMessage(String conversationId,String message) async {
-    var conversation = await _getConversation(conversationId);
-    var result = await conversation.send(message:TextMessage.from(text:message));
-    return _convertMessage(result);
-  }
   Future<List<TMessage>> queryMessages(String conversationId,int limit) async {
     var conversation = await _getConversation(conversationId);
     var result = await conversation.queryMessage(limit:limit);
@@ -170,9 +160,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   void onUnreadMessagesCountUpdated(TConversation conversation) {
     saveConversation(conversation);
   }
-  void onNotifyReceived(TMessage message){
-
-  }
+  void onNotifyReceived(TMessage message) => GetIt.instance<SfAppState>().addNotify(message.msgExtra['notifyType']);
   Future<Conversation> _getConversation(String conversationId) async {
     var query = _client.conversationQuery();
     query.whereString = jsonEncode({
@@ -182,5 +170,18 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     var result = await query.find();
     if(result.length == 0) throw '未查询到会话!';
     return result[0];
+  }
+  Future<TMessage> _sendMessage(String conversationId,String msg,String msgType,Map msgExtra,{bool transient}) async {
+    var conversation = await _getConversation(conversationId);
+    var message = json.encode({
+      'msg': msg,
+      'msgType': msgType,
+      'msgExtra': msgExtra
+    });
+    var result = await conversation.send(
+      message: TextMessage.from(text:message),
+      transient: transient??false
+    );
+    return _convertMessage(result);
   }
 }
