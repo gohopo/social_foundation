@@ -23,7 +23,7 @@ class SfDialog{
     closeFunc: closeFunc,
     onClose: onClose,
     backgroundColor: backgroundColor ?? Colors.black45,
-    warpWidget: warpWidget,
+    warpWidget: warpWidget ?? (cancelFunc,widget) => Material(child:widget),
     duration: duration,
   );
   void close() => _cancelFunc?.call();
@@ -64,13 +64,14 @@ class SfEasyDialog extends SfDialog{
     child: Text(action,style:TextStyle(fontSize:14,color:Colors.white)),
   );
 
-  Future onShowAlert(String title,String content,String action) => onShowConfirm(title,content,[action]);
-  Future<int> onShowConfirm(String title,String content,List<String> actions,{Color backgroundColor}) => onShowCustomConfirm(
+  Future onShowAlert(String title,String content,String action,{bool clickClose,Color backgroundColor}) => onShowConfirm(title,content,[action],clickClose:clickClose,backgroundColor:backgroundColor);
+  Future<int> onShowConfirm(String title,String content,List<String> actions,{bool clickClose,Color backgroundColor}) => onShowCustomConfirm(
     title: buildTitle(title),
     content: buildContent(content),
     actions: actions.map(buildAction).toList(),
+    clickClose:clickClose,backgroundColor:backgroundColor
   );
-  Future<int> onShowCustomConfirm({Widget title,Widget content,List<Widget> actions,Color backgroundColor}){
+  Future<int> onShowCustomConfirm({Widget title,Widget content,List<Widget> actions,bool clickClose,Color backgroundColor}){
     var completer = Completer<int>();
     onShowFrame(
       title: title,
@@ -89,11 +90,11 @@ class SfEasyDialog extends SfDialog{
           )).toList(),
         )
       ),
-      backgroundColor: backgroundColor
+      clickClose:clickClose,backgroundColor: backgroundColor
     );
     return completer.future;
   }
-  void onShowFrame({Widget title,Widget close,Widget body,Widget footer,VoidCallback onClose,Color backgroundColor}) => onShowCustomFrame(
+  void onShowFrame({Widget title,Widget close,Widget body,Widget footer,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShowCustomFrame(
     header: Container(
       padding: EdgeInsets.only(bottom:3),
       child: Row(
@@ -104,9 +105,9 @@ class SfEasyDialog extends SfDialog{
         ],
       ),
     ),
-    body:body,footer:footer,onClose:onClose,backgroundColor:backgroundColor
+    body:body,footer:footer,clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor
   );
-  void onShowCustomFrame({Widget header,Widget body,Widget footer,BoxConstraints constraints,VoidCallback onClose,Color backgroundColor}) => onShowCustom(
+  void onShowCustomFrame({Widget header,Widget body,Widget footer,BoxConstraints constraints,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShowCustom(
     child: Center(
       child: buildDialog(
         constraints: constraints ?? BoxConstraints.tightFor(width:250),
@@ -117,11 +118,12 @@ class SfEasyDialog extends SfDialog{
         )
       ),
     ),
-    onClose:onClose,backgroundColor:backgroundColor
+    clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor
   );
-  void onShowCustom({Widget child,String groupKey,VoidCallback onClose,Color backgroundColor}) => onShow(
+  void onShowCustom({Widget child,String groupKey,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShow(
     child: child,
     groupKey: groupKey??'SfEasyDialog',
+    clickClose: clickClose,
     onClose: onClose,
     backgroundColor: backgroundColor
   );
