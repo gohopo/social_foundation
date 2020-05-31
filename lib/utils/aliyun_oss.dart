@@ -68,24 +68,30 @@ class SfAliyunOss {
     if(resize.isNotEmpty) url += '?x-oss-process=image/resize' + resize;
     return url;
   }
-  static String getFileUrl(String dir,String fileKey) => '$endPoint/$dir/$fileKey';
+  static String getFileUrl(String dir,String fileKey){
+    if(isEncryptFileName(fileKey) > 0) dir = 'Encrypt' + dir;
+    return '$endPoint/$dir/$fileKey';
+  }
   static Future<Response> uploadFile(String dir,String filePath,{String fileName,ProgressCallback onSendProgress}) async {
     fileName = fileName ?? SfFileHelper.getFileName(filePath);
-    var encrypt = isEncryptFileName(fileName);
-    if(encrypt == 0){
-      var file = await MultipartFile.fromFile(filePath,filename: fileName);
-      return uploadMultipartFile(dir,file,fileName:fileName,onSendProgress:onSendProgress);
-    }
-    else if(encrypt == 1){
-      var bytes = await File(filePath).readAsBytes();
-      return uploadBytes(dir,fileName,SfUtils.encrypt(bytes),onSendProgress:onSendProgress);
-    }
-    throw '不支持的加密方式!';
+    var bytes = await File(filePath).readAsBytes();
+    return uploadBytes(dir,fileName,bytes,onSendProgress:onSendProgress);
   }
   static Future<Response> uploadBytes(String dir,String fileName,Uint8List bytes,{ProgressCallback onSendProgress}){
-    return uploadMultipartFile(dir,MultipartFile.fromBytes(bytes,filename:fileName),fileName:fileName,onSendProgress:onSendProgress);
+    var encrypt = isEncryptFileName(fileName);
+    if(encrypt > 0){
+      dir = 'Encrypt' + dir;
+      switch(encrypt){
+        case 1:
+          bytes = SfUtils.encrypt(bytes);
+          break;
+        default:
+          throw '不支持的加密方式!';
+      }
+    }
+    return _uploadMultipartFile(dir,MultipartFile.fromBytes(bytes,filename:fileName),fileName:fileName,onSendProgress:onSendProgress);
   }
-  static Future<Response> uploadMultipartFile(String dir,MultipartFile file,{String fileName,ProgressCallback onSendProgress}){
+  static Future<Response> _uploadMultipartFile(String dir,MultipartFile file,{String fileName,ProgressCallback onSendProgress}){
     fileName = fileName ?? file.filename;
     FormData data = FormData.fromMap({
       'Filename': fileName,

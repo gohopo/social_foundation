@@ -36,7 +36,8 @@ class _SfPhotoGalleryViewerState extends State<SfPhotoGalleryViewer>{
             left: 0,
             bottom: 0,
             right: 0,
-            child: Container(
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
               child: PhotoViewGallery.builder(
                 scrollPhysics: const BouncingScrollPhysics(),
                 builder: (BuildContext context, int index) {
@@ -48,30 +49,20 @@ class _SfPhotoGalleryViewerState extends State<SfPhotoGalleryViewer>{
                 itemCount: widget.images.length,
                 backgroundDecoration: null,
                 pageController: widget.controller,
-                enableRotation: true,
+                enableRotation: false,
                 onPageChanged: (index){
                   setState(() {
                     curIndex = index;
                   });
                 },
               )
-            ),
+            )
           ),
           Positioned(//图片index显示
             top: MediaQuery.of(context).padding.top+15,
             width: MediaQuery.of(context).size.width,
             child: Center(
               child: Text("${curIndex+1}/${widget.images.length}",style: TextStyle(color: Colors.white,fontSize: 16)),
-            ),
-          ),
-          Positioned(//右上角关闭按钮
-            right: 10,
-            top: MediaQuery.of(context).padding.top,
-            child: IconButton(
-              icon: Icon(Icons.close,size: 30,color: Colors.white,),
-              onPressed: (){
-                Navigator.of(context).pop();
-              },
             ),
           ),
         ],
