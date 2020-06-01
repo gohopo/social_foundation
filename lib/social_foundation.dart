@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 export 'package:bot_toast/bot_toast.dart';
 export 'package:event_bus/event_bus.dart';
+export 'package:extended_image/extended_image.dart';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'package:flutter_spinkit/flutter_spinkit.dart';
 export 'package:get_it/get_it.dart';

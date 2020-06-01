@@ -29,9 +29,6 @@ class RouterManager extends SfRouterManager{
         return MaterialPageRoute(builder: (_) => TabNavigator());
       case RouteName.Chat:
         return MaterialPageRoute(builder: (_) => ChatPage(settings.arguments));
-      case RouteName.PhotoViewer:
-        var map = settings.arguments as Map;
-        return SfFadeRoute(page: SfPhotoGalleryViewer(images:map['images'],index:map['index'],heroTag: map['heroTag']));
       default:
         return super.generateRoute(settings);
     }

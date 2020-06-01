@@ -1,72 +1,86 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
+import 'package:social_foundation/widgets/provider_widget.dart';
+import 'package:social_foundation/widgets/view_state.dart';
 
-class SfPhotoGalleryViewer extends StatefulWidget {
-    final List<ImageProvider> images;
-    final int index;
-    final String heroTag;
-    final PageController controller;
-
-    SfPhotoGalleryViewer({Key key,@required this.images,int index,String heroTag,PageController controller}) :
-      index = index ?? 0,
-      heroTag = heroTag ?? '',
-      controller = controller??PageController(initialPage: index),
-      super(key: key);
-
-    @override
-    _SfPhotoGalleryViewerState createState() => _SfPhotoGalleryViewerState();
-}
-
-class _SfPhotoGalleryViewerState extends State<SfPhotoGalleryViewer>{
-  int curIndex = 0;
-
-  @override
-  void initState() {
-      super.initState();
-      curIndex = widget.index;
+class SfPhotoGalleryViewer extends StatelessWidget {
+  SfPhotoGalleryViewer(this.args);
+  final Map args;
+  
+  Widget buildPhotoGallery(BuildContext context,_SfPhotoGalleryViewerModel model){
+    return Positioned(
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      child: Container(
+        constraints: BoxConstraints.expand(
+          height: MediaQuery.of(context).size.height
+        ),
+        child: ExtendedImageGesturePageView.builder(
+          controller: model.controller,
+          itemCount: model.images.length,
+          onPageChanged: (index) => model.onPageChanged(index),
+          itemBuilder: (context,index) => buildPhoto(context,model,index),
+        ),
+      )
+    );
   }
+  Widget buildPhoto(BuildContext context,_SfPhotoGalleryViewerModel model,int index){
+    Widget image = GestureDetector(
+      onTap: () => Navigator.of(context).pop(),
+      child: ExtendedImage(
+        image: model.images[index],
+        fit: BoxFit.contain,
+        mode: ExtendedImageMode.gesture,
+        initGestureConfigHandler: (_) => GestureConfig(
+          inPageView: true, initialScale: 1.0,
+          cacheGesture: false
+        ),
+      )
+    );
+    return index==model.index ? Hero(
+      tag: '${model.heroPrefix}_$index',
+      child: image,
+    ) : image;
+  }
+  Widget buildIndex(BuildContext context,_SfPhotoGalleryViewerModel model){
+    return Positioned(
+      top: MediaQuery.of(context).padding.top+15,
+      width: MediaQuery.of(context).size.width,
+      child: Center(
+        child: Text("${model.index+1}/${model.images.length}",style: TextStyle(color: Colors.white,fontSize: 16)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: PhotoViewGallery.builder(
-                scrollPhysics: const BouncingScrollPhysics(),
-                builder: (BuildContext context, int index) {
-                  return PhotoViewGalleryPageOptions(
-                    imageProvider: widget.images[index],
-                    heroAttributes: widget.heroTag.isNotEmpty?PhotoViewHeroAttributes(tag: widget.heroTag):null,
-                  );
-                },
-                itemCount: widget.images.length,
-                backgroundDecoration: null,
-                pageController: widget.controller,
-                enableRotation: false,
-                onPageChanged: (index){
-                  setState(() {
-                    curIndex = index;
-                  });
-                },
-              )
-            )
-          ),
-          Positioned(//图片index显示
-            top: MediaQuery.of(context).padding.top+15,
-            width: MediaQuery.of(context).size.width,
-            child: Center(
-              child: Text("${curIndex+1}/${widget.images.length}",style: TextStyle(color: Colors.white,fontSize: 16)),
-            ),
-          ),
-        ],
-      ),
+      body: SfProviderWidget<_SfPhotoGalleryViewerModel>(
+        model: _SfPhotoGalleryViewerModel(args),
+        builder: (context,model,_) => Stack(
+          children: <Widget>[
+            buildPhotoGallery(context,model),
+            buildIndex(context,model),
+          ],
+        )
+      )
     );
+  }
+}
+
+class _SfPhotoGalleryViewerModel extends SfViewState{
+  _SfPhotoGalleryViewerModel(Map args):images=args['images']??[],index=args['index']??0,heroPrefix=args['heroPrefix']??'SfPhotoGalleryViewer'{
+    controller = args['controller']??PageController(initialPage:index);
+  }
+  List<ImageProvider> images;
+  int index;
+  String heroPrefix;
+  PageController controller;
+
+  void onPageChanged(index){
+    this.index = index;
+    notifyListeners();
   }
 }
