@@ -7,6 +7,7 @@ export 'package:event_bus/event_bus.dart';
 export 'package:extended_image/extended_image.dart';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'package:flutter_spinkit/flutter_spinkit.dart';
+export 'package:fluwx/fluwx.dart';
 export 'package:get_it/get_it.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ export './utils/file_helper.dart';
 export './utils/aliyun_oss.dart';
 export './utils/date_helper.dart';
 export './utils/image_helper.dart';
+export './utils/wechat_helper.dart';
 //models
 export './models/app.dart';
 export './models/message.dart';

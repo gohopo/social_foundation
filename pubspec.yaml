@@ -33,6 +33,7 @@ dependencies:
   flutter_screenutil: ^1.1.0
   shimmer: ^1.1.1
   flutter_spinkit: ^4.1.2
+  fluwx: ^2.1.0
 
 dev_dependencies:
   flutter_test:
