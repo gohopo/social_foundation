@@ -23,7 +23,7 @@ class SfDialog{
     closeFunc: closeFunc,
     onClose: onClose,
     backgroundColor: backgroundColor ?? Colors.black45,
-    warpWidget: warpWidget ?? (cancelFunc,widget) => Material(child:widget),
+    warpWidget: warpWidget ?? (cancelFunc,widget) => Material(color:Colors.transparent,child:widget),
     duration: duration,
   );
   void close() => _cancelFunc?.call();

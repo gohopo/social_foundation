@@ -69,7 +69,7 @@ class SfAliyunOss {
     return url;
   }
   static String getFileUrl(String dir,String fileKey){
-    if(isEncryptFileName(fileKey) > 0) dir = 'Encrypt' + dir;
+    if(isEncryptFileName(fileKey) > 0) dir = 'encrypt_$dir';
     return '$endPoint/$dir/$fileKey';
   }
   static Future<Response> uploadFile(String dir,String filePath,{String fileName,ProgressCallback onSendProgress}) async {
@@ -80,7 +80,7 @@ class SfAliyunOss {
   static Future<Response> uploadBytes(String dir,String fileName,Uint8List bytes,{ProgressCallback onSendProgress}){
     var encrypt = isEncryptFileName(fileName);
     if(encrypt > 0){
-      dir = 'Encrypt' + dir;
+      dir = 'encrypt_$dir';
       switch(encrypt){
         case 1:
           bytes = SfUtils.encrypt(bytes);
