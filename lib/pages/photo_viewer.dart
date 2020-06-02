@@ -62,7 +62,7 @@ class SfPhotoGalleryViewer extends StatelessWidget {
         builder: (context,model,_) => Stack(
           children: <Widget>[
             buildPhotoGallery(context,model),
-            buildIndex(context,model),
+            if(model.images.length > 1) buildIndex(context,model),
           ],
         )
       )
