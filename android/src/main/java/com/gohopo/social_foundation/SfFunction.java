@@ -9,8 +9,8 @@ public class SfFunction {
         return android.os.Build.VERSION.RELEASE;
     }
     public static void initialize(String appId,String appKey,String serverURL){
+        AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
         AVOSCloud.initialize(SocialFoundationPlugin.Activity.getApplication(), appId, appKey, serverURL);
-        //AVOSCloud.setLogLevel(AVLogger.Level.DEBUG);
         AVIMOptions.getGlobalOptions().setUnreadNotificationEnabled(true);
     }
 }
