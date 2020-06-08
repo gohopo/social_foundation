@@ -63,12 +63,26 @@ class SfEasyDialog extends SfDialog{
     ),
     child: Text(action,style:TextStyle(fontSize:14,color:Colors.white)),
   );
+  @protected Widget buildSheetAction(String action) => Container(
+    width: 250,
+    height: 60,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10)
+    ),
+    child: Text(action,style:TextStyle(fontSize: 16,color: Colors.black26))
+  );
 
   Future onShowAlert(String title,String content,String action,{bool clickClose,Color backgroundColor}) => onShowConfirm(title,content,[action],clickClose:clickClose,backgroundColor:backgroundColor);
   Future<int> onShowConfirm(String title,String content,List<String> actions,{bool clickClose,Color backgroundColor}) => onShowCustomConfirm(
     title: buildTitle(title),
     content: buildContent(content),
     actions: actions.map(buildAction).toList(),
+    clickClose:clickClose,backgroundColor:backgroundColor
+  );
+  Future<int> onShowSheet(List<String> actions,{bool clickClose,Color backgroundColor}) => onShowCustomConfirm(
+    actions: actions.map(buildSheetAction).toList(),
     clickClose:clickClose,backgroundColor:backgroundColor
   );
   Future<int> onShowCustomConfirm({Widget title,Widget content,List<Widget> actions,bool clickClose,Color backgroundColor}){
