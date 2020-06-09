@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.0.17-beta7
+version: 0.0.17-beta8
 homepage: https://github.com/gohopo/social_foundation
 
 environment:
@@ -34,6 +34,7 @@ dependencies:
   shimmer: ^1.1.1
   flutter_spinkit: ^4.1.2
   fluwx: ^2.1.0
+  common_utils: ^1.2.1
 
 dev_dependencies:
   flutter_test:

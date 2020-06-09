@@ -1,4 +1,10 @@
+import 'package:common_utils/common_utils.dart';
+
 class SfDateHelper{
+  static String formatTimeline(int timestamp) => TimelineUtil.format(timestamp,locale:'zh');
+  static String formatDate(DateTime date,{String format}) => DateUtil.formatDate(date,format:format);
+  static String formatDateMs(int timestamp,{String format}) => DateUtil.formatDateMs(timestamp,format:format);
+
   static bool isSameYear(DateTime dateLeft, DateTime dateRight) => dateLeft.year==dateRight.year;
   static bool isSameMonth(DateTime dateLeft, DateTime dateRight) => dateLeft.month==dateRight.month && isSameYear(dateLeft,dateRight);
   static bool isSameDay(DateTime dateLeft, DateTime dateRight) => dateLeft.day==dateRight.day && isSameMonth(dateLeft,dateRight);

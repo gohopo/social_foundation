@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 export 'package:bot_toast/bot_toast.dart';
+export 'package:common_utils/common_utils.dart';
 export 'package:event_bus/event_bus.dart';
 export 'package:extended_image/extended_image.dart';
 export 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -54,7 +54,7 @@ class SfEasyDialog extends SfDialog{
     margin: EdgeInsets.only(bottom:10),
     child: Text(content,style:TextStyle(fontSize:14,color:Colors.white70)),
   );
-  @protected Widget buildAction(String action) => Container(
+  @protected Widget buildAction(int index,String action) => Container(
     margin: EdgeInsets.symmetric(horizontal:15),
     padding: EdgeInsets.symmetric(horizontal:14,vertical:4),
     decoration: BoxDecoration(
@@ -63,26 +63,20 @@ class SfEasyDialog extends SfDialog{
     ),
     child: Text(action,style:TextStyle(fontSize:14,color:Colors.white)),
   );
-  @protected Widget buildSheetAction(String action) => Container(
-    width: 250,
+  @protected Widget buildSheetAction(int index,String action) => Container(
     height: 60,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(10)
+      border: index!=0 ? Border(top:BorderSide(color:Colors.white24)) : null
     ),
-    child: Text(action,style:TextStyle(fontSize: 16,color: Colors.black26))
+    child: Text(action,style:TextStyle(fontSize: 16,color: Colors.white))
   );
 
   Future onShowAlert(String title,String content,String action,{bool clickClose,Color backgroundColor}) => onShowConfirm(title,content,[action],clickClose:clickClose,backgroundColor:backgroundColor);
   Future<int> onShowConfirm(String title,String content,List<String> actions,{bool clickClose,Color backgroundColor}) => onShowCustomConfirm(
-    title: buildTitle(title),
+    title: title!=null ? buildTitle(title) : null,
     content: buildContent(content),
-    actions: actions.map(buildAction).toList(),
-    clickClose:clickClose,backgroundColor:backgroundColor
-  );
-  Future<int> onShowSheet(List<String> actions,{bool clickClose,Color backgroundColor}) => onShowCustomConfirm(
-    actions: actions.map(buildSheetAction).toList(),
+    actions: actions.asMap().keys.map((index) => buildAction(index,actions[index])).toList(),
     clickClose:clickClose,backgroundColor:backgroundColor
   );
   Future<int> onShowCustomConfirm({Widget title,Widget content,List<Widget> actions,bool clickClose,Color backgroundColor}){
@@ -108,14 +102,36 @@ class SfEasyDialog extends SfDialog{
     );
     return completer.future;
   }
+  Future<int> onShowSheet(List<String> actions,{String title,bool clickClose,Color backgroundColor}) => onShowCustomSheet(
+    title: title!=null ? buildTitle(title) : null,
+    actions: actions.asMap().keys.map((index) => buildSheetAction(index,actions[index])).toList(),
+    clickClose:clickClose,backgroundColor:backgroundColor
+  );
+  Future<int> onShowCustomSheet({Widget title,List<Widget> actions,bool clickClose,Color backgroundColor}){
+    var completer = Completer<int>();
+    onShowFrame(
+      title: title,
+      body: Column(
+        children: actions.asMap().keys.map((index) => GestureDetector(
+          onTap: (){
+            this.close();
+            completer.complete(index);
+          },
+          child: actions[index]
+        )).toList(),
+      ),
+      clickClose:clickClose,backgroundColor: backgroundColor
+    );
+    return completer.future;
+  }
   void onShowFrame({Widget title,Widget close,Widget body,Widget footer,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShowCustomFrame(
     header: Container(
       padding: EdgeInsets.only(bottom:3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          title,
-          close
+          if(title != null) title,
+          if(close != null) close
         ],
       ),
     ),
@@ -128,7 +144,11 @@ class SfEasyDialog extends SfDialog{
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [header,body,footer],
+          children: [
+            if(header != null) header,
+            if(body != null) body,
+            if(footer != null) footer
+          ],
         )
       ),
     ),

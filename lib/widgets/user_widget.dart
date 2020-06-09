@@ -25,7 +25,7 @@ class SfUserConsumer<TUser extends SfUser> extends StatelessWidget {
     return SfProviderWidget<SfUserState>(
       model: GetIt.instance<SfUserState>(),
       onModelReady: (model){
-        if(this.user==null && this.userId.isNotEmpty){
+        if(this.user==null && this.userId!=null){
           model.queryUser(this.userId,this.fetch);
         }
       },
