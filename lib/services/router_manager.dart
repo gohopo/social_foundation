@@ -12,7 +12,7 @@ class SfRouterManager extends NavigatorObserver{
   Route<dynamic> generateRoute(RouteSettings settings){
     switch (settings.name) {
       case SfRouteName.photo_viewer:
-        return SfFadeRoute(page: SfPhotoGalleryViewer(settings.arguments));
+        return SfFadeRoute(SfPhotoGalleryViewer(settings.arguments));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
