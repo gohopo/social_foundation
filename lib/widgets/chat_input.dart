@@ -8,12 +8,12 @@ import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfChatInput extends StatelessWidget {
-  final SfChatInputModel model;
-
   SfChatInput({
     Key key,
     this.model
   }) : super(key:key);
+  final SfChatInputModel model;
+  
   Widget buildEditor(){
     return TextField(
       controller: model.textEditingController,
@@ -35,37 +35,36 @@ class SfChatInput extends StatelessWidget {
     );
   }
   Widget buildToolbar(){
+    var list = buildMenuList();
     return Container(
       padding: EdgeInsets.symmetric(vertical:5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          GestureDetector(
-            child: Icon(Icons.keyboard_voice,color: model.curAccessory==0?Colors.blue:null),
-            onTap: () => model.changeAccessory(0),
-          ),
-          GestureDetector(
-            child: Icon(Icons.photo_album),
-            onTap: () {
-              model.changeAccessory(1);
-              onTapPhoto(ImageSource.gallery);
-            },
-          ),
-          GestureDetector(
-            child: Icon(Icons.photo_camera),
-            onTap: () {
-              model.changeAccessory(2);
-              onTapPhoto(ImageSource.camera);
-            },
-          )
-        ],
+        children: list.asMap().keys.map((index) => GestureDetector(
+            child: list[index],
+            onTap: () => onTapMenu(index),
+        )).toList(),
       ),
     );
   }
+  List<Widget> buildMenuList(){
+    return [
+      Icon(Icons.keyboard_voice,color: model.curAccessory==0?Colors.blue:null),
+      Icon(Icons.photo_album),
+      Icon(Icons.photo_camera),
+    ];
+  }
+  Widget buildAccessoryContainer(){
+    Widget accessory = buildAccessory();
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 200),
+      height: accessory!=null ? 260 : 0,
+      child: accessory
+    );
+  }
   Widget buildAccessory(){
-    Widget accessory;
     if(model.curAccessory == 0){
-      accessory = Center(
+      return Center(
         child: SfAudioRecorderConsumer(
           onStartRecord: model.onStartRecord,
           onStopRecord: model.onStopRecord,
@@ -81,11 +80,12 @@ class SfChatInput extends StatelessWidget {
         ),
       );
     }
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 200),
-      height: accessory!=null ? 260 : 0,
-      child: accessory
-    );
+    return null;
+  }
+  void onTapMenu(int index){
+    model.changeAccessory(index);
+    if(index == 1) onTapPhoto(ImageSource.gallery);
+    else if(index == 2) onTapPhoto(ImageSource.camera);
   }
   void onTapPhoto(ImageSource source) async {
     File image = await ImagePicker.pickImage(source: source);
@@ -108,7 +108,7 @@ class SfChatInput extends StatelessWidget {
           ]),
         ),
         buildToolbar(),
-        buildAccessory()
+        buildAccessoryContainer()
       ]),
     );
   }

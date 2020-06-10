@@ -35,6 +35,7 @@ export './widgets/audio_widget.dart';
 export './widgets/badge.dart';
 export './widgets/cached_image_provider.dart';
 export './widgets/user_widget.dart';
+export './widgets/chat_input.dart';
 export './widgets/image_picker.dart';
 export './widgets/keep_alive.dart';
 export './widgets/rolling_number.dart';
