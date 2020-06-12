@@ -15,21 +15,31 @@ class SfChatInput extends StatelessWidget {
   final SfChatInputModel model;
   
   Widget buildEditor(){
-    return TextField(
-      controller: model.textEditingController,
-      focusNode: model.focusNode,
-      textInputAction: model.textInputAction,
-      onEditingComplete: model.onTapSend,
-      decoration: InputDecoration(
-        hintText: '请输入消息...'
+    return Container(
+      height: 37,
+      padding: EdgeInsets.symmetric(horizontal:11),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255,48,50,66),
+        borderRadius: BorderRadius.circular(16.5)
       ),
+      child: TextField(
+        controller: model.textEditingController,
+        focusNode: model.focusNode,
+        textInputAction: model.textInputAction,
+        onEditingComplete: model.onTapSend,
+        style: TextStyle(fontSize:16,color:Colors.white),
+        decoration: InputDecoration.collapsed(
+          hintText: '说点什么吧~',
+          hintStyle: TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8))
+        ),
+      )
     );
   }
   Widget buildSend(){
     return InkWell(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 5,vertical:10),
-        child: Icon(Icons.send),
+        padding: EdgeInsets.only(left:15),
+        child: Icon(Icons.send,color:Color.fromARGB(255,159,162,178)),
       ),
       onTap: model.onTapSend,
     );
@@ -37,7 +47,7 @@ class SfChatInput extends StatelessWidget {
   Widget buildToolbar(){
     var list = buildMenuList();
     return Container(
-      padding: EdgeInsets.symmetric(vertical:5),
+      padding: EdgeInsets.symmetric(vertical:16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: list.asMap().keys.map((index) => GestureDetector(
@@ -97,19 +107,22 @@ class SfChatInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return SfProviderWidget<SfChatInputModel>(
       model: model,
-      builder: (context,model,child) => Column(children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(horizontal:14,vertical:5),
-          child: Row(children: <Widget>[
-            Expanded(
-              child: buildEditor()
-            ),
-            buildSend()
-          ]),
-        ),
-        buildToolbar(),
-        buildAccessoryContainer()
-      ]),
+      builder: (context,model,child) => Container(
+        padding: EdgeInsets.only(left:15,top:15,right:15),
+        color: Color.fromARGB(255,37,38,51),
+        child: Column(children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: buildEditor()
+              ),
+              buildSend()
+            ]
+          ),
+          buildToolbar(),
+          buildAccessoryContainer()
+        ]),
+      ),
     );
   }
 }

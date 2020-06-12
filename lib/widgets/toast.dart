@@ -174,7 +174,7 @@ class SfToast{
     borderRadius: borderRadius ?? BorderRadius.all(Radius.circular(8)),
     textStyle: textStyle ?? TextStyle(fontSize: 17, color: Colors.white)
   );
-  void onShowLoading({double size,Color color}) => onShowCustomLoading(SpinKitCubeGrid(
+  void onShowLoading({double size,Color color}) => onShowCustomLoading(SpinKitCircle(
     size: size ?? 50.0,
     color: color ?? Colors.white,
   ));
