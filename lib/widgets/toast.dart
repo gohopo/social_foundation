@@ -1,18 +1,25 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:social_foundation/widgets/animation.dart';
 
 class SfDialog{
   CancelFunc _cancelFunc;
   
-  void onShow({Widget child,UniqueKey key,String groupKey,bool crossPage,bool allowClick,bool clickClose,bool ignoreContentClick,bool onlyOne,FutureFunc closeFunc,VoidCallback onClose,Color backgroundColor,WrapWidget warpWidget,Duration duration}) => BotToast.showEnhancedWidget(
+  void onShow({Widget child,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapAnimation,WrapAnimation wrapToastAnimation,UniqueKey key,String groupKey,bool crossPage,bool allowClick,bool clickClose,bool ignoreContentClick,bool onlyOne,VoidCallback onClose,Color backgroundColor,Duration duration}) => BotToast.showAnimationWidget(
     toastBuilder: (cancelFunc){
       _cancelFunc = cancelFunc;
       return child;
     },
+    animationDuration: animationDuration ?? Duration(milliseconds:250),
+    animationReverseDuration: animationReverseDuration,
+    wrapAnimation: wrapAnimation ?? (controller,cancelFunc,widget) => Material(color:Colors.transparent,child:widget),
+    wrapToastAnimation: wrapToastAnimation ?? (controller,cancelFunc,widget) => SfTranslateAnimation(controller:controller,child:widget),
     key: key,
     groupKey: groupKey ?? 'SfDialog',
     crossPage: crossPage ?? true,
@@ -20,10 +27,8 @@ class SfDialog{
     clickClose: clickClose ?? false,
     ignoreContentClick: ignoreContentClick ?? false,
     onlyOne: onlyOne ?? true,
-    closeFunc: closeFunc,
     onClose: onClose,
-    backgroundColor: backgroundColor ?? Colors.black45,
-    warpWidget: warpWidget ?? (cancelFunc,widget) => Material(color:Colors.transparent,child:widget),
+    backgroundColor: backgroundColor ?? Color.fromRGBO(221,221,221,0.6),
     duration: duration,
   );
   void close() => _cancelFunc?.call();
@@ -31,47 +36,52 @@ class SfDialog{
 
 class SfEasyDialog extends SfDialog{
   @protected Widget buildDialog({Widget child,BoxConstraints constraints}){
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: 10,
-          sigmaY: 10
-        ),
-        child: Container(
-          padding: EdgeInsets.all(5),
-          constraints: constraints,
-          decoration: BoxDecoration(
-            color: Colors.white10,
-          ),
-          child: child
-        )
+    return Container(
+      padding: EdgeInsets.all(3),
+      constraints: constraints,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10)
       ),
+      child: child
     );
   }
-  @protected Widget buildTitle(String title) => Text(title,style:TextStyle(fontSize:18,color:Colors.white));
+  @protected Widget buildTitle(String title) => Padding(
+    padding: EdgeInsets.only(left:7),
+    child: Text(title,style:TextStyle(fontSize:18,color:Colors.black.withOpacity(0.85))),
+  );
   @protected Widget buildContent(String content) => Container(
-    margin: EdgeInsets.only(bottom:10),
-    child: Text(content,style:TextStyle(fontSize:14,color:Colors.white70)),
+    margin: EdgeInsets.only(left:7,bottom:10),
+    child: Text(content,style:TextStyle(fontSize:14,color:Color.fromARGB(255,51,51,51))),
   );
   @protected Widget buildAction(int index,String action) => Container(
     margin: EdgeInsets.symmetric(horizontal:15),
     padding: EdgeInsets.symmetric(horizontal:14,vertical:4),
     decoration: BoxDecoration(
-      color: Colors.black26,
-      borderRadius: BorderRadius.circular(4)
+      border: Border.all(width:0.5,color:Color.fromARGB(255,217,217,217)),
+      borderRadius: BorderRadius.circular(2)
     ),
-    child: Text(action,style:TextStyle(fontSize:14,color:Colors.white)),
+    child: Text(action,style:TextStyle(fontSize:14,color:Color.fromARGB(255,51,51,51))),
   );
-  @protected Widget buildSheetAction(int index,String action) => Container(
-    height: 60,
+  @protected Widget buildSheetAction(List<String> actions,int index,bool splitLast) => Container(
+    height: 44,
+    margin: splitLast==true&&index==actions.length-1 ? EdgeInsets.only(top:5) : null,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      border: index!=0 ? Border(top:BorderSide(color:Colors.white24)) : null
+      color: Colors.white,
+      border: index!=0 ? Border(top:BorderSide(width:0.5,color:Color.fromARGB(255,232,232,232))) : null
     ),
-    child: Text(action,style:TextStyle(fontSize: 16,color: Colors.white))
+    child: Text(actions[index],style:TextStyle(fontSize:15,color:Color.fromARGB(255,51,51,51)))
   );
 
+  Future<File> onPickImage({int imageQuality = 75}) async {
+    var index = await onShowSheet(['从相册选择照片','拍照','取消'],splitLast:true);
+    if(index == 2) return null;
+    return ImagePicker.pickImage(
+      source: [ImageSource.gallery,ImageSource.camera][index],
+      imageQuality: imageQuality
+    );
+  }
   Future onShowAlert(String title,String content,String action,{bool clickClose,Color backgroundColor}) => onShowConfirm(title,content,[action],clickClose:clickClose,backgroundColor:backgroundColor);
   Future<int> onShowConfirm(String title,String content,List<String> actions,{bool clickClose,Color backgroundColor}) => onShowCustomConfirm(
     title: title!=null ? buildTitle(title) : null,
@@ -102,29 +112,39 @@ class SfEasyDialog extends SfDialog{
     );
     return completer.future;
   }
-  Future<int> onShowSheet(List<String> actions,{String title,bool clickClose,Color backgroundColor}) => onShowCustomSheet(
+  Future<int> onShowSheet(List<String> actions,{String title,bool splitLast,bool clickClose,Color backgroundColor}) => onShowCustomSheet(
     title: title!=null ? buildTitle(title) : null,
-    actions: actions.asMap().keys.map((index) => buildSheetAction(index,actions[index])).toList(),
+    actions: actions.asMap().keys.map((index) => buildSheetAction(actions,index,splitLast)).toList(),
     clickClose:clickClose,backgroundColor:backgroundColor
   );
-  Future<int> onShowCustomSheet({Widget title,List<Widget> actions,bool clickClose,Color backgroundColor}){
+  Future<int> onShowCustomSheet({Widget title,List<Widget> actions,Duration animationDuration,WrapAnimation wrapToastAnimation,bool clickClose,Color backgroundColor}){
     var completer = Completer<int>();
-    onShowFrame(
-      title: title,
-      body: Column(
-        children: actions.asMap().keys.map((index) => GestureDetector(
-          onTap: (){
-            this.close();
-            completer.complete(index);
-          },
-          child: actions[index]
-        )).toList(),
+    onShowCustom(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if(title != null) title,
+            Column(
+              children: actions.asMap().keys.map((index) => GestureDetector(
+                onTap: (){
+                  this.close();
+                  completer.complete(index);
+                },
+                child: actions[index]
+              )).toList(),
+            )
+          ],
+        ),
       ),
-      clickClose:clickClose,backgroundColor: backgroundColor
+      animationDuration:animationDuration,wrapToastAnimation:wrapToastAnimation,
+      clickClose:clickClose,backgroundColor:backgroundColor
     );
     return completer.future;
   }
-  void onShowFrame({Widget title,Widget close,Widget body,Widget footer,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShowCustomFrame(
+  void onShowFrame({Widget title,Widget close,Widget body,Widget footer,Alignment alignment,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShowCustomFrame(
     header: Container(
       padding: EdgeInsets.only(bottom:3),
       child: Row(
@@ -135,10 +155,11 @@ class SfEasyDialog extends SfDialog{
         ],
       ),
     ),
-    body:body,footer:footer,clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor
+    body:body,footer:footer,alignment:alignment,clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor
   );
-  void onShowCustomFrame({Widget header,Widget body,Widget footer,BoxConstraints constraints,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShowCustom(
-    child: Center(
+  void onShowCustomFrame({Widget header,Widget body,Widget footer,BoxConstraints constraints,Alignment alignment,Duration animationDuration,WrapAnimation wrapToastAnimation,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShowCustom(
+    child: Align(
+      alignment: alignment ?? Alignment.center,
       child: buildDialog(
         constraints: constraints ?? BoxConstraints.tightFor(width:250),
         child: Column(
@@ -152,10 +173,13 @@ class SfEasyDialog extends SfDialog{
         )
       ),
     ),
+    animationDuration:animationDuration,wrapToastAnimation:wrapToastAnimation,
     clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor
   );
-  void onShowCustom({Widget child,String groupKey,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShow(
+  void onShowCustom({Widget child,Duration animationDuration,WrapAnimation wrapToastAnimation,String groupKey,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShow(
     child: child,
+    animationDuration: animationDuration,
+    wrapToastAnimation: wrapToastAnimation,
     groupKey: groupKey??'SfEasyDialog',
     clickClose: clickClose,
     onClose: onClose,

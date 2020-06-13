@@ -36,12 +36,12 @@ export './widgets/badge.dart';
 export './widgets/cached_image_provider.dart';
 export './widgets/user_widget.dart';
 export './widgets/chat_input.dart';
-export './widgets/image_picker.dart';
 export './widgets/keep_alive.dart';
 export './widgets/rolling_number.dart';
 export './widgets/toast.dart';
 export './widgets/ticker_provider.dart';
 export './widgets/skeleton.dart';
+export './widgets/animation.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels

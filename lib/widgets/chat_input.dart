@@ -28,9 +28,15 @@ class SfChatInput extends StatelessWidget {
         textInputAction: model.textInputAction,
         onEditingComplete: model.onTapSend,
         style: TextStyle(fontSize:16,color:Colors.white),
-        decoration: InputDecoration.collapsed(
+        decoration: InputDecoration(
           hintText: '说点什么吧~',
-          hintStyle: TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8))
+          hintStyle: TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8)),
+          border: InputBorder.none,
+          errorBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
         ),
       )
     );
