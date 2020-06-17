@@ -30,7 +30,7 @@ class MessagePage extends StatelessWidget {
     var model1 = Provider.of<ChatState>(context);
     return Scaffold(
       appBar: AppBar(title: Text('消息')),
-      body: SfProviderWidget<MessageModel>(
+      body: SfProvider<MessageModel>(
         model: MessageModel(),
         builder: (context,model2,child) => buildList(context,model1,model2),
       )

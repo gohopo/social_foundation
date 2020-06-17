@@ -17,6 +17,7 @@ class SfChatInput extends StatelessWidget {
   Widget buildEditor(){
     return Container(
       height: 37,
+      margin: EdgeInsets.only(left:15,top:15,right:15),
       padding: EdgeInsets.symmetric(horizontal:11),
       decoration: BoxDecoration(
         color: Color.fromARGB(255,48,50,66),
@@ -111,10 +112,9 @@ class SfChatInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SfProviderWidget<SfChatInputModel>(
+    return SfProvider<SfChatInputModel>(
       model: model,
       builder: (context,model,child) => Container(
-        padding: EdgeInsets.only(left:15,top:15,right:15),
         color: Color.fromARGB(255,37,38,51),
         child: Column(children: <Widget>[
           Row(

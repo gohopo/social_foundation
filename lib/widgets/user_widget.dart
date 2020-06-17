@@ -22,7 +22,7 @@ class SfUserConsumer<TUser extends SfUser> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-    return SfProviderWidget<SfUserState>(
+    return SfProvider<SfUserState>(
       model: GetIt.instance<SfUserState>(),
       onModelReady: (model){
         if(this.user==null && this.userId!=null){

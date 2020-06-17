@@ -370,7 +370,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.17-beta92"
+    version: "0.0.17-beta93"
   source_span:
     dependency: transitive
     description:
@@ -426,7 +426,7 @@ packages:
       name: test_api
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.2.16"
+    version: "0.2.15"
   typed_data:
     dependency: transitive
     description:
@@ -449,5 +449,5 @@ packages:
     source: hosted
     version: "2.0.8"
 sdks:
-  dart: ">=2.9.0-14.0.dev <3.0.0"
+  dart: ">=2.6.0 <3.0.0"
   flutter: ">=1.12.13+hotfix.4 <2.0.0"

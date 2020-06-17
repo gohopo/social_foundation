@@ -57,7 +57,7 @@ class SfPhotoGalleryViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      body: SfProviderWidget<_SfPhotoGalleryViewerModel>(
+      body: SfProvider<_SfPhotoGalleryViewerModel>(
         model: _SfPhotoGalleryViewerModel(args),
         builder: (context,model,_) => Stack(
           children: <Widget>[

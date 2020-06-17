@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:social_foundation/widgets/ticker_provider.dart';
 
-class SfProviderWidget<T extends ChangeNotifier> extends StatefulWidget{
+class SfProvider<T extends ChangeNotifier> extends StatefulWidget{
   final T model;
   final ValueWidgetBuilder<T> builder;
   final Widget child;
   final Function(T model) onModelReady;
   final bool autoDispose;
 
-  SfProviderWidget({
+  SfProvider({
     Key key,
     @required this.model,
     @required this.builder,
@@ -18,9 +19,9 @@ class SfProviderWidget<T extends ChangeNotifier> extends StatefulWidget{
   }) : super(key: key);
 
   @override
-  _SfProviderWidgetState<T> createState() => _SfProviderWidgetState<T>();
+  _SfProviderState<T> createState() => _SfProviderState<T>();
 }
-class _SfProviderWidgetState<T extends ChangeNotifier> extends State<SfProviderWidget<T>>{
+class _SfProviderState<T extends ChangeNotifier> extends State<SfProvider<T>>{
   T model;
 
   @override
@@ -46,7 +47,7 @@ class _SfProviderWidgetState<T extends ChangeNotifier> extends State<SfProviderW
   }
 }
 
-class SfProviderWidget2<A extends ChangeNotifier,B extends ChangeNotifier> extends StatefulWidget{
+class SfProvider2<A extends ChangeNotifier,B extends ChangeNotifier> extends StatefulWidget{
   final A model1;
   final B model2;
   final Widget Function(BuildContext context, A model1, B model2, Widget child) builder;
@@ -54,7 +55,7 @@ class SfProviderWidget2<A extends ChangeNotifier,B extends ChangeNotifier> exten
   final Function(A model1,B model2) onModelReady;
   final bool autoDispose;
 
-  SfProviderWidget2({
+  SfProvider2({
     Key key,
     @required this.model1,
     @required this.model2,
@@ -65,9 +66,9 @@ class SfProviderWidget2<A extends ChangeNotifier,B extends ChangeNotifier> exten
   }) : super(key: key);
 
   @override
-  _SfProviderWidget2State<A,B> createState() => _SfProviderWidget2State<A,B>();
+  _SfProvider2State<A,B> createState() => _SfProvider2State<A,B>();
 }
-class _SfProviderWidget2State<A extends ChangeNotifier,B extends ChangeNotifier> extends State<SfProviderWidget2<A,B>>{
+class _SfProvider2State<A extends ChangeNotifier,B extends ChangeNotifier> extends State<SfProvider2<A,B>>{
   A model1;
   B model2;
 
@@ -99,4 +100,60 @@ class _SfProviderWidget2State<A extends ChangeNotifier,B extends ChangeNotifier>
       )
     );
   }
+}
+
+class SfProviderEnhanced<T extends ChangeNotifier> extends StatelessWidget{
+  SfProviderEnhanced({
+    Key key,
+    @required this.model,
+    @required this.builder,
+    this.child,
+    this.onModelReady,
+    this.autoDispose: true,
+  }) : super(key:key);
+  final T model;
+  final ValueWidgetBuilder<T> builder;
+  final Widget child;
+  final Function(TickerProviderStateMixin vsync,T model) onModelReady;
+  final bool autoDispose;
+
+  @override
+  Widget build(BuildContext context) => SfProvider<T>(
+    model: model,
+    builder: (context,model,child) => SfTickerProvider(
+      onReady: (vsync) => onModelReady?.call(vsync,model),
+      builder: (context) => builder(context,model,child),
+    ),
+    child: child,
+    autoDispose: autoDispose,
+  );
+}
+class SfProviderEnhanced2<A extends ChangeNotifier,B extends ChangeNotifier> extends StatelessWidget{
+  SfProviderEnhanced2({
+    Key key,
+    @required this.model1,
+    @required this.model2,
+    @required this.builder,
+    this.child,
+    this.onModelReady,
+    this.autoDispose: true,
+  }) : super(key:key);
+  final A model1;
+  final B model2;
+  final Widget Function(BuildContext context, A model1, B model2, Widget child) builder;
+  final Widget child;
+  final Function(TickerProviderStateMixin vsync,A model1,B model2) onModelReady;
+  final bool autoDispose;
+
+  @override
+  Widget build(BuildContext context) => SfProvider2<A,B>(
+    model1: model1,
+    model2: model2,
+    builder: (context,model1,model2,child) => SfTickerProvider(
+      onReady: (vsync) => onModelReady?.call(vsync,model1,model2),
+      builder: (context) => builder(context,model1,model2,child),
+    ),
+    child: child,
+    autoDispose: autoDispose,
+  );
 }

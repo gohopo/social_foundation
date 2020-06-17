@@ -13,7 +13,7 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('聊天')),
-      body: SfProviderWidget<ChatModel>(
+      body: SfProvider<ChatModel>(
         model: ChatModel(args),
         onModelReady: (model) => model.initData(),
         builder: (context,model,child) => Column(

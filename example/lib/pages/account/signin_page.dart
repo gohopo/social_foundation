@@ -6,7 +6,7 @@ class SigninPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SfProviderWidget<SigninModel>(
+      body: SfProvider<SigninModel>(
         model: SigninModel(),
         builder: (context,model,child) => Center(
           child: SingleChildScrollView(

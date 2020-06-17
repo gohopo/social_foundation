@@ -42,6 +42,7 @@ export './widgets/toast.dart';
 export './widgets/ticker_provider.dart';
 export './widgets/skeleton.dart';
 export './widgets/animation.dart';
+export './widgets/nine_patch_image.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels
