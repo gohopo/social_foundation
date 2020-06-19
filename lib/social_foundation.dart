@@ -21,6 +21,7 @@ export './utils/aliyun_oss.dart';
 export './utils/date_helper.dart';
 export './utils/image_helper.dart';
 export './utils/wechat_helper.dart';
+export './utils/contracts.dart';
 //models
 export './models/app.dart';
 export './models/message.dart';
@@ -43,6 +44,7 @@ export './widgets/ticker_provider.dart';
 export './widgets/skeleton.dart';
 export './widgets/animation.dart';
 export './widgets/nine_patch_image.dart';
+export './widgets/bottom_navigation_bar_item.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels

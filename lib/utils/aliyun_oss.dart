@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' as p;
 import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/storage_manager.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 import 'package:social_foundation/utils/utils.dart';
 
@@ -77,8 +78,13 @@ class SfAliyunOss {
     var bytes = await File(filePath).readAsBytes();
     return uploadBytes(dir,fileName,bytes,onSendProgress:onSendProgress);
   }
-  static Future<Response> uploadBytes(String dir,String fileName,Uint8List bytes,{ProgressCallback onSendProgress}){
+  static Future<Response> uploadBytes(String dir,String fileName,Uint8List bytes,{ProgressCallback onSendProgress}) async {
     var encrypt = isEncryptFileName(fileName);
+    //加入缓存
+    await SfCacheManager().putFile(
+      getFileUrl(dir,fileName), bytes, fileExtension: SfFileHelper.getFileExt(fileName)
+    );
+    //加密
     if(encrypt > 0){
       dir = 'encrypt_$dir';
       switch(encrypt){
