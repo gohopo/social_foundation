@@ -109,14 +109,19 @@ class SfAppState extends SfViewState{
   Future queryNotifyList() async {
     notifyList = await GetIt.instance.get<SfApp>().queryNotifyList(GetIt.instance.get<SfUserState>().curUserId);
     notifyListeners();
+    processNotifyList();
   }
   void addNotify(String notifyType){
     notifyList.add(notifyType);
     notifyListeners();
+    processNotifyList();
   }
   void removeNotify(String notifyType){
     notifyList.removeWhere((data) => data==notifyType);
     notifyListeners();
+  }
+  void processNotifyList(){
+    
   }
 
   @override
