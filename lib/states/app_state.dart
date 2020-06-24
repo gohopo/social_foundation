@@ -115,7 +115,6 @@ class SfAppState extends SfViewState{
     notifyListeners();
   }
   void removeNotify(String notifyType){
-    GetIt.instance.get<SfApp>().removeNotify(GetIt.instance.get<SfUserState>().curUserId, notifyType);
     notifyList.removeWhere((data) => data==notifyType);
     notifyListeners();
   }
