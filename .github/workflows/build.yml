@@ -1,8 +1,8 @@
 name: deploy to pub dev
 on:
   push:
-    tags: 
-      - 'v*.*.*'
+    branches:
+    - build
 jobs:
   build-deploy:
     runs-on: ubuntu-latest

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_record/index.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:social_foundation/view_models/audio_model.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 
@@ -25,7 +26,9 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
   int _voiceIcon = 1;
   String _tips = '手指上滑,取消录音';
   double _startY = 0;
+  double _offsetY = 0;
 
+  bool get isCancelled => _startY-_offsetY>100;
   buildOverLay(){
     if(_overlayEntry != null) return;
     _overlayEntry = OverlayEntry(builder: (content) => Positioned(
@@ -93,7 +96,7 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
           widget.onStartRecord?.call();
         }
         else if(data.msg == 'onStop'){
-          widget.onStopRecord?.call(data.path,data.audioTimeLength.toInt()*1000);
+          if(!isCancelled) widget.onStopRecord?.call(data.path,data.audioTimeLength.toInt()*1000);
         }
       })
       ..responseFromAmplitude.listen((data){
@@ -135,15 +138,15 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onVerticalDragStart: (details){
+      onLongPressStart: (details){
         _startY = details.globalPosition.dy;
         start();
       },
-      onVerticalDragEnd: (details) => stop(),
-      onVerticalDragCancel: stop,
-      onVerticalDragUpdate: (details){
+      onLongPressEnd: (details) => stop(),
+      onLongPressMoveUpdate: (details){
+        _offsetY = details.globalPosition.dy;
         setState((){
-          _tips = _startY-details.globalPosition.dy>100 ? '松开 取消 录音' : '手指上滑,取消录音';
+          _tips = isCancelled ? '松开 取消 录音' : '手指上滑,取消录音';
         });
       },
       child: widget.child
@@ -153,13 +156,6 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
 
 
 class SfAudioPlayerWidget extends StatelessWidget {
-  final String uri;
-  final int duration;
-  final double width;
-  final double height;
-  final Color color;
-  final Color borderColor;
-  final VoidCallback onTap;
   SfAudioPlayerWidget({
     Key key,
     this.uri,
@@ -168,10 +164,31 @@ class SfAudioPlayerWidget extends StatelessWidget {
     this.height,
     this.color,
     this.borderColor,
+    this.textColor = Colors.white,
     this.onTap
   }) : super(key:key);
+  final String uri;
+  final int duration;
+  final double width;
+  final double height;
+  final Color color;
+  final Color borderColor;
+  final Color textColor;
+  final VoidCallback onTap;
 
-  _onTap(SfAudioPlayerModel model){
+  Widget buildContainer(BuildContext context,SfAudioPlayerModel model){
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: color,
+        border: Border.all(width:0.5,color:borderColor),
+        borderRadius: BorderRadius.circular(5)
+      ),
+      child: buildChildren(context, model),
+    );
+  }
+  onTapContainer(SfAudioPlayerModel model){
     if(model.position < 0){
       model.play(uri);
     }
@@ -180,6 +197,28 @@ class SfAudioPlayerWidget extends StatelessWidget {
     }
     onTap?.call();
   }
+  Widget buildChildren(BuildContext context,SfAudioPlayerModel model){
+    return Row(children: <Widget>[
+      buildIcon(context, model),
+      buildText(context, model)
+    ]);
+  }
+  Widget buildIcon(BuildContext context,SfAudioPlayerModel model){
+    return SizedBox(
+      width: 25,
+      child: !model.isPlaying ? Icon(
+        Icons.music_note,
+        size: 20,
+        color: textColor,
+      ) : SpinKitWave(
+        size: 10,
+        color: textColor,
+      )
+    );
+  }
+  Widget buildText(BuildContext context,SfAudioPlayerModel model){
+    return Text('${duration ~/1000}"',style:TextStyle(color:textColor));
+  }
 
   @override
   Widget build(BuildContext context){
@@ -187,20 +226,8 @@ class SfAudioPlayerWidget extends StatelessWidget {
       model: SfAudioPlayerModel(),
       onModelReady: (model) => model.initData(),
       builder: (context,model,child) => GestureDetector(
-        onTap: () => _onTap(model),
-        child: Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            color: color,
-            border: Border.all(width:0.5,color:borderColor),
-            borderRadius: BorderRadius.circular(5)
-          ),
-          child: Row(children: <Widget>[
-            Icon(Icons.music_note),
-            Text('${duration ~/1000}"')
-          ]),
-        ),
+        onTap: () => onTapContainer(model),
+        child: buildContainer(context, model),
       ),
     );
   }

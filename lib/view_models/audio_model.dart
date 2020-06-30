@@ -9,6 +9,7 @@ class SfAudioPlayerModel extends SfViewState {
   StreamSubscription _positionSubscription;
   int position = -1;
   
+  bool get isPlaying => position!=-1;
   Future play(String uri){
     return _player.play(uri);
   }

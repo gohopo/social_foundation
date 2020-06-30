@@ -15,7 +15,7 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
       for(;index<list.length;++index){
         var conv = list[index];
         if(conv.top!=0 || conv.lastMessageAt==null) continue;
-        if(conversation.lastMessageAt==null || conv.lastMessageAt>=conversation.lastMessageAt){
+        if(conversation.lastMessageAt==null || conv.lastMessageAt<=conversation.lastMessageAt){
           break;
         }
       }

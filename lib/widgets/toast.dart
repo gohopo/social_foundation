@@ -115,6 +115,7 @@ class SfEasyDialog extends SfDialog{
           )).toList(),
         )
       ),
+      onClose: () => !completer.isCompleted ? completer.complete(-1) : null,
       clickClose:clickClose,backgroundColor: backgroundColor
     );
     return completer.future;
@@ -156,6 +157,7 @@ class SfEasyDialog extends SfDialog{
           ],
         ),
       ),
+      onClose: () => !completer.isCompleted ? completer.complete(-1) : null,
       animationDuration:animationDuration,wrapToastAnimation:wrapToastAnimation,
       clickClose:clickClose,backgroundColor:backgroundColor
     );
