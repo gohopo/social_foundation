@@ -21,9 +21,6 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   }
   TConversation convertConversation(Map data);
   TMessage convertMessage(Map data);
-  Future<TMessage> sendTextMsg({@required String convId,String msg,Map attribute}){
-    return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.text,attribute:attribute);
-  }
   Future<TMessage> sendSystemMsg({@required String convId,@required String systemType,Map msgExtra}){
     if(msgExtra == null) msgExtra = {};
     msgExtra['systemType'] = systemType;
@@ -67,7 +64,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     }
     return saveMessage(message);
   }
-  saveConversation(TConversation conversation){
+  void saveConversation(TConversation conversation){
     GetIt.instance<SfChatState>().saveConversation(conversation);
   }
   Future<TMessage> saveMessage(TMessage message) async {

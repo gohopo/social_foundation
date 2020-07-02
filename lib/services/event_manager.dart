@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
+import 'package:social_foundation/models/message.dart';
 
 class SfEvent<T>{
   StreamSubscription _subscription;
@@ -19,7 +20,7 @@ class SfEvent<T>{
 }
 
 class SfMessageEvent extends SfEvent<SfMessageEvent>{
-  dynamic message;
+  SfMessage message;
   bool isNew;
   SfMessageEvent({this.message,this.isNew});
 }
