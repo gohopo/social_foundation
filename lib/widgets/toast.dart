@@ -66,18 +66,22 @@ class SfEasyDialog extends SfDialog{
     child: Text(action,style:TextStyle(fontSize:14,color:Color.fromARGB(255,51,51,51))),
   );
   @protected Widget buildSheetActionContainer({int length,int index,Widget child,bool split,bool splitLast}) => Container(
-    margin: splitLast==true&&index==length-1 ? EdgeInsets.only(top:5) : null,
+    margin: EdgeInsets.only(left:10,top:splitLast==true&&index==length-1?10:0,right:10,bottom:index==length-1?10:0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.vertical(
+        top: index==0||splitLast==true&&index==length-1?Radius.circular(10):Radius.zero,
+        bottom: index==length-1||splitLast==true&&index==length-2?Radius.circular(10):Radius.zero
+      )
+    ),
     foregroundDecoration: BoxDecoration(
-      border: split&&index!=0 ? Border(top:BorderSide(width:0.5,color:Color.fromARGB(255,232,232,232))) : null
+      border: split && index!=0 && (splitLast!=true || index!=length-1) ? Border(top:BorderSide(width:0.5,color:Color.fromARGB(255,232,232,232))) : null
     ),
     child: child
   );
   @protected Widget buildSheetAction(int index,String action) => Container(
     height: 44,
     alignment: Alignment.center,
-    decoration: BoxDecoration(
-      color: Colors.white,
-    ),
     child: Text(action,style:TextStyle(fontSize:15,color:Color.fromARGB(255,51,51,51))),
   );
 

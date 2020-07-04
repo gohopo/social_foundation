@@ -33,7 +33,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
     await database.delete('conversation',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
   }
   Future toggleTop() async {
-    int top = this.top==0 ? 1 : 0;
+    this.top = this.top==0 ? 1 : 0;
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     await database.update('conversation', {'top':top}, where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
   }
