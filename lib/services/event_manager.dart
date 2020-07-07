@@ -7,8 +7,10 @@ import 'package:social_foundation/models/message.dart';
 class SfEvent<T>{
   StreamSubscription _subscription;
   
-  void listen(void onData(T event)){
-    _subscription = GetIt.instance<EventBus>().on<T>().listen(onData);
+  void listen(void onData(T event),{bool onWhere(T event)}){
+    _subscription = GetIt.instance<EventBus>().on<T>().listen((event){
+      if(onWhere==null || onWhere(event)) onData(event);
+    });
   }
   void emit(){
     GetIt.instance<EventBus>().fire(this);

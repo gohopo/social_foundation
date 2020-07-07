@@ -93,14 +93,14 @@ class SfEasyDialog extends SfDialog{
       imageQuality: imageQuality
     );
   }
-  Future onShowAlert(String title,String content,String action,{bool clickClose,Color backgroundColor}) => onShowConfirm(title,content,[action],clickClose:clickClose,backgroundColor:backgroundColor);
-  Future<int> onShowConfirm(String title,String content,List<String> actions,{bool clickClose,Color backgroundColor}) => onShowCustomConfirm(
+  Future onShowAlert(String title,String content,String action,{Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,bool clickClose,Color backgroundColor,Duration duration}) => onShowConfirm(title,content,[action],animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,backgroundColor:backgroundColor,duration:duration);
+  Future<int> onShowConfirm(String title,String content,List<String> actions,{Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,bool clickClose,Color backgroundColor,Duration duration}) => onShowCustomConfirm(
     title: title!=null ? buildTitle(title) : null,
     content: buildContent(content),
     actions: actions.asMap().keys.map((index) => buildAction(index,actions[index])).toList(),
-    clickClose:clickClose,backgroundColor:backgroundColor
+    animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,backgroundColor:backgroundColor,duration:duration
   );
-  Future<int> onShowCustomConfirm({Widget title,Widget content,List<Widget> actions,bool clickClose,Color backgroundColor}){
+  Future<int> onShowCustomConfirm({Widget title,Widget content,List<Widget> actions,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,bool clickClose,Color backgroundColor,Duration duration}){
     var completer = Completer<int>();
     onShowFrame(
       title: title,
@@ -120,26 +120,26 @@ class SfEasyDialog extends SfDialog{
         )
       ),
       onClose: () => !completer.isCompleted ? completer.complete(-1) : null,
-      clickClose:clickClose,backgroundColor: backgroundColor
+      animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,backgroundColor:backgroundColor,duration:duration
     );
     return completer.future;
   }
-  Future<int> onShowSheet(List<String> actions,{String title,bool split,bool splitLast,bool clickClose,Color backgroundColor}) => onShowSheetEnhanced(
+  Future<int> onShowSheet(List<String> actions,{String title,bool split,bool splitLast,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,bool clickClose,Color backgroundColor,Duration duration}) => onShowSheetEnhanced(
     title: title!=null ? buildTitle(title) : null,
     actions: actions.asMap().keys.map((index) => buildSheetAction(index,actions[index])).toList(),
-    split:split,splitLast:splitLast,clickClose:clickClose,backgroundColor:backgroundColor
+    split:split,splitLast:splitLast,animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,backgroundColor:backgroundColor,duration:duration
   );
-  Future<int> onShowSheetEnhanced({Widget title,List<Widget> actions,bool split,bool splitLast,Duration animationDuration,WrapAnimation wrapToastAnimation,UniqueKey key,String groupKey,bool clickClose,Color backgroundColor}) => onShowCustomSheet(
+  Future<int> onShowSheetEnhanced({Widget title,List<Widget> actions,bool split,bool splitLast,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,UniqueKey key,String groupKey,bool clickClose,Color backgroundColor,Duration duration}) => onShowCustomSheet(
     actions: actions.asMap().keys.map((index) => buildSheetActionContainer(
       length: actions.length,
       index: index,
       child: actions[index],
       split:split??true,splitLast:splitLast
     )).toList(),
-    title:title,animationDuration:animationDuration,wrapToastAnimation:wrapToastAnimation,
-    clickClose:clickClose,backgroundColor:backgroundColor
+    title:title,animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,
+    clickClose:clickClose,backgroundColor:backgroundColor,duration:duration
   );
-  Future<int> onShowCustomSheet({Widget title,List<Widget> actions,Duration animationDuration,WrapAnimation wrapToastAnimation,bool clickClose,Color backgroundColor}){
+  Future<int> onShowCustomSheet({Widget title,List<Widget> actions,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,bool clickClose,Color backgroundColor,Duration duration}){
     var completer = Completer<int>();
     onShowCustom(
       builder: (_) => Align(
@@ -162,12 +162,12 @@ class SfEasyDialog extends SfDialog{
         ),
       ),
       onClose: () => !completer.isCompleted ? completer.complete(-1) : null,
-      animationDuration:animationDuration,wrapToastAnimation:wrapToastAnimation,
-      clickClose:clickClose,backgroundColor:backgroundColor
+      animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,
+      clickClose:clickClose,backgroundColor:backgroundColor,duration:duration
     );
     return completer.future;
   }
-  void onShowFrame({Widget title,Widget close,Widget body,Widget footer,Alignment alignment,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShowCustomFrame(
+  void onShowFrame({Widget title,Widget close,Widget body,Widget footer,Alignment alignment,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,bool clickClose,VoidCallback onClose,Color backgroundColor,Duration duration}) => onShowCustomFrame(
     header: Container(
       padding: EdgeInsets.only(bottom:3),
       child: Row(
@@ -178,9 +178,9 @@ class SfEasyDialog extends SfDialog{
         ],
       ),
     ),
-    body:body,footer:footer,alignment:alignment,clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor
+    body:body,footer:footer,alignment:alignment,animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor,duration:duration
   );
-  void onShowCustomFrame({Widget header,Widget body,Widget footer,BoxConstraints constraints,Alignment alignment,Duration animationDuration,WrapAnimation wrapToastAnimation,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShowCustom(
+  void onShowCustomFrame({Widget header,Widget body,Widget footer,BoxConstraints constraints,Alignment alignment,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,bool clickClose,VoidCallback onClose,Color backgroundColor,Duration duration}) => onShowCustom(
     builder: (_) => Align(
       alignment: alignment ?? Alignment.center,
       child: buildDialog(
@@ -196,18 +196,20 @@ class SfEasyDialog extends SfDialog{
         )
       ),
     ),
-    animationDuration:animationDuration,wrapToastAnimation:wrapToastAnimation,
-    clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor
+    animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,
+    clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor,duration:duration
   );
-  void onShowCustom({SfDialogBuilder builder,Duration animationDuration,WrapAnimation wrapToastAnimation,UniqueKey key,String groupKey,bool clickClose,VoidCallback onClose,Color backgroundColor}) => onShow(
+  void onShowCustom({SfDialogBuilder builder,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,UniqueKey key,String groupKey,bool clickClose,VoidCallback onClose,Color backgroundColor,Duration duration}) => onShow(
     builder: builder,
     animationDuration: animationDuration,
+    animationReverseDuration: animationReverseDuration,
     wrapToastAnimation: wrapToastAnimation,
     key: key,
     groupKey: groupKey??'SfEasyDialog',
     clickClose: clickClose,
     onClose: onClose,
-    backgroundColor: backgroundColor
+    backgroundColor: backgroundColor,
+    duration: duration
   );
 }
 

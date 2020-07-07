@@ -45,6 +45,7 @@ export './widgets/skeleton.dart';
 export './widgets/animation.dart';
 export './widgets/nine_patch_image.dart';
 export './widgets/bottom_navigation_bar_item.dart';
+export './widgets/path.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels

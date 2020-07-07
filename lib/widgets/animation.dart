@@ -22,7 +22,7 @@ class SfTranslateAnimation extends StatelessWidget{
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: controller,
-      builder: (context, child)  => Transform.translate(
+      builder: (context, child) => Transform.translate(
         offset: Tween<Offset>(
           begin: Offset(offsetX, offsetY),
           end: Offset(0, 0),
