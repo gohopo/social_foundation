@@ -2,9 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:path/path.dart' as p;
 
 class SfRequestManager{
-  SfRequestManager({
-    String baseUrl
-  }) : _dio=Dio(BaseOptions(baseUrl:baseUrl));
+  SfRequestManager(BaseOptions options) : _dio=Dio(options);
   Dio _dio;
 
   Future<dynamic> invokeFunction(String controller,String function,Map body) async {
