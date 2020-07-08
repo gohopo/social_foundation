@@ -29,7 +29,7 @@ dependencies:
   audioplayers: ^0.14.0
   image_picker: ^0.6.3+4
   bot_toast: ^2.3.0
-  leancloud_official_plugin: ^1.0.0-beta.4
+  leancloud_official_plugin: ^1.0.0-beta.5
   flutter_screenutil: ^1.1.0
   shimmer: ^1.1.1
   flutter_spinkit: ^4.1.2
