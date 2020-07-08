@@ -1,3 +1,3 @@
-## 0.0.18-beta1
+## 0.0.18-beta2
 
 * TODO: Describe initial release.

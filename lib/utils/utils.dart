@@ -45,4 +45,15 @@ class SfUtils{
     }
     return index;
   }
+  static List<T> distinct<T,TKey>(List<T> source,TKey keySelector(T data)){
+    keySelector ??= (T v) => v as TKey;
+    List<T> list = [];
+    var sets = <TKey>{};
+    for (var data in source) {
+      if (sets.add(keySelector(data))){
+        list.add(data);
+      }
+    }
+    return list;
+  }
 }
