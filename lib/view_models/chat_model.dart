@@ -21,7 +21,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   SfChatModel(Map args) : conversation=args['conversation']{
     inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage: onPickImage,onRecordVoice: onRecordVoice);
   }
-  Future _sendMessage({String msg,@required String msgType,Map msgExtra,Map attribute}) async {
+  Future sendMessage({String msg,@required String msgType,Map msgExtra,Map attribute}) async {
     await GetIt.instance<SfChatManager>().sendMsg(convId:conversation.convId,msg:msg,msgType:msgType,msgExtra:msgExtra,attribute:attribute);
     scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
@@ -55,7 +55,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   }
   void onTapSend() async {
     if(inputModel.textEditingController.text.isEmpty) return;
-    await _sendMessage(msg:inputModel.textEditingController.text,msgType: SfMessageType.text);
+    await sendMessage(msg:inputModel.textEditingController.text,msgType: SfMessageType.text);
     inputModel.textEditingController.clear();
   }
   void onPickImage(File image) async {
@@ -64,7 +64,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       'filePath': filePath,
       'fileDir': SfMessageType.image
     };
-    return _sendMessage(msgType:SfMessageType.image,attribute:attribute);
+    return sendMessage(msgType:SfMessageType.image,attribute:attribute);
   }
   void onRecordVoice(String path,int duration) async {
     var filePath = await SfAliyunOss.cacheFile(SfMessageType.voice,path,prefix:'chat');
@@ -75,7 +75,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       'filePath': filePath,
       'fileDir': SfMessageType.voice
     };
-    return _sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
+    return sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
   }
 
   @override
