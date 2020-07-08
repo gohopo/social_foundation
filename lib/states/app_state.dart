@@ -111,7 +111,8 @@ class SfAppState extends SfViewState{
     notifyListeners();
     processNotifyList();
   }
-  void addNotify(String notifyType){
+  void addNotify(String notifyType) async {
+    await Future.delayed(Duration(milliseconds:3000));
     notifyList.add(notifyType);
     notifyListeners();
     processNotifyList();
