@@ -253,7 +253,7 @@ packages:
       name: leancloud_official_plugin
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.0-beta.5"
+    version: "1.0.0-beta.6"
   matcher:
     dependency: transitive
     description:
@@ -377,7 +377,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.18-beta6"
+    version: "0.0.18-beta7"
   source_span:
     dependency: transitive
     description:

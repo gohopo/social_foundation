@@ -71,7 +71,4 @@ class SocialFoundation {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
-  static void initialize(String appId, String appKey, String serverURL){
-    _channel.invokeMethod('initialize', {'appId': appId, 'appKey': appKey, 'serverURL': serverURL});
-  }
 }

@@ -8,7 +8,6 @@ import '../models/conversation.dart';
 class ChatManager extends SfChatManager<Conversation,Message> {
   static ChatManager get instance => GetIt.instance<SfChatManager>();
 
-  ChatManager(String appId, String appKey, String serverURL) : super(appId,appKey,serverURL);
   Future<Message> sendTextMsg({@required String convId,String msg,Map attribute}){
     return sendMsg(convId: convId,msg:msg,msgType:SfMessageType.text,attribute:attribute);
   }

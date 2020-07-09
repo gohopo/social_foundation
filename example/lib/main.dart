@@ -55,7 +55,7 @@ void configureServices(){
   GetIt.instance.registerSingleton<SfAppState>(AppState());
   GetIt.instance.registerSingleton<SfUserState>(UserState());
   GetIt.instance.registerSingleton<SfChatState>(ChatState());
-  GetIt.instance.registerSingleton<SfChatManager>(ChatManager(LeancloudSecret.appId, LeancloudSecret.appKey, LeancloudSecret.serverURL));
+  GetIt.instance.registerSingleton<SfChatManager>(ChatManager());
 }
 
 Future configure() async {

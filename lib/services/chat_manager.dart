@@ -16,9 +16,6 @@ import 'package:social_foundation/utils/file_helper.dart';
 
 abstract class SfChatManager<TConversation extends SfConversation,TMessage extends SfMessage> {
   Client _client;
-  SfChatManager(String appId, String appKey, String serverURL){
-    SocialFoundation.initialize(appId, appKey, serverURL);
-  }
   TConversation convertConversation(Map data);
   TMessage convertMessage(Map data);
   Future<TMessage> sendSystemMsg({@required String convId,@required String systemType,Map msgExtra}){
