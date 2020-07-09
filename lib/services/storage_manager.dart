@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_foundation/utils/utils.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class SfStorageManager{
@@ -15,11 +16,13 @@ abstract class SfStorageManager{
   final int dbVersion;
   Directory cacheDirectory;
   SharedPreferences sharedPreferences;
+  String deviceId;
   Database _database;
 
   Future init() async {
     cacheDirectory = await getApplicationDocumentsDirectory();
     sharedPreferences = await SharedPreferences.getInstance();
+    deviceId = await SfUtils.getDeviceId();
     return onInit();
   }
   String getFileDirectory(String dir) => p.join(cacheDirectory.path,dir);

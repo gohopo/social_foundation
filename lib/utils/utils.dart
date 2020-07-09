@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:device_info/device_info.dart';
 import 'package:uuid/uuid.dart';
 
 class SfUtils{
@@ -55,5 +57,16 @@ class SfUtils{
       }
     }
     return list;
+  }
+  static Future<String> getDeviceId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if(Platform.isIOS){
+      var info = await deviceInfo.iosInfo;
+      return info.identifierForVendor;
+    }
+    else{
+      var info = await deviceInfo.androidInfo;
+      return info.androidId;
+    }
   }
 }
