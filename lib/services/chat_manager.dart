@@ -86,7 +86,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     map['members'] = conversation.members;
     map['unreadMessagesCount'] = conversation.unreadMessageCount ?? 0;
     map['lastMessage'] = _convertMessage(conversation.lastMessage);
-    map['lastMessageAt'] = conversation?.lastMessage?.sentTimestamp;
+    map['lastMessageAt'] = conversation.lastMessageTimestamp;
     return convertConversation(map);
   }
   TMessage _convertMessage(Message message){
