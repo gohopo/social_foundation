@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/services/chat_manager.dart';
@@ -7,7 +9,13 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
   Future<TConversation> queryConversation(String convId) async {
     return list.firstWhere((data) => data.convId==convId,orElse: ()=>null);
   }
-  void saveConversation(TConversation conversation){
+  void saveConversation(TConversation conversation,{bool fromReceived}){
+    if(Platform.isAndroid && fromReceived==true){
+      var index = list.indexWhere((data) => data.convId==conversation.convId);
+      if(index != 0){
+        conversation.unreadMessagesCount = list[index].unreadMessagesCount+1;
+      }
+    }
     conversation.save();
     list.removeWhere((e) => e.convId==conversation.convId);
     int index = 0;

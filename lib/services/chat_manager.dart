@@ -64,8 +64,8 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     }
     return saveMessage(message);
   }
-  void saveConversation(TConversation conversation){
-    GetIt.instance<SfChatState>().saveConversation(conversation);
+  void saveConversation(TConversation conversation,{bool fromReceived}){
+    GetIt.instance<SfChatState>().saveConversation(conversation,fromReceived:fromReceived);
   }
   Future<TMessage> saveMessage(TMessage message) async {
     var isNew = message.id==null;
@@ -152,7 +152,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   }
   void onMessageReceived(TConversation conversation,TMessage message){
     if(message.msgType == SfMessageType.notify) return onNotifyReceived(message);
-    saveConversation(conversation);
+    saveConversation(conversation,fromReceived:true);
     saveMessage(message);
   }
   void onUnreadMessagesCountUpdated(TConversation conversation) {
