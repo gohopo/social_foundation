@@ -10,10 +10,11 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
     return list.firstWhere((data) => data.convId==convId,orElse: ()=>null);
   }
   void saveConversation(TConversation conversation,{bool fromReceived}){
-    if(Platform.isAndroid && fromReceived==true){
+    if(fromReceived == true){
       var index = list.indexWhere((data) => data.convId==conversation.convId);
-      if(index != 0){
-        conversation.unreadMessagesCount = list[index].unreadMessagesCount+1;
+      if(index != -1){
+        conversation.unreadMessagesCount = list[index].unreadMessagesCount;
+        if(Platform.isAndroid) conversation.unreadMessagesCount++;
       }
     }
     conversation.save();
