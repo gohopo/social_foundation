@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/services/chat_manager.dart';
@@ -14,7 +12,6 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
       var index = list.indexWhere((data) => data.convId==conversation.convId);
       if(index != -1){
         conversation.unreadMessagesCount = list[index].unreadMessagesCount;
-        if(Platform.isAndroid) conversation.unreadMessagesCount++;
       }
     }
     conversation.save();
