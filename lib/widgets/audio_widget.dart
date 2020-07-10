@@ -76,14 +76,15 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
     );
     Overlay.of(context).insert(_overlayEntry);
   }
-  start(){
+  void start(){
     buildOverLay();
     _recordPlugin.start();
   }
-  stop(){
+  void stop(){
     _recordPlugin.stop();
     _overlayEntry?.remove();
     _overlayEntry = null;
+    _startY = _offsetY = 0;
   }
 
   @override

@@ -16,7 +16,6 @@ class SfChatInput extends StatelessWidget {
   
   Widget buildEditor(){
     return Container(
-      height: 37,
       padding: EdgeInsets.symmetric(horizontal:11),
       decoration: BoxDecoration(
         color: Color.fromARGB(255,48,50,66),
