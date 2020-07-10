@@ -81,7 +81,7 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
     _recordPlugin.start();
   }
   void stop(){
-    _recordPlugin.stop();
+    _recordPlugin?.stop();
     _overlayEntry?.remove();
     _overlayEntry = null;
     _startY = _offsetY = 0;
@@ -129,10 +129,12 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
           }
           _overlayEntry?.markNeedsBuild();
         });
+        if(_startY == 0) stop();
       });
   }
   @override
   void dispose() {
+    stop();
     _recordPlugin?.dispose();
     super.dispose();
   }
