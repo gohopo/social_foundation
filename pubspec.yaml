@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.0.19-beta3
+version: 0.0.19-beta4
 homepage: https://github.com/gohopo/social_foundation
 
 environment:
@@ -29,7 +29,7 @@ dependencies:
   audioplayers: ^0.14.0
   image_picker: ^0.6.3+4
   bot_toast: ^2.3.0
-  leancloud_official_plugin: ^1.0.0-beta.6
+  leancloud_official_plugin: ^1.0.0-beta.7
   flutter_screenutil: ^1.1.0
   shimmer: ^1.1.1
   flutter_spinkit: ^4.1.2
