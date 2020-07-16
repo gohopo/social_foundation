@@ -19,7 +19,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   ScrollController scrollController = ScrollController();
 
   SfChatModel(Map args) : conversation=args['conversation']{
-    inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage: onPickImage,onRecordVoice: onRecordVoice);
+    onInitInputModel();
   }
   Future sendMessage({String msg,@required String msgType,Map msgExtra,Map attribute}) async {
     await GetIt.instance<SfChatManager>().sendMsg(convId:conversation.convId,msg:msg,msgType:msgType,msgExtra:msgExtra,attribute:attribute);
@@ -52,6 +52,9 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   }
   void onUnreadMessages(List<TMessage> messages){
 
+  }
+  void onInitInputModel(){
+    inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage: onPickImage,onRecordVoice: onRecordVoice);
   }
   void onTapSend() async {
     if(inputModel.textEditingController.text.isEmpty) return;

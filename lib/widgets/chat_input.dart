@@ -57,7 +57,7 @@ class SfChatInput extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: list.asMap().keys.map((index) => GestureDetector(
             child: list[index],
-            onTap: () => onTapMenu(index),
+            onTap: () => model.onTapMenu(index),
         )).toList(),
       ),
     );
@@ -96,16 +96,6 @@ class SfChatInput extends StatelessWidget {
       );
     }
     return null;
-  }
-  void onTapMenu(int index){
-    model.changeAccessory(index);
-    if(index == 1) onTapPhoto(ImageSource.gallery);
-    else if(index == 2) onTapPhoto(ImageSource.camera);
-  }
-  void onTapPhoto(ImageSource source) async {
-    File image = await ImagePicker.pickImage(source: source);
-    if(image==null || model.onPickImage==null) return;
-    model.onPickImage(image);
   }
 
   @override
@@ -161,6 +151,16 @@ class SfChatInputModel extends SfViewState {
     }
     _curAccessory = curAccessory;
     notifyListeners();
+  }
+  void onTapMenu(int index){
+    changeAccessory(index);
+    if(index == 1) onTapPhoto(ImageSource.gallery);
+    else if(index == 2) onTapPhoto(ImageSource.camera);
+  }
+  void onTapPhoto(ImageSource source) async {
+    File image = await ImagePicker.pickImage(source: source);
+    if(image==null || onPickImage==null) return;
+    onPickImage(image);
   }
   void onStartRecord(){
     recorderTips = '松开 结束';
