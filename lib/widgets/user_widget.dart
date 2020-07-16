@@ -7,12 +7,13 @@ import 'package:social_foundation/widgets/provider_widget.dart';
 class SfUserConsumer<TUser extends SfUser> extends StatelessWidget {
   SfUserConsumer({
     Key key,
-    this.userId,
-    this.user,
+    String userId,
+    TUser user,
     this.builder,
     this.child,
     this.fetch = false
-  }) : super(key:key);
+  }) :userId=userId,user=user,
+      super(key:key ?? Key(userId ?? user?.userId));
 
   final String userId;
   final TUser user;
