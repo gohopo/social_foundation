@@ -157,14 +157,18 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   }
   void onNotifyReceived(TMessage message) => GetIt.instance<SfAppState>().addNotify(message.msgExtra['notifyType']);
   Future<Conversation> _getConversation(String conversationId) async {
-    var query = _client.conversationQuery();
-    query.whereString = jsonEncode({
-      'objectId': conversationId,
-    });
-    query.limit = 1;
-    var result = await query.find();
-    if(result.length == 0) throw '未查询到会话!';
-    return result[0];
+    var conversation = _client.conversationMap[conversationId];
+    if(conversation == null){
+      var query = _client.conversationQuery();
+      query.whereString = jsonEncode({
+        'objectId': conversationId,
+      });
+      query.limit = 1;
+      var result = await query.find();
+      if(result.length == 0) throw '未查询到会话!';
+      conversation = result[0];
+    }
+    return conversation;
   }
   Future<TMessage> _sendMessage(String conversationId,String msg,String msgType,Map msgExtra,{bool transient}) async {
     var conversation = await _getConversation(conversationId);

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation/utils/utils.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -34,6 +35,14 @@ abstract class SfStorageManager{
     }
     return _database;
   }
+  Future deleteDirectory(String dir) => Directory(p.join(cacheDirectory.path,dir)).delete(recursive:true);
+  Future clear() async {
+    await SfCacheManager().emptyCache();
+    await deleteDirectory('image');
+    await deleteDirectory('voice');
+    await onInit();
+  }
+  
   @protected Future onInit() async {
     await Directory(p.join(cacheDirectory.path,'image')).create(recursive:true);
     await Directory(p.join(cacheDirectory.path,'voice')).create(recursive:true);

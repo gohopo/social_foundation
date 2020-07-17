@@ -384,7 +384,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.19-beta6"
+    version: "0.0.19-beta7"
   source_span:
     dependency: transitive
     description:
