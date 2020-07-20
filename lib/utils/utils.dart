@@ -58,15 +58,23 @@ class SfUtils{
     }
     return list;
   }
-  static Future<String> getDeviceId() async {
+  static Future<Map> getDeviceInfo() async {
+    var result = {};
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if(Platform.isIOS){
       var info = await deviceInfo.iosInfo;
-      return info.identifierForVendor;
+      result['device'] = '${info.model}${info.systemVersion}';
+      result['deviceId'] = info.identifierForVendor;
     }
     else{
       var info = await deviceInfo.androidInfo;
-      return info.androidId;
+      result['device'] = '${info.manufacturer}${info.model}';
+      result['deviceId'] = info.androidId;
     }
+    return result;
+  }
+  static Future<String> getDeviceId() async {
+    var result = await getDeviceInfo();
+    return result['deviceId'];
   }
 }

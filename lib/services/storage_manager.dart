@@ -17,13 +17,16 @@ abstract class SfStorageManager{
   final int dbVersion;
   Directory cacheDirectory;
   SharedPreferences sharedPreferences;
+  String device;
   String deviceId;
   Database _database;
 
   Future init() async {
     cacheDirectory = await getApplicationDocumentsDirectory();
     sharedPreferences = await SharedPreferences.getInstance();
-    deviceId = await SfUtils.getDeviceId();
+    var deviceInfo = await SfUtils.getDeviceInfo();
+    device = deviceInfo['device'];
+    deviceId = deviceInfo['deviceId'];
     return onInit();
   }
   String getFileDirectory(String dir) => p.join(cacheDirectory.path,dir);
