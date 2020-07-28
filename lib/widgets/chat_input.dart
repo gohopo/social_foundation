@@ -10,11 +10,13 @@ import 'package:social_foundation/widgets/view_state.dart';
 class SfChatInput extends StatelessWidget {
   SfChatInput({
     Key key,
-    this.model
+    this.model,
+    this.accessoryHeight = 260
   }) : super(key:key);
   final SfChatInputModel model;
+  final double accessoryHeight;
   
-  Widget buildEditor(){
+  Widget buildEditor(BuildContext context){
     return Container(
       padding: EdgeInsets.symmetric(horizontal:11),
       decoration: BoxDecoration(
@@ -40,7 +42,7 @@ class SfChatInput extends StatelessWidget {
       )
     );
   }
-  Widget buildSend(){
+  Widget buildSend(BuildContext context){
     return InkWell(
       child: Container(
         padding: EdgeInsets.only(left:15),
@@ -49,8 +51,8 @@ class SfChatInput extends StatelessWidget {
       onTap: model.onTapSend,
     );
   }
-  Widget buildToolbar(){
-    var list = buildMenuList();
+  Widget buildToolbar(BuildContext context){
+    var list = buildMenuList(context);
     return Container(
       padding: EdgeInsets.symmetric(vertical:16),
       child: Row(
@@ -62,22 +64,22 @@ class SfChatInput extends StatelessWidget {
       ),
     );
   }
-  List<Widget> buildMenuList(){
+  List<Widget> buildMenuList(BuildContext context){
     return [
       Icon(Icons.keyboard_voice,color: model.curAccessory==0?Colors.blue:null),
       Icon(Icons.photo_album),
       Icon(Icons.photo_camera),
     ];
   }
-  Widget buildAccessoryContainer(){
-    Widget accessory = buildAccessory();
+  Widget buildAccessoryContainer(BuildContext context){
+    Widget accessory = buildAccessory(context);
     return AnimatedContainer(
       duration: Duration(milliseconds: 200),
-      height: accessory!=null ? 260 : 0,
+      height: accessory!=null ? accessoryHeight : 0,
       child: accessory
     );
   }
-  Widget buildAccessory(){
+  Widget buildAccessory(BuildContext context){
     if(model.curAccessory == 0){
       return Center(
         child: SfAudioRecorderConsumer(
@@ -110,14 +112,14 @@ class SfChatInput extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: buildEditor()
+                  child: buildEditor(context)
                 ),
-                buildSend()
+                buildSend(context)
               ]
             )
           ),
-          buildToolbar(),
-          buildAccessoryContainer()
+          buildToolbar(context),
+          buildAccessoryContainer(context)
         ]),
       ),
     );
