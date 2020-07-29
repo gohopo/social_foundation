@@ -133,6 +133,9 @@ class SfChatInputModel extends SfViewState {
   int _curAccessory = -1;
   String recorderTips = '按住 说话';
   VoidCallback onTapSend;
+  double imageMaxWidth = 1000;
+  double imageMaxHeight = 1000;
+  int imageQuality = 75;
   final void Function(File image) onPickImage;
   final void Function(String path,int duration) onRecordVoice;
   SfChatInputModel({
@@ -160,7 +163,7 @@ class SfChatInputModel extends SfViewState {
     else if(index == 2) onTapPhoto(ImageSource.camera);
   }
   void onTapPhoto(ImageSource source) async {
-    File image = await ImagePicker.pickImage(source: source);
+    File image = await ImagePicker.pickImage(source:source,maxWidth:imageMaxWidth,maxHeight:imageMaxHeight,imageQuality:imageQuality);
     if(image==null || onPickImage==null) return;
     onPickImage(image);
   }

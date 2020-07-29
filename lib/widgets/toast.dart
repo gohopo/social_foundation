@@ -85,12 +85,12 @@ class SfEasyDialog extends SfDialog{
     child: Text(action,style:TextStyle(fontSize:15,color:Color.fromARGB(255,51,51,51))),
   );
 
-  Future<File> onPickImage({int imageQuality = 75}) async {
+  Future<File> onPickImage({double maxWidth,double maxHeight,int imageQuality}) async {
     var index = await onShowSheet(['从相册选择照片','拍照','取消'],splitLast:true);
     if(index == 2) return null;
     return ImagePicker.pickImage(
       source: [ImageSource.gallery,ImageSource.camera][index],
-      imageQuality: imageQuality
+      maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality
     );
   }
   Future onShowAlert(String title,String content,String action,{Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,bool clickClose,Color backgroundColor,Duration duration}) => onShowConfirm(title,content,[action],animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,backgroundColor:backgroundColor,duration:duration);

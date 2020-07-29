@@ -13,7 +13,8 @@ class SfAvatar extends StatelessWidget{
     this.borderRadius,
     this.defaultImage,
     this.fit = BoxFit.cover,
-    this.builder
+    this.builder,
+    this.imageLongSide = 200
   }) : super(key:key);
   final SfUser user;
   final double width;
@@ -23,6 +24,7 @@ class SfAvatar extends StatelessWidget{
   final ImageProvider defaultImage;
   final BoxFit fit;
   final Widget Function(BuildContext context,SfAvatar avatar,ImageProvider image) builder;
+  final int imageLongSide;
 
   onTapOverride(){
     onTap?.call();
@@ -36,7 +38,7 @@ class SfAvatar extends StatelessWidget{
     );
   }
   ImageProvider buildImageProvider(){
-    return user?.icon!=null ? SfCacheManager.provder(SfAliyunOss.getImageUrl(user?.icon)) : defaultImage;
+    return user?.icon!=null ? SfCacheManager.provder(SfAliyunOss.getImageUrl(user?.icon,long:imageLongSide)) : defaultImage;
   }
 
   @override
