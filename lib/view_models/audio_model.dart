@@ -4,6 +4,10 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfAudioPlayerModel extends SfViewState {
+  SfAudioPlayerModel({
+    this.earpieceMode
+  });
+  bool earpieceMode;
   AudioPlayer _player = new AudioPlayer();
   StreamSubscription _stateSubscription;
   StreamSubscription _positionSubscription;

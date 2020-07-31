@@ -168,7 +168,8 @@ class SfAudioPlayerWidget extends StatelessWidget {
     this.color,
     this.borderColor,
     this.textColor = Colors.white,
-    this.onTap
+    this.onTap,
+    this.earpieceMode
   }) : super(key:key);
   final String uri;
   final int duration;
@@ -178,6 +179,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
   final Color borderColor;
   final Color textColor;
   final VoidCallback onTap;
+  final bool earpieceMode;
 
   Widget buildContainer(BuildContext context,SfAudioPlayerModel model){
     return Container(
@@ -226,7 +228,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context){
     return SfProvider<SfAudioPlayerModel>(
-      model: SfAudioPlayerModel(),
+      model: SfAudioPlayerModel(earpieceMode:earpieceMode),
       onModelReady: (model) => model.initData(),
       builder: (context,model,child) => GestureDetector(
         onTap: () => onTapContainer(model),

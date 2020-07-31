@@ -12,6 +12,7 @@ export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'package:flutter_spinkit/flutter_spinkit.dart';
 export 'package:fluwx/fluwx.dart';
 export 'package:get_it/get_it.dart';
+export 'package:image_gallery_saver/image_gallery_saver.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:provider/provider.dart';
 export 'package:pull_to_refresh/pull_to_refresh.dart';

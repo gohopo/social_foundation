@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.0.20-beta1
+version: 0.0.20-beta2
 homepage: https://github.com/gohopo/social_foundation
 
 environment:
@@ -36,6 +36,7 @@ dependencies:
   fluwx: ^2.1.0
   common_utils: ^1.2.1
   device_info: ^0.4.2+4
+  image_gallery_saver: ^1.5.0
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
@@ -29,6 +31,8 @@ class SfPhotoGalleryViewer extends StatelessWidget {
   Widget buildPhoto(BuildContext context,_SfPhotoGalleryViewerModel model,int index){
     Widget image = GestureDetector(
       onTap: () => Navigator.of(context).pop(),
+      onLongPress: () => onLongPress(context,model,index),
+      onLongPressUp: () => onLongPressUp(context,model,index),
       child: ExtendedImage(
         image: model.images[index],
         fit: BoxFit.contain,
@@ -43,6 +47,22 @@ class SfPhotoGalleryViewer extends StatelessWidget {
       tag: '${model.heroPrefix}_$index',
       child: image,
     ) : image;
+  }
+  void onLongPress(BuildContext context,_SfPhotoGalleryViewerModel model,int index) async {
+    if(!model.canSave) return;
+    var result = await GetIt.instance<SfEasyDialog>().onShowSheet(['保存到相册','取消'],clickClose:true);
+    if(result != 0) return;
+    try{
+      var bytes = await SfImageHelper.convertProviderToBytes(model.images[index]);
+      await ImageGallerySaver.saveImage(bytes,quality:100,name:'${model.heroPrefix}_${DateTime.now().millisecondsSinceEpoch}');
+      GetIt.instance<SfToast>().onShowText('保存成功');
+    }
+    catch(error){
+      GetIt.instance<SfToast>().onShowText('保存失败');
+    }
+  }
+  void onLongPressUp(BuildContext context,_SfPhotoGalleryViewerModel model,int index){
+    
   }
   Widget buildIndex(BuildContext context,_SfPhotoGalleryViewerModel model){
     return Positioned(
@@ -71,13 +91,16 @@ class SfPhotoGalleryViewer extends StatelessWidget {
 }
 
 class _SfPhotoGalleryViewerModel extends SfViewState{
-  _SfPhotoGalleryViewerModel(Map args):images=args['images']??[],index=args['index']??0,heroPrefix=args['heroPrefix']??'SfPhotoGalleryViewer'{
-    controller = args['controller']??PageController(initialPage:index);
+  _SfPhotoGalleryViewerModel(Map args)
+    :images=args['images']??[],index=args['index']??0,heroPrefix=args['heroPrefix']??'SfPhotoGallery'
+    ,canSave=args['canSave']??true{
+      controller = args['controller']??PageController(initialPage:index);
   }
   List<ImageProvider> images;
   int index;
   String heroPrefix;
   PageController controller;
+  bool canSave;
 
   void onPageChanged(index){
     this.index = index;
