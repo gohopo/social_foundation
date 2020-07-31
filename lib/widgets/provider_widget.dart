@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_foundation/widgets/ticker_provider.dart';
+import 'package:social_foundation/widgets/view_state.dart';
 
-class SfProvider<T extends ChangeNotifier> extends StatefulWidget{
+class SfProvider<T extends SfViewState> extends StatefulWidget{
   final T model;
   final ValueWidgetBuilder<T> builder;
   final Widget child;
@@ -21,7 +22,7 @@ class SfProvider<T extends ChangeNotifier> extends StatefulWidget{
   @override
   _SfProviderState<T> createState() => _SfProviderState<T>();
 }
-class _SfProviderState<T extends ChangeNotifier> extends State<SfProvider<T>>{
+class _SfProviderState<T extends SfViewState> extends State<SfProvider<T>>{
   T model;
 
   @override
@@ -102,7 +103,7 @@ class _SfProvider2State<A extends ChangeNotifier,B extends ChangeNotifier> exten
   }
 }
 
-class SfProviderEnhanced<T extends ChangeNotifier> extends StatelessWidget{
+class SfProviderEnhanced<T extends SfViewState> extends StatelessWidget{
   SfProviderEnhanced({
     Key key,
     @required this.model,

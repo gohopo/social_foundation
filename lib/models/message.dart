@@ -79,6 +79,10 @@ class SfMessage {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where fromId="$userId"'));
   }
+  static Future delete(int id) async {
+    var database = await GetIt.instance<SfStorageManager>().getDatabase();
+    return database.delete('message',where:'id=?',whereArgs:[id]);
+  }
 }
 
 class SfMessageStatus{

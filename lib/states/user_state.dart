@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:social_foundation/models/user.dart';
+import 'package:social_foundation/widgets/view_state.dart';
 
-class SfUserState<TUser extends SfUser> with ChangeNotifier{
+class SfUserState<TUser extends SfUser> extends SfViewState{
   Map<String,TUser> _users = {};
   String _curUserId;
 

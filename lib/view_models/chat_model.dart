@@ -80,6 +80,11 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     };
     return sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
   }
+  Future deleteMessage(TMessage message) async {
+    await SfMessage.delete(message.id);
+    list.removeWhere((data) => data.id==message.id);
+    notifyListeners();
+  }
 
   @override
   Future initData() async {
