@@ -195,7 +195,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
   }
   onTapContainer(SfAudioPlayerModel model){
     if(model.position < 0){
-      model.play(uri);
+      model.play();
     }
     else{
       model.stop();
@@ -228,7 +228,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context){
     return SfProvider<SfAudioPlayerModel>(
-      model: SfAudioPlayerModel(earpieceMode:earpieceMode),
+      model: SfAudioPlayerModel(uri:uri,earpieceMode:earpieceMode),
       builder: (context,model,child) => GestureDetector(
         onTap: () => onTapContainer(model),
         child: buildContainer(context, model),
