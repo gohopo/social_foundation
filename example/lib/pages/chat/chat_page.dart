@@ -15,7 +15,6 @@ class ChatPage extends StatelessWidget {
       appBar: AppBar(title: Text('聊天')),
       body: SfProvider<ChatModel>(
         model: ChatModel(args),
-        onModelReady: (model) => model.initData(),
         builder: (context,model,child) => Column(
           children: <Widget>[
             Expanded(

@@ -15,6 +15,7 @@ abstract class SfViewState extends ChangeNotifier {
   dynamic _error;
 
   SfViewState({SfViewStatus viewStatus : SfViewStatus.idle}) : _viewStatus = viewStatus;
+  Future initDataVsync(TickerProviderStateMixin vsync) => initData();
   Future initData() async {}
   SfViewStatus get viewStatus => _viewStatus;
   dynamic get error => _error;

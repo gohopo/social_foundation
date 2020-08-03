@@ -23,16 +23,15 @@ class SfUserConsumer<TUser extends SfUser> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-    return SfProvider<SfUserState>(
+    return SfProviderEnhanced<SfUserState>(
       model: GetIt.instance<SfUserState>(),
-      onModelReady: (model){
+      onModelReady: (vsync,model){
         if(this.user==null && this.userId!=null){
           model.queryUser(this.userId,this.fetch);
         }
       },
       builder: (context,model,child) => builder(context,this.user??model[this.userId],child),
       child: this.child,
-      autoDispose: false,
     );
   }
 }
