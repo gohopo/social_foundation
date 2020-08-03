@@ -54,11 +54,17 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       //发送
       var data = await _sendMessage(message.convId,message.msg,message.msgType,message.msgExtra);
       message.msgId = data.msgId;
+      message.timestamp = data.timestamp;
       message.status = data.status;
     }
     catch(e){
       message.status = SfMessageStatus.failed;
     }
+    return saveMessage(message);
+  }
+  Future<TMessage> recallMessage(TMessage message) async {
+    await convRecall(message.convId, message.msgId, message.timestamp);
+    message.msgType = SfMessageType.recall;
     return saveMessage(message);
   }
   void saveConversation(TConversation conversation,{bool fromReceived}){
@@ -67,7 +73,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   Future<TMessage> saveMessage(TMessage message) async {
     var isNew = message.id==null;
     await message.save();
-    SfMessageEvent(message: message,isNew:isNew).emit();
+    SfMessageEvent(message:message,isNew:isNew).emit();
     if(message.fromOwner || !isNew){
       var conversation = await GetIt.instance<SfChatState>().queryConversation(message.convId);
       if(conversation!=null && (isNew || conversation.lastMessage==null || conversation.lastMessage.id==message.id)){
@@ -108,6 +114,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     _client = Client(id:userId);
     _client.onMessage = ({client,conversation,message}) => onMessageReceived(_convertConversation(conversation),_convertMessage(message));
     _client.onUnreadMessageCountUpdated = ({client,conversation}) => onUnreadMessagesCountUpdated(_convertConversation(conversation));
+    _client.onMessageRecalled = ({client,conversation,recalledMessage}) => onMessageRecalled(_convertMessage(recalledMessage));
     return _client.open();
   }
   Future close() async {
@@ -147,6 +154,10 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     var conversation = await _getConversation(conversationId);
     return conversation.read();
   }
+  Future convRecall(String conversationId,String messageID,int timestamp) async {
+    var conversation = await _getConversation(conversationId);
+    return conversation.recallMessage(messageID:messageID,messageTimestamp:timestamp);
+  }
   void onMessageReceived(TConversation conversation,TMessage message){
     if(message.msgType == SfMessageType.notify) return onNotifyReceived(message);
     saveConversation(conversation,fromReceived:true);
@@ -154,6 +165,10 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   }
   void onUnreadMessagesCountUpdated(TConversation conversation) {
     saveConversation(conversation);
+  }
+  void onMessageRecalled(TMessage message){
+    message.msgType = SfMessageType.recall;
+    saveMessage(message);
   }
   void onNotifyReceived(TMessage message) => GetIt.instance<SfAppState>().addNotify(message.msgExtra['notifyType']);
   Future<Conversation> _getConversation(String conversationId) async {

@@ -33,6 +33,10 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       list.insert(0,event.message);
       GetIt.instance<SfChatState>().read(conversation.convId);
     }
+    else{
+      var index = list.indexWhere((data) => data.id==event.message.id);
+      if(index != -1) list[index] = event.message;
+    }
     notifyListeners();
   }
   Future queryUnreadMessages() async {

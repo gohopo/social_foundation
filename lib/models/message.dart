@@ -100,4 +100,5 @@ class SfMessageType {
   static const String voice = 'voice';
   static const String system = 'system';
   static const String notify = 'notify';
+  static const String recall = 'recall';
 }
