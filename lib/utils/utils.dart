@@ -78,12 +78,12 @@ class SfUtils{
     var result = await getDeviceInfo();
     return result['deviceId'];
   }
-  static Future<String> getClientIp() => getClientIpEnhanced(null,null);
-  static Future<String> getClientIpEnhanced(List<String> apiList,String converter(data)) async {
+  static Future<String> getClientIp() => getClientIpEnhanced();
+  static Future<String> getClientIpEnhanced({List<String> apiList,String converter(data),int timeout=2000}) async {
     apiList = apiList ?? [
-      'http://www.trackip.net/ip','https://ipecho.net/plain','https://www.fbisb.com/ip.php','http://icanhazip.com/','http://ipinfo.io/ip'
+      'http://www.trackip.net/ip','http://icanhazip.com/','https://www.fbisb.com/ip.php'
     ];
-    var dio = Dio(BaseOptions(sendTimeout:4000,receiveTimeout:4000));
+    var dio = Dio(BaseOptions(sendTimeout:timeout,receiveTimeout:timeout));
     for(var api in apiList){
       try{
         var response = await dio.get(api);
