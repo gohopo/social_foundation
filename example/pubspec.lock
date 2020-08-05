@@ -391,7 +391,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.20-beta4"
+    version: "0.0.20-beta5"
   source_span:
     dependency: transitive
     description:

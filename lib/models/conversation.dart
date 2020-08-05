@@ -26,6 +26,11 @@ abstract class SfConversation<TMessage extends SfMessage>{
     map['top'] = top;
     return map;
   }
+  void copyWith(SfConversation conversation){
+    unreadMessagesCount = conversation.unreadMessagesCount;
+    lastMessage = conversation.lastMessage;
+    lastMessageAt = conversation.lastMessageAt;
+  }
   String get otherId => members.firstWhere((userId) => userId!=ownerId,orElse: ()=>null);
   Future save();
   Future delete() async {

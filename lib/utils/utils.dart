@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:device_info/device_info.dart';
+import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 class SfUtils{
@@ -76,5 +77,22 @@ class SfUtils{
   static Future<String> getDeviceId() async {
     var result = await getDeviceInfo();
     return result['deviceId'];
+  }
+  static Future<String> getClientIp() => getClientIpEnhanced(null,null);
+  static Future<String> getClientIpEnhanced(List<String> apiList,String converter(data)) async {
+    apiList = apiList ?? [
+      'http://www.trackip.net/ip','https://ipecho.net/plain','https://www.fbisb.com/ip.php','http://icanhazip.com/','http://ipinfo.io/ip'
+    ];
+    var dio = Dio(BaseOptions(sendTimeout:4000,receiveTimeout:4000));
+    for(var api in apiList){
+      try{
+        var response = await dio.get(api);
+        return converter?.call(response.data) ?? response.data;
+      }
+      catch(error){
+
+      }
+    }
+    return null;
   }
 }

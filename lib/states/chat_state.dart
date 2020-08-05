@@ -8,15 +8,17 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
     return list.firstWhere((data) => data.convId==convId,orElse: ()=>null);
   }
   void saveConversation(TConversation conversation,{bool fromReceived}){
-    if(fromReceived == true){
-      var index = list.indexWhere((data) => data.convId==conversation.convId);
-      if(index != -1){
+    var index = list.indexWhere((data) => data.convId==conversation.convId);
+    if(index != -1){
+      if(fromReceived == true){
         conversation.unreadMessagesCount = list[index].unreadMessagesCount;
       }
+      conversation = list[index]..copyWith(conversation);
+      list.removeWhere((e) => e.convId==conversation.convId);
     }
     conversation.save();
-    list.removeWhere((e) => e.convId==conversation.convId);
-    int index = 0;
+    
+    index = 0;
     if(conversation.top == 0){
       for(;index<list.length;++index){
         var conv = list[index];
