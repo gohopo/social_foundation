@@ -50,6 +50,7 @@ flutter:
         pluginClass: SocialFoundationPlugin
       ios:
         pluginClass: SocialFoundationPlugin
+  uses-material-design: true
   assets:
     - assets/images/
     - assets/images/audio_recorder/
