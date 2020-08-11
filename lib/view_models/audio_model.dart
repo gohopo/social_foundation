@@ -34,8 +34,8 @@ class SfAudioPlayerModel extends SfViewState{
       notifyListeners();
     });
     
+    await _player.setUrl(uri);
     if(earpieceMode){
-      await _player.setUrl(uri);
       await _player.earpieceOrSpeakersToggle();
     }
   }
