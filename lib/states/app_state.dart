@@ -2,10 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/app.dart';
+import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/services/storage_manager.dart';
-import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfAppState extends SfViewState{
@@ -47,12 +46,12 @@ class SfAppState extends SfViewState{
   Future saveTheme(bool userDarkMode, MaterialColor themeColor) async {
     var index = Colors.primaries.indexOf(themeColor);
     await Future.wait([
-      GetIt.instance<SfStorageManager>().sharedPreferences.setAppBool(SfStorageManagerKey.themeUserDarkMode, userDarkMode),
-      GetIt.instance<SfStorageManager>().sharedPreferences.setAppInt(SfStorageManagerKey.themeColorIndex, index)
+      SfLocatorManager.storageManager.sharedPreferences.setAppBool(SfStorageManagerKey.themeUserDarkMode, userDarkMode),
+      SfLocatorManager.storageManager.sharedPreferences.setAppInt(SfStorageManagerKey.themeColorIndex, index)
     ]);
   }
   Future saveFontIndex(int index) async {
-    await GetIt.instance<SfStorageManager>().sharedPreferences.setAppInt(SfStorageManagerKey.fontIndex, index);
+    await SfLocatorManager.storageManager.sharedPreferences.setAppInt(SfStorageManagerKey.fontIndex, index);
   }
   InputDecorationTheme inputDecorationTheme(ThemeData theme){
     var width = 0.5;
@@ -107,19 +106,22 @@ class SfAppState extends SfViewState{
   List<String> notifyList = [];
   bool isNotifyUnread(String notifyType) => notifyList.contains(notifyType);
   Future queryNotifyList() async {
-    notifyList = await GetIt.instance.get<SfApp>().queryNotifyList(GetIt.instance.get<SfUserState>().curUserId);
+    notifyList = await SfApp.queryNotifyList(SfLocatorManager.userState.curUserId);
     notifyListeners();
     processNotifyList();
   }
   void addNotify(String notifyType) async {
+    notifyList.removeWhere((data) => data==notifyType);
     await Future.delayed(Duration(milliseconds:3000));
     notifyList.add(notifyType);
     notifyListeners();
     processNotifyList();
   }
-  void removeNotify(String notifyType){
+  void removeNotify(String notifyType) {
+    if(!notifyList.contains(notifyType)) return;
     notifyList.removeWhere((data) => data==notifyType);
-    notifyListeners();
+    delayedNotifyListeners(500);
+    SfApp.removeNotify(SfLocatorManager.userState.curUserId, notifyType);
   }
   void processNotifyList(){
     
@@ -127,8 +129,8 @@ class SfAppState extends SfViewState{
 
   @override
   Future initData() async {
-    _userDarkMode = GetIt.instance<SfStorageManager>().sharedPreferences.getAppBool(SfStorageManagerKey.themeUserDarkMode) ?? false;
-    _themeColor = Colors.primaries[GetIt.instance<SfStorageManager>().sharedPreferences.getAppInt(SfStorageManagerKey.themeColorIndex) ?? 5];
-    _fontIndex = GetIt.instance<SfStorageManager>().sharedPreferences.getAppInt(SfStorageManagerKey.fontIndex) ?? 0;
+    _userDarkMode = SfLocatorManager.storageManager.sharedPreferences.getAppBool(SfStorageManagerKey.themeUserDarkMode) ?? false;
+    _themeColor = Colors.primaries[SfLocatorManager.storageManager.sharedPreferences.getAppInt(SfStorageManagerKey.themeColorIndex) ?? 5];
+    _fontIndex = SfLocatorManager.storageManager.sharedPreferences.getAppInt(SfStorageManagerKey.fontIndex) ?? 0;
   }
 }

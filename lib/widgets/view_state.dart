@@ -45,6 +45,8 @@ abstract class SfViewState extends ChangeNotifier {
   void setUnAuthorized(){
     viewStatus = SfViewStatus.unAuthorized;
   }
+  //解决build中调用notifyListeners的错误
+  Future delayedNotifyListeners(int milliseconds) => Future.delayed(Duration(milliseconds:milliseconds),() => notifyListeners());
 
   @override
   void dispose(){

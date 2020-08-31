@@ -61,6 +61,7 @@ export './services/chat_manager.dart';
 export './services/event_manager.dart';
 export './services/router_manager.dart';
 export './services/request_manager.dart';
+export './services/locator_manager.dart';
 //states
 export './states/app_state.dart';
 export './states/chat_state.dart';
