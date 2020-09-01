@@ -111,6 +111,7 @@ class SfAppState extends SfViewState{
     processNotifyList();
   }
   void addNotify(String notifyType) async {
+    if(notifyType==null) return;
     notifyList.removeWhere((data) => data==notifyType);
     await Future.delayed(Duration(milliseconds:3000));
     notifyList.add(notifyType);
@@ -118,7 +119,7 @@ class SfAppState extends SfViewState{
     processNotifyList();
   }
   void removeNotify(String notifyType) {
-    if(!notifyList.contains(notifyType)) return;
+    if(notifyType==null || !notifyList.contains(notifyType)) return;
     notifyList.removeWhere((data) => data==notifyType);
     delayedNotifyListeners(500);
     SfApp.removeNotify(SfLocatorManager.userState.curUserId, notifyType);
