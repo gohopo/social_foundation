@@ -54,7 +54,7 @@ class SfChatInput extends StatelessWidget {
   Widget buildToolbar(BuildContext context){
     var list = buildMenuList(context);
     return Container(
-      padding: EdgeInsets.symmetric(vertical:16),
+      padding: EdgeInsets.only(bottom:16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: list.asMap().keys.map((index) => GestureDetector(
@@ -108,7 +108,7 @@ class SfChatInput extends StatelessWidget {
         color: Color.fromARGB(255,37,38,51),
         child: Column(children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(left:15,top:15,right:15),
+            padding: EdgeInsets.all(15),
             child: Row(
               children: <Widget>[
                 Expanded(

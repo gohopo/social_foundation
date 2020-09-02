@@ -7,7 +7,7 @@ import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/chat_manager.dart';
 import 'package:social_foundation/services/event_manager.dart';
-import 'package:social_foundation/states/chat_state.dart';
+import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/widgets/chat_input.dart';
 import 'package:social_foundation/widgets/view_state.dart';
@@ -31,7 +31,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   void onMessageEvent(SfMessageEvent event){
     if(event.isNew){
       list.insert(0,event.message);
-      GetIt.instance<SfChatState>().read(conversation.convId);
+      convRead();
     }
     else{
       var index = list.indexWhere((data) => data.id==event.message.id);
@@ -40,6 +40,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     notifyListeners();
   }
   Future queryUnreadMessages() async {
+    if(conversation==null) return;
     _messageEvent?.dispose();
     if(conversation.unreadMessagesCount > 0){
       List<TMessage> messages = await GetIt.instance<SfChatManager>().queryMessages(conversation.convId, conversation.unreadMessagesCount);
@@ -50,10 +51,11 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       notifyListeners();
       
       await SfMessage.insertAll(messages);
-      GetIt.instance<SfChatState>().read(conversation.convId);
+      convRead();
     }
     _messageEvent.listen(onMessageEvent,onWhere:(event) => event.message.convId==conversation.convId);
   }
+  void convRead() => SfLocatorManager.chatState.read(conversation.convId);
   void onUnreadMessages(List<TMessage> messages){
 
   }

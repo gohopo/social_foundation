@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+// ignore: implementation_imports
 import 'package:flutter_cache_manager/src/compat/file_service_compat.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_it/get_it.dart';

@@ -23,7 +23,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     msgExtra['systemType'] = systemType;
     return sendMsg(convId:convId,msgType:SfMessageType.system,msgExtra:msgExtra);
   }
-  Future<TMessage> sendNotifyMsg({@required String convId,@required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType},transient:true);
+  Future<TMessage> sendNotifyMsg({@required String convId,@required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType},{'transient':true});
   Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute}) async {
     var message = convertMessage({
       'ownerId': GetIt.instance<SfUserState>().curUserId,
@@ -52,7 +52,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
         await saveMessage(message);
       }
       //发送
-      var data = await _sendMessage(message.convId,message.msg,message.msgType,message.msgExtra);
+      var data = await _sendMessage(message.convId,message.msg,message.msgType,message.msgExtra,message.attribute);
       message.msgId = data.msgId;
       message.timestamp = data.timestamp;
       message.status = data.status;
@@ -74,7 +74,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     var isNew = message.id==null;
     await message.save();
     SfMessageEvent(message:message,isNew:isNew).emit();
-    if(message.fromOwner || !isNew){
+    if(!message.transient && (message.fromOwner || !isNew)){
       var conversation = await GetIt.instance<SfChatState>().queryConversation(message.convId);
       if(conversation!=null && (isNew || conversation.lastMessage==null || conversation.lastMessage.id==message.id)){
         conversation.lastMessage = message;
@@ -106,6 +106,9 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     map['timestamp'] = message.sentTimestamp;
     map['status'] = message.status.index;
     map['receiptTimestamp'] = message.deliveredTimestamp;
+    map['attribute'] = {
+      'transient': message.isTransient
+    };
     map.addAll(json.decode(textMessage.text));
     return convertMessage(map);
   }
@@ -134,9 +137,10 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     var result = await _client.createConversation(name:name,members:members.toSet(),isUnique:isUnique,attributes:attributes);
     return _convertConversation(result);
   }
-  Future convJoin(String conversationId) async {
+  Future<TConversation> convJoin(String conversationId) async {
     var conversation = await _getConversation(conversationId);
     await conversation.join();
+    return _convertConversation(conversation);
   }
   Future convQuit(String conversationId) async {
     var conversation = await _getConversation(conversationId);
@@ -159,8 +163,8 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     return conversation.recallMessage(messageID:messageID,messageTimestamp:timestamp);
   }
   void onMessageReceived(TConversation conversation,TMessage message){
-    if(message.msgType == SfMessageType.notify) return onNotifyReceived(message);
-    saveConversation(conversation,fromReceived:true);
+    if(message.msgType==SfMessageType.notify) return onNotifyReceived(message);
+    if(!message.transient) saveConversation(conversation,fromReceived:true);
     saveMessage(message);
   }
   void onUnreadMessagesCountUpdated(TConversation conversation) {
@@ -185,7 +189,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     }
     return conversation;
   }
-  Future<TMessage> _sendMessage(String conversationId,String msg,String msgType,Map msgExtra,{bool transient}) async {
+  Future<TMessage> _sendMessage(String conversationId,String msg,String msgType,Map msgExtra,Map attribute) async {
     var conversation = await _getConversation(conversationId);
     var message = json.encode({
       'msg': msg,
@@ -194,7 +198,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     });
     var result = await conversation.send(
       message: TextMessage.from(text:message),
-      transient: transient??false
+      transient: attribute['transient']??false
     );
     return _convertMessage(result);
   }
