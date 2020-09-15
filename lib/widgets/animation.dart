@@ -136,6 +136,7 @@ class _SfShakeAnimationModel extends SfViewState{
   @override
   void dispose(){
     closeTimer();
+    controller?.dispose();
     super.dispose();
   }
 }

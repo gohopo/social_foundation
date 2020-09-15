@@ -113,7 +113,7 @@ class SfAppState extends SfViewState{
   void addNotify(String notifyType) async {
     if(notifyType==null) return;
     notifyList.removeWhere((data) => data==notifyType);
-    await Future.delayed(Duration(milliseconds:3000));
+    await Future.delayed(Duration(milliseconds:3000));//通知延迟,因为多元索引同步有延迟
     notifyList.add(notifyType);
     notifyListeners();
     processNotifyList();

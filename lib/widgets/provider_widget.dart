@@ -63,7 +63,7 @@ class _SfProviderEnhancedState<T extends SfViewState> extends State<SfProviderEn
   @override
   void didUpdateWidget(oldWidget){
     super.didUpdateWidget(oldWidget);
-    if(model!=widget.model) widget?.onModelRefactor(model,widget.model);
+    if(model!=widget.model) widget?.onModelRefactor?.call(model,widget.model);
   }
 
   @override
