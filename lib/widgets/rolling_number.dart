@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:social_foundation/widgets/provider_widget.dart';
+import 'package:social_foundation/widgets/view_state.dart';
 
 class SfRollingNumber extends StatefulWidget{
   SfRollingNumber({
@@ -14,7 +16,6 @@ class SfRollingNumber extends StatefulWidget{
   @override
   _SfRollingNumberState createState() => _SfRollingNumberState();
 }
-
 class _SfRollingNumberState extends State<SfRollingNumber> with SingleTickerProviderStateMixin{
   AnimationController controller;
   List<String> oldNumbers;
@@ -81,5 +82,101 @@ class _SfRollingNumberState extends State<SfRollingNumber> with SingleTickerProv
         children: numbers.asMap().keys.map(buildNumber).toList(),
       ),
     );
+  }
+}
+
+class SfRollingNumberEnhanced extends StatelessWidget{
+  SfRollingNumberEnhanced({
+    Key key,
+    this.number,
+    this.duration = const Duration(milliseconds:400),
+    @required this.height,
+    @required this.path
+  }) : super(key:key);
+  final String number;
+  final Duration duration;
+  final double height;
+  final String path;
+
+  Widget buildNumberColumn(BuildContext context,SfRollingNumberEnhancedModel model,int index){
+    var number = model.getNumber(index);
+    if(number == null) return buildNumber(context,model.numbers[index]);
+    return Stack(
+      children: [
+        buildNumberSlot(context),
+        buildNumberAnimation(context,model,number,model.getOldNumber(index))
+      ],
+    );
+  }
+  Widget buildNumber(BuildContext context,String ch){
+    return Image.asset('$path/$ch.png',height:height);
+  }
+  Widget buildNumberSlot(BuildContext context) => Opacity(
+    opacity: 0,
+    child: buildNumber(context,'7'),
+  );
+  Widget buildNumberAnimation(BuildContext context,SfRollingNumberEnhancedModel model,int number,oldNumber){
+    return Positioned(
+      top: Tween<double>(
+        begin: -oldNumber*height,
+        end: -number*height,
+      ).animate(model.controller).value,
+      child: Column(
+        children: ['0','1','2','3','4','5','6','7','8','9'].map<Widget>((ch) => buildNumber(context, ch)).toList(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SfProvider<SfRollingNumberEnhancedModel>(
+      model: SfRollingNumberEnhancedModel(this),
+      builder: (context,model,child) => AnimatedBuilder(
+        animation: model.controller,
+        builder: (context, child) => Row(
+          mainAxisSize: MainAxisSize.min,
+          children: model.numbers.asMap().keys.map((index)=>buildNumberColumn(context, model, index)).toList(),
+        ),
+      ),
+    );
+  }
+}
+class SfRollingNumberEnhancedModel extends SfViewState{
+  SfRollingNumberEnhancedModel(this.widget);
+  SfRollingNumberEnhanced widget;
+  AnimationController controller;
+  List<String> oldNumbers;
+  List<String> numbers;
+
+  int getNumber(int index) => int.tryParse(numbers[index]);
+  int getOldNumber(int index) => int.tryParse(oldNumbers[index])??0;
+  void rolling() async {
+    oldNumbers = numbers ?? [];
+    numbers = widget.number?.split('') ?? [];
+    if(oldNumbers.length < numbers.length){
+      oldNumbers.insertAll(0, List.filled(numbers.length-oldNumbers.length, '0'));
+    }
+    else if(oldNumbers.length > numbers.length){
+      numbers.insertAll(0, List.filled(oldNumbers.length-numbers.length, '0'));
+    }
+    notifyListeners();
+    controller.reset();
+    await controller.forward();
+    numbers = widget.number?.split('') ?? [];
+    notifyListeners();
+  }
+
+  @override
+  Future initDataVsync(vsync) async {
+    controller = AnimationController(duration:widget.duration,vsync:vsync);
+    rolling();
+  }
+  @override
+  void onRefactor(SfViewState newState){
+    var state = newState as SfRollingNumberEnhancedModel;
+    if(state.widget.number!=widget.number){
+      widget = state.widget;
+      rolling();
+    }
   }
 }
