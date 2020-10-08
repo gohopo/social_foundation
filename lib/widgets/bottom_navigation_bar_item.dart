@@ -6,11 +6,11 @@ class SfBottomNavigationBarItem extends BottomNavigationBarItem{
     @required WidgetWrapper iconWrapper,
     @required Widget icon,
     Widget activeIcon,
-    Widget title,
+    String label,
     Color backgroundColor,
   }) : super(
     icon: iconWrapper(icon),
-    title: title,
+    label: label,
     activeIcon: iconWrapper(activeIcon),
     backgroundColor: backgroundColor
   );
