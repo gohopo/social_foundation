@@ -7,17 +7,19 @@ import 'package:social_foundation/services/storage_manager.dart';
 abstract class SfConversation<TMessage extends SfMessage>{
   String ownerId;
   String convId;
+  String name;
   String creator;
   List members;
   int unreadMessagesCount;
   TMessage lastMessage;
   int lastMessageAt;
   int top;
-  SfConversation(Map data) : ownerId = data['ownerId'],convId = data['convId'],creator = data['creator'],members = data['members']??[],unreadMessagesCount = data['unreadMessagesCount']??0,lastMessage = data['lastMessage'],lastMessageAt = data['lastMessageAt'],top=data['top']??0;
+  SfConversation(Map data):ownerId=data['ownerId'],convId=data['convId'],name=data['name'],creator=data['creator'],members=data['members']??[],unreadMessagesCount=data['unreadMessagesCount']??0,lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt'],top=data['top']??0;
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
     map['ownerId'] = ownerId;
     map['convId'] = convId;
+    map['name'] = name;
     map['creator'] = creator;
     map['members'] = json.encode(members);
     map['unreadMessagesCount'] = unreadMessagesCount;

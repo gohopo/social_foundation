@@ -47,15 +47,15 @@ class _TabNavigatorState extends State<TabNavigator> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.forum),
-            title: Text('社区'),
+            label: '社区'
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.message),
-            title: Text('消息'),
+            label: '消息'
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            title: Text('设置'),
+            label: '设置'
           )
         ],
         currentIndex: _selectedIndex,

@@ -26,7 +26,7 @@ class SigninPage extends StatelessWidget {
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: <Widget>[
       FlutterLogo(
-        colors: Colors.green,
+        textColor: Colors.green,
         size: 80.0
       ),
       SizedBox(

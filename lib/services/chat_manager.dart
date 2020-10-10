@@ -88,6 +88,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     var map = Map();
     map['ownerId'] = GetIt.instance<SfUserState>().curUserId;
     map['convId'] = conversation.id;
+    map['name'] = conversation.name;
     map['creator'] = conversation.creator;
     map['members'] = conversation.members;
     map['unreadMessagesCount'] = conversation.unreadMessageCount ?? 0;

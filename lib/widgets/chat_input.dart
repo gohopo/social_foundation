@@ -11,16 +11,22 @@ class SfChatInput extends StatelessWidget {
   SfChatInput({
     Key key,
     this.model,
+    this.backgroundColor = const Color.fromARGB(255,37,38,51),
+    this.editorBackgroundColor = const Color.fromARGB(255,48,50,66),
+    this.editorColor = Colors.white,
     this.accessoryHeight = 260
   }) : super(key:key);
   final SfChatInputModel model;
+  final Color backgroundColor;
+  final Color editorBackgroundColor;
+  final Color editorColor;
   final double accessoryHeight;
   
   Widget buildEditor(BuildContext context){
     return Container(
       padding: EdgeInsets.symmetric(horizontal:11),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255,48,50,66),
+        color: editorBackgroundColor,
         borderRadius: BorderRadius.circular(16.5)
       ),
       child: TextField(
@@ -28,7 +34,7 @@ class SfChatInput extends StatelessWidget {
         focusNode: model.focusNode,
         textInputAction: model.textInputAction,
         onEditingComplete: model.onTapSend,
-        style: TextStyle(fontSize:16,color:Colors.white),
+        style: TextStyle(fontSize:16,color:editorColor),
         decoration: InputDecoration(
           hintText: '说点什么吧~',
           hintStyle: TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8)),
@@ -105,7 +111,7 @@ class SfChatInput extends StatelessWidget {
     return SfProvider<SfChatInputModel>(
       model: model,
       builder: (context,model,child) => Container(
-        color: Color.fromARGB(255,37,38,51),
+        color: backgroundColor,
         child: Column(children: <Widget>[
           Padding(
             padding: EdgeInsets.all(15),
@@ -142,9 +148,7 @@ class SfChatInputModel extends SfViewState {
     this.onTapSend,
     this.onPickImage,
     this.onRecordVoice
-  }){
-    initData();
-  }
+  });
 
   int get curAccessory => _curAccessory;
   void changeAccessory(int curAccessory){

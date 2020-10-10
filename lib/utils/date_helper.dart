@@ -43,7 +43,11 @@ class SfDateHelper{
     }
     millisecondsUnit = Duration.millisecondsPerSecond;
     if(minUnits==1 || maxUnits>0&&milliseconds>=millisecondsUnit){
-      format += _formatValue((milliseconds/millisecondsUnit).floor(), full, secondUnit??'');
+      format += _formatValue((milliseconds/millisecondsUnit).floor(), full, secondUnit??defaultUnit);
+    }
+    var index = format.lastIndexOf(defaultUnit);
+    if(index+defaultUnit.length == format.length){
+      format = format.replaceRange(index,format.length,'');
     }
     return format;
   }

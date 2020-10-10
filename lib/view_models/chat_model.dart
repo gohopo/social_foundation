@@ -14,11 +14,13 @@ import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatModel<TConversation extends SfConversation,TMessage extends SfMessage> extends SfRefreshListViewState<TMessage> with WidgetsBindingObserver{
   TConversation conversation;
+  String name;
+  bool anonymous;
   SfMessageEvent _messageEvent = SfMessageEvent();
   SfChatInputModel inputModel;
   ScrollController scrollController = ScrollController();
 
-  SfChatModel(Map args) : conversation=args['conversation']{
+  SfChatModel(Map args):conversation=args['conversation'],name=args['name']??'',anonymous=args['anonymous']??false{
     onInitInputModel();
   }
   Future sendMessage({String msg,@required String msgType,Map msgExtra,Map attribute}) async {
