@@ -6,43 +6,58 @@ class SfDateHelper{
   static String formatTimeline(int timestamp) => TimelineUtil.format(timestamp,locale:'zh');
   static String formatDate(DateTime date,{String format}) => DateUtil.formatDate(date,format:format);
   static String formatDateMs(int timestamp,{String format}) => DateUtil.formatDateMs(timestamp,format:format);
-  static String formatDuration(Duration duration,{bool full,int minUnits,int maxUnits,String defaultUnit,String yearUnit,String dayUnit,String hourUnit,String minuteUnit,String secondUnit}) => formatDurationMs(duration.inMilliseconds,full:full,minUnits:minUnits,maxUnits:maxUnits,defaultUnit:defaultUnit,yearUnit:yearUnit,dayUnit:dayUnit,hourUnit:hourUnit,minuteUnit:minuteUnit,secondUnit:secondUnit);
-  static String formatDurationMs(int milliseconds,{bool full,int minUnits,int maxUnits,String defaultUnit,String yearUnit,String dayUnit,String hourUnit,String minuteUnit,String secondUnit}){
+  ///格式化持续时间
+  ///使用请看[formatDurationMs]
+  static String formatDuration(Duration duration,{bool full,int minUnits,int maxUnits,String defaultUnit,String yearUnit,String dayUnit,String hourUnit,String minuteUnit,String secondUnit,int minUnit}) => formatDurationMs(duration.inMilliseconds,full:full,minUnits:minUnits,maxUnits:maxUnits,defaultUnit:defaultUnit,yearUnit:yearUnit,dayUnit:dayUnit,hourUnit:hourUnit,minuteUnit:minuteUnit,secondUnit:secondUnit,minUnit:minUnit);
+  ///格式化持续时间
+  ///[milliseconds] 持续时间,单位毫秒
+  ///[full] 是否有前導零
+  ///[minUnits] 最少单位数量
+  ///[maxUnits] 最多单位数量
+  ///[defaultUnit] 默认单位:
+  ///[yearUnit] 年单位
+  ///[dayUnit] 天单位
+  ///[hourUnit] 时单位
+  ///[minuteUnit] 分单位
+  ///[secondUnit] 秒单位
+  ///[minUnit] 最小单位,默认为0.(年:4 天:3 时:2 分:1 秒:0)
+  static String formatDurationMs(int milliseconds,{bool full,int minUnits,int maxUnits,String defaultUnit,String yearUnit,String dayUnit,String hourUnit,String minuteUnit,String secondUnit,int minUnit}){
     full ??= true;
-    minUnits = max(1,min(minUnits??1,5));
-    maxUnits = max(minUnits,min(maxUnits??2,5));
+    minUnit = max(0,min(minUnit??0,4));
+    minUnits = max(1,min(minUnits??1,5-minUnit));
+    maxUnits = max(minUnits,min(maxUnits??2,5-minUnit));
     defaultUnit ??= ':';
     var format = ''; 
     int millisecondsUnit = Duration.millisecondsPerDay*365;
-    if(minUnits==5 || milliseconds>=millisecondsUnit){
+    if(minUnits==5-minUnit || milliseconds>=millisecondsUnit){
       format += _formatValue((milliseconds/millisecondsUnit).floor(), full, yearUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerDay;
-    if(minUnits==4 || maxUnits>0&&milliseconds>=millisecondsUnit){
+    if(minUnit<4 && (minUnits==4-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
       format += _formatValue((milliseconds/millisecondsUnit).floor(), full, dayUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerHour;
-    if(minUnits==3 || maxUnits>0&&milliseconds>=millisecondsUnit){
+    if(minUnit<3 && (minUnits==3-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
       format += _formatValue((milliseconds/millisecondsUnit).floor(), full, hourUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerMinute;
-    if(minUnits==2 || maxUnits>0&&milliseconds>=millisecondsUnit){
+    if(minUnit<2 && (minUnits==2-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
       format += _formatValue((milliseconds/millisecondsUnit).floor(), full, minuteUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerSecond;
-    if(minUnits==1 || maxUnits>0&&milliseconds>=millisecondsUnit){
+    if(minUnit<1 && (minUnits==1-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
       format += _formatValue((milliseconds/millisecondsUnit).floor(), full, secondUnit??defaultUnit);
     }
     var index = format.lastIndexOf(defaultUnit);
@@ -74,6 +89,7 @@ class SfDateHelper{
   static DateTime endOfYesterday() => endOfToday().subtract(Duration(days:1));
   static Duration distanceBetweenDates(DateTime date, DateTime baseDate) => baseDate.difference(date);
   static Duration distanceToNow(DateTime baseDate) => distanceBetweenDates(DateTime.now(),baseDate);
+  static Duration distanceToNowMs(int timestamp) => distanceToNow(DateTime.fromMillisecondsSinceEpoch(timestamp));
   static Duration distanceToTomorrow() => distanceToNow(startOfTomorrow());
   static Duration distanceToYesterday() => distanceToNow(startOfToday());
 }

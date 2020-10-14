@@ -65,28 +65,43 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage: onPickImage,onRecordVoice: onRecordVoice);
   }
   void onTapSend() async {
-    if(inputModel.textEditingController.text.isEmpty) return;
-    await sendMessage(msg:inputModel.textEditingController.text,msgType: SfMessageType.text);
-    inputModel.textEditingController.clear();
+    try{
+      if(inputModel.textEditingController.text.isEmpty) return;
+      await sendMessage(msg:inputModel.textEditingController.text,msgType: SfMessageType.text);
+      inputModel.textEditingController.clear();
+    }
+    catch(error){
+      SfLocatorManager.appState.showError(error);
+    }
   }
   void onPickImage(File image) async {
-    var filePath = await SfAliyunOss.cacheFile(SfMessageType.image,image.path,prefix: 'chat',encrypt: 1);
-    var attribute = {
-      'filePath': filePath,
-      'fileDir': SfMessageType.image
-    };
-    return sendMessage(msgType:SfMessageType.image,attribute:attribute);
+    try{
+      var filePath = await SfAliyunOss.cacheFile(SfMessageType.image,image.path,prefix: 'chat',encrypt: 1);
+      var attribute = {
+        'filePath': filePath,
+        'fileDir': SfMessageType.image
+      };
+      return sendMessage(msgType:SfMessageType.image,attribute:attribute);
+    }
+    catch(error){
+      SfLocatorManager.appState.showError(error);
+    }
   }
   void onRecordVoice(String path,int duration) async {
-    var filePath = await SfAliyunOss.cacheFile(SfMessageType.voice,path,prefix:'chat');
-    Map msgExtra = {
-      'duration': duration
-    };
-    Map attribute = {
-      'filePath': filePath,
-      'fileDir': SfMessageType.voice
-    };
-    return sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
+    try{
+      var filePath = await SfAliyunOss.cacheFile(SfMessageType.voice,path,prefix:'chat');
+      Map msgExtra = {
+        'duration': duration
+      };
+      Map attribute = {
+        'filePath': filePath,
+        'fileDir': SfMessageType.voice
+      };
+      return sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
+    }
+    catch(error){
+      SfLocatorManager.appState.showError(error);
+    }
   }
   Future deleteMessage(TMessage message) async {
     await SfMessage.delete(message.id);

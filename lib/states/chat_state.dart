@@ -4,8 +4,12 @@ import 'package:social_foundation/services/chat_manager.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatState<TConversation extends SfConversation> extends SfRefreshListViewState<TConversation> {
+  List<TConversation> getList(String name) => list.where((data) => data.name==name).toList();
+  int getListUnreadMessagesCount(List<TConversation> list) => list.fold(0, (previousValue, conv) => previousValue+conv.unreadMessagesCount);
+  TConversation getConversation(String convId) => list.firstWhere((data) => data.convId==convId,orElse: ()=>null);
+  int getUnreadMessagesCount(String convId) => getConversation(convId)?.unreadMessagesCount??0;
   Future<TConversation> queryConversation(String convId) async {
-    return list.firstWhere((data) => data.convId==convId,orElse: ()=>null);
+    return getConversation(convId);
   }
   void saveConversation(TConversation conversation,{bool fromReceived}){
     var index = list.indexWhere((data) => data.convId==conversation.convId);

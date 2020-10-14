@@ -102,6 +102,7 @@ class SfAppState extends SfViewState{
       inputDecorationTheme: inputDecorationTheme(themeData),
     );
   }
+  void showError(error){}
   //通知
   List<String> notifyList = [];
   bool isNotifyUnread(String notifyType) => notifyList.contains(notifyType);
@@ -124,9 +125,7 @@ class SfAppState extends SfViewState{
     delayedNotifyListeners(500);
     SfApp.removeNotify(SfLocatorManager.userState.curUserId, notifyType);
   }
-  void processNotifyList(){
-    
-  }
+  void processNotifyList(){}
 
   @override
   Future initData() async {
