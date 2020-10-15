@@ -3,14 +3,11 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:leancloud_official_plugin/leancloud_plugin.dart';
 import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/event_manager.dart';
 import 'package:social_foundation/social_foundation.dart';
-import 'package:social_foundation/states/chat_state.dart';
-import 'package:social_foundation/states/user_state.dart';
 import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 
@@ -26,9 +23,9 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   Future<TMessage> sendNotifyMsg({@required String convId,@required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType},{'transient':true});
   Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute}) async {
     var message = convertMessage({
-      'ownerId': GetIt.instance<SfUserState>().curUserId,
+      'ownerId': SfLocatorManager.userState.curUserId,
       'convId': convId,
-      'fromId': GetIt.instance<SfUserState>().curUserId,
+      'fromId': SfLocatorManager.userState.curUserId,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'status': MessageStatus.sending.index,
       'attribute': attribute,
@@ -68,14 +65,14 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     return saveMessage(message);
   }
   void saveConversation(TConversation conversation,{bool fromReceived}){
-    GetIt.instance<SfChatState>().saveConversation(conversation,fromReceived:fromReceived);
+    SfLocatorManager.chatState.saveConversation(conversation,fromReceived:fromReceived);
   }
   Future<TMessage> saveMessage(TMessage message) async {
     var isNew = message.id==null;
     await message.save();
     SfMessageEvent(message:message,isNew:isNew).emit();
     if(!message.transient && (message.fromOwner || !isNew)){
-      var conversation = await GetIt.instance<SfChatState>().queryConversation(message.convId);
+      var conversation = await SfLocatorManager.chatState.queryConversation(message.convId);
       if(conversation!=null && (isNew || conversation.lastMessage==null || conversation.lastMessage.id==message.id)){
         conversation.lastMessage = message;
         conversation.lastMessageAt = message.timestamp;
@@ -86,7 +83,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   }
   TConversation _convertConversation(Conversation conversation){
     var map = Map();
-    map['ownerId'] = GetIt.instance<SfUserState>().curUserId;
+    map['ownerId'] = SfLocatorManager.userState.curUserId;
     map['convId'] = conversation.id;
     map['name'] = conversation.name;
     map['creator'] = conversation.creator;
@@ -97,10 +94,8 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     return convertConversation(map);
   }
   TMessage _convertMessage(Message message){
-    TextMessage textMessage = message is TextMessage ? message : null;
-    if(textMessage == null) return null;
     var map = Map();
-    map['ownerId'] = GetIt.instance<SfUserState>().curUserId;
+    map['ownerId'] = SfLocatorManager.userState.curUserId;
     map['msgId'] = message.id;
     map['convId'] = message.conversationID;
     map['fromId'] = message.fromClientID;
@@ -110,7 +105,12 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     map['attribute'] = {
       'transient': message.isTransient
     };
-    map.addAll(json.decode(textMessage.text));
+    if(message is TextMessage){
+      map.addAll(json.decode(message.text));
+    }
+    else if(message is RecalledMessage){
+      map['msgType'] = SfMessageType.recall;
+    }
     return convertMessage(map);
   }
   //sdk
@@ -172,10 +172,9 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     saveConversation(conversation);
   }
   void onMessageRecalled(TMessage message){
-    message.msgType = SfMessageType.recall;
     saveMessage(message);
   }
-  void onNotifyReceived(TMessage message) => GetIt.instance<SfAppState>().addNotify(message.msgExtra['notifyType']);
+  void onNotifyReceived(TMessage message) => SfLocatorManager.appState.addNotify(message.msgExtra['notifyType']);
   Future<Conversation> _getConversation(String conversationId) async {
     var conversation = _client.conversationMap[conversationId];
     if(conversation == null){

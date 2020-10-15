@@ -55,6 +55,12 @@ class SfMessage {
         return '[图片]';
       case SfMessageType.voice:
         return '[声音]';
+      case SfMessageType.system:
+        return '[系统]';
+      case SfMessageType.notify:
+        return '[通知]';
+      case SfMessageType.recall:
+        return '[已撤回]';
       default:
         return '';
     }
