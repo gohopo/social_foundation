@@ -94,6 +94,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     return convertConversation(map);
   }
   TMessage _convertMessage(Message message){
+    if(message==null) return null;
     var map = Map();
     map['ownerId'] = SfLocatorManager.userState.curUserId;
     map['msgId'] = message.id;
