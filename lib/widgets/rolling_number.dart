@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
@@ -177,6 +180,80 @@ class SfRollingNumberEnhancedModel extends SfViewState{
     if(state.widget.number!=widget.number){
       widget = state.widget;
       rolling();
+    }
+  }
+}
+
+class SfAnimatedNumber extends StatelessWidget{
+  SfAnimatedNumber({
+    this.number,
+    this.style,
+    this.duration = const Duration(milliseconds:400),
+    this.framesPerSecond = 100,
+    this.numberBuilder
+  });
+  final double number;
+  final TextStyle style;
+  final Duration duration;
+  final int framesPerSecond;
+  final String Function(double number) numberBuilder;
+
+  @override
+  Widget build(BuildContext context){
+    return SfProvider<SfAnimatedNumberModel>(
+      model: SfAnimatedNumberModel(this),
+      builder: (context,model,child) => Text(numberBuilder?.call(model.number)??model.number.toString(),style:style),
+    );
+  }
+}
+class SfAnimatedNumberModel extends SfViewState{
+  SfAnimatedNumberModel(this.widget);
+  SfAnimatedNumber widget;
+  double number = 0;
+  Timer _timer;
+  List<double> _frameList = [];
+
+  void animate() async {
+    stop();
+    if(widget.number==null || widget.number==number) return;
+    _frameList = [];
+    var random = Random();
+    int count = widget.duration.inMilliseconds*widget.framesPerSecond~/1000;
+    double num = number;
+    do{
+      double step = random.nextDouble()*(widget.number-number)*2/count;
+      num += step;
+      if(step>0&&num>widget.number || step<0&&num<widget.number){
+        num = widget.number;
+      }
+      _frameList.add(num);
+    }
+    while(num!=widget.number);
+    _timer = Timer.periodic(Duration(milliseconds:widget.duration.inMilliseconds~/count),onUpdate);
+  }
+  void stop(){
+    _timer?.cancel();
+    _timer = null;
+  }
+  void onUpdate(timer){
+    number = _frameList.removeAt(0);
+    notifyListeners();
+    if(_frameList.length==0) stop();
+  }
+
+  @override
+  Future initData() async => animate();
+  @override
+  void dispose(){
+    stop();
+    super.dispose();
+  }
+  @override
+  void onRefactor(SfViewState newState){
+    var state = newState as SfAnimatedNumberModel;
+    if(state.widget.number!=widget.number){
+      widget = state.widget;
+      animate();
     }
   }
 }
