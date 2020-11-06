@@ -17,7 +17,7 @@ class SfUser{
     return map;
   }
   int get genderReverse => gender==2 ? 1 : 2;
-  Color get genderColor => gender==2 ? Color.fromRGBO(255,67,142,1) : Color.fromRGBO(51,51,51,1);
+  Color get genderColor => gender==2 ? Color.fromRGBO(255,67,142,1) : Color.fromRGBO(64,101,153,1);
   Future save() async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     await database.insert('user', toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
