@@ -135,6 +135,7 @@ class SfNinePatchImagePainter extends CustomPainter{
     if(image == null) return;
     Size imageSize = Size(image.width.toDouble(),image.height.toDouble())/ScreenUtil.pixelRatio;
     final Paint paint = Paint()..isAntiAlias=false;
+    canvas.save();
     //宽分三列
     if(size.width>imageSize.width && size.height<=imageSize.height) drawImageHorizontal(canvas, size, imageSize, paint);
     //高分三层
@@ -143,6 +144,7 @@ class SfNinePatchImagePainter extends CustomPainter{
     else if(size.width>imageSize.width && size.height>imageSize.height) drawImageNinePatch(canvas, size, imageSize, paint);
     //画图像缩放
     else drawImageScale(canvas,0,0,size.width,size.height,0,0,imageSize.width,imageSize.height,paint);
+    canvas.restore();
   }
   
   @override
