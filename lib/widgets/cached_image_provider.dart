@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -9,6 +11,7 @@ import 'package:social_foundation/services/storage_manager.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/utils/utils.dart';
+import 'package:svgaplayer_flutter/svgaplayer_flutter.dart';
 
 class SfCacheManager extends BaseCacheManager {
   factory SfCacheManager() {
@@ -124,5 +127,70 @@ class SfCachedNetworkImage extends StatelessWidget{
       colorBlendMode: colorBlendMode,
       placeholderFadeInDuration: placeholderFadeInDuration,
     );
+  }
+}
+
+class SfCachedImage extends StatelessWidget{
+  SfCachedImage({
+    Key key,
+    this.imagePath,
+    this.fit,
+    this.imageBuilder
+  }):super(key:key);
+  final String imagePath;
+  final BoxFit fit;
+  final ValueWidgetBuilder<ImageProvider> imageBuilder;
+
+  Widget _imageBuilder(BuildContext context,ImageProvider image,Widget child) => Image(
+    image: image,
+    fit: fit
+  );
+  Widget buildImage(BuildContext context,_SfCachedImageModel model){
+    switch(model.ext){
+      case '.png':
+      case '.gif':
+      case '.jpg':
+      case '.webp':
+        return (imageBuilder??_imageBuilder).call(context,model.file!=null?FileImage(model.file):AssetImage(imagePath),null);
+      case '.svga':
+        return SVGASimpleImage(
+          assetsName: model.file!=null ? null : imagePath,
+          file: model.file,
+        );
+      default:
+        return SizedBox();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return SfProvider<_SfCachedImageModel>(
+      model: _SfCachedImageModel(this),
+      builder: (context,model,child) => imagePath==null || model.network&&model.file==null ? SizedBox() : buildImage(context,model)
+    );
+  }
+}
+class _SfCachedImageModel extends SfViewState{
+  _SfCachedImageModel(this.widget);
+  SfCachedImage widget;
+  String ext;
+  bool network;
+  File file;
+
+  void reload() async {
+    if(widget.imagePath != null){
+      ext = SfFileHelper.getUrlExt(widget.imagePath);
+      network = SfFileHelper.isUrl(widget.imagePath);
+      if(network) file = await SfCacheManager().getSingleFile(widget.imagePath);
+    }
+    notifyListeners();
+  }
+
+  @override
+  Future initData() async => reload();
+  @override
+  void onRefactor(newState){
+    var model = newState as _SfCachedImageModel;
+    if(widget.imagePath!=model.widget.imagePath) reload();
   }
 }
