@@ -19,13 +19,19 @@ class SfUtils{
   static String md5(String data){
     return crypto.md5.convert(Utf8Encoder().convert(data)).toString();
   }
-  static int getIndexInRange<T>(List<T> range,bool test(T element)){
-    var index = range.indexWhere(test);
+  static int getIndexInRange<T>(List<T> range,bool predicate(T element)){
+    var index = range.indexWhere(predicate);
     if(--index < 0) index = range.length-1;
     return index;
   }
+  static int calcIndexInRange(int value,int calculator(int index)){
+    var index = 0;
+    for(;value >= calculator(index);++index){}
+    return index;
+  }
   //获取经验等级
-  static int getLevelForExp(List<int> exps,int exp) => getIndexInRange<int>(exps,(e) => e>exp);
+  static int getLevelFromExp(List<int> exps,int exp) => getIndexInRange<int>(exps,(e) => e>exp);
+  static int calcLevelFromExp(int exp,int calculator(int level)) => calcIndexInRange(exp,calculator);
   //返回min,max之间的随机数
   static int randRange(int min,int max) => min + Random().nextInt(max-min);
   static double randRangeDouble(double min,double max) => min + Random().nextDouble()*(max-min);
