@@ -4,7 +4,11 @@ import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/message.dart';
 
-class SfEvent<T>{
+class _SfEventBase{
+  List<String> handledTags = [];
+}
+
+class SfEvent<T extends _SfEventBase> extends _SfEventBase{
   StreamSubscription _subscription;
   
   void listen(void onData(T event),{bool onWhere(T event)}){
