@@ -56,6 +56,7 @@ export './pages/photo_viewer.dart';
 //viewmodels
 export './view_models/audio_model.dart';
 export './view_models/chat_model.dart';
+export './view_models/list_model.dart';
 //services
 export './services/storage_manager.dart';
 export './services/chat_manager.dart';

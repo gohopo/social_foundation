@@ -38,14 +38,14 @@ class SfAliyunOss {
     await File(srcFilePath).copy(filePath);
     return filePath;
   }
-  static int isEncryptFile(String path) => isEncryptFileName(SfFileHelper.getFileNameWithoutExt(path));
-  static int isEncryptFileUrl(String url) => isEncryptFileName(SfFileHelper.getUrlNameWithoutExt(url));
-  static int isEncryptFileName(String name){
+  static int getEncryptFromFilePath(String path) => getEncryptFromFileName(SfFileHelper.getFileNameWithoutExt(path));
+  static int getEncryptFromFileUrl(String url) => getEncryptFromFileName(SfFileHelper.getUrlNameWithoutExt(url));
+  static int getEncryptFromFileName(String name){
     name = SfFileHelper.getFileNameWithoutExt(name);
     var index = name.lastIndexOf('_');
     if(index != -1){
       var encrypt = name.substring(index+1,name.length);
-      return int.parse(encrypt);
+      return int.tryParse(encrypt) ?? 0;
     }
     return 0;
   }
@@ -70,7 +70,7 @@ class SfAliyunOss {
     return url;
   }
   static String getFileUrl(String dir,String fileKey){
-    if(isEncryptFileName(fileKey) > 0) dir = 'encrypt_$dir';
+    if(getEncryptFromFileName(fileKey) > 0) dir = 'encrypt_$dir';
     return '$endPoint/$dir/$fileKey';
   }
   static Future<Response> uploadFile(String dir,String filePath,{String fileName,ProgressCallback onSendProgress}) async {
@@ -79,7 +79,7 @@ class SfAliyunOss {
     return uploadBytes(dir,fileName,bytes,onSendProgress:onSendProgress);
   }
   static Future<Response> uploadBytes(String dir,String fileName,Uint8List bytes,{ProgressCallback onSendProgress}) async {
-    var encrypt = isEncryptFileName(fileName);
+    var encrypt = getEncryptFromFileName(fileName);
     //加入缓存
     await SfCacheManager().putFile(
       getFileUrl(dir,fileName), bytes, fileExtension: SfFileHelper.getFileExt(fileName)

@@ -31,12 +31,15 @@ class SfCacheManager extends BaseCacheManager {
   }
   static Future<FileFetcherResponse> _fileFetcher(String url,{Map<String, String> headers}) async {
     var httpResponse = await http.get(url, headers: headers);
-    var encrypt = SfAliyunOss.isEncryptFileUrl(url);
-    if(encrypt == 1){
-      SfUtils.encrypt(httpResponse.bodyBytes);
-    }
-    else if(encrypt > 0){
-      throw '不支持的加密方式!';
+    var encrypt = SfAliyunOss.getEncryptFromFileUrl(url);
+    if(encrypt > 0){
+      switch(encrypt){
+        case 1:
+          SfUtils.encrypt(httpResponse.bodyBytes);
+          break;
+        default:
+          throw '不支持的加密方式!';
+      }
     }
     return new HttpFileFetcherResponse(httpResponse);
   }

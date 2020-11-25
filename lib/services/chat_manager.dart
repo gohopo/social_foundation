@@ -15,10 +15,10 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   Client _client;
   TConversation convertConversation(Map data);
   TMessage convertMessage(Map data);
-  Future<TMessage> sendSystemMsg({@required String convId,@required String systemType,Map msgExtra}){
+  Future<TMessage> sendSystemMsg({@required String convId,String msg,String systemType,Map msgExtra}){
     if(msgExtra == null) msgExtra = {};
     msgExtra['systemType'] = systemType;
-    return sendMsg(convId:convId,msgType:SfMessageType.system,msgExtra:msgExtra);
+    return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra);
   }
   Future<TMessage> sendNotifyMsg({@required String convId,@required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType},{'transient':true});
   Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute}) async {
