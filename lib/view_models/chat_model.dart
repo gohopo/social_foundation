@@ -62,7 +62,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
 
   }
   void onInitInputModel(){
-    inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage: onPickImage,onRecordVoice: onRecordVoice);
+    inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage:onPickImage,onRecordVoice:onRecordVoice,onAccessoryChanged:onAccessoryChanged);
   }
   void onTapSend() async {
     try{
@@ -107,6 +107,9 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     await SfMessage.delete(message.id);
     list.removeWhere((data) => data.id==message.id);
     notifyListeners();
+  }
+  void onAccessoryChanged(SfChatInputModel model){
+
   }
 
   @override

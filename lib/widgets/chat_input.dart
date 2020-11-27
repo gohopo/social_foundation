@@ -144,22 +144,27 @@ class SfChatInputModel extends SfViewState {
   int imageQuality = 75;
   final void Function(File image) onPickImage;
   final void Function(String path,int duration) onRecordVoice;
+  final void Function(SfChatInputModel model) onAccessoryChanged;
+  bool editorHasFocus = false;
   SfChatInputModel({
     this.onTapSend,
     this.onPickImage,
-    this.onRecordVoice
+    this.onRecordVoice,
+    this.onAccessoryChanged
   });
 
   int get curAccessory => _curAccessory;
   void changeAccessory(int curAccessory){
     if(curAccessory!=-1 && focusNode.hasFocus){
       focusNode.unfocus();
+      editorHasFocus = false;
     }
     else if(_curAccessory == curAccessory){
       curAccessory = -1;
     }
     _curAccessory = curAccessory;
     notifyListeners();
+    onAccessoryChanged?.call(this);
   }
   void onTapMenu(int index){
     changeAccessory(index);
@@ -184,6 +189,7 @@ class SfChatInputModel extends SfViewState {
   @override
   Future initData() async {
     focusNode.addListener((){
+      editorHasFocus = focusNode.hasFocus;
       if(focusNode.hasFocus){
         changeAccessory(-1);
       }
