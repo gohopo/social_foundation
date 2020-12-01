@@ -85,9 +85,12 @@ class SfMessage {
       messages[i].id = results[i];
     }
   }
-  static Future<int> sumMessageCount(String convId,String userId) async {
+  static Future<int> sumMessageCount(String convId,String userId,{int startTime,int endTime}) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
-    return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where convId="$convId" and fromId="$userId"'));
+    var where = 'convId="$convId" and fromId="$userId"';
+    if(startTime!=null) where += ' and timestamp>=$startTime';
+    if(endTime!=null) where += ' and timestamp<=$endTime';
+    return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where $where'));
   }
   static Future delete(int id) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();

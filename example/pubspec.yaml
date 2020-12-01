@@ -9,11 +9,8 @@ dependencies:
   flutter:
     sdk: flutter
   social_foundation:
-      path: ../
+    path: ../
   cupertino_icons: ^0.1.2
-  date_format: ^1.0.8
-  image_picker: ^0.6.3+4
-  bot_toast: ^2.3.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,3 @@
-import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/services/router_manager.dart';
@@ -63,7 +62,7 @@ class ConversationItemWidget extends StatelessWidget{
               Container(
                 margin: const EdgeInsets.only(top: 4),
                 child: Text(
-                  conversation.lastMessageAt!=null ? formatDate(DateTime.fromMillisecondsSinceEpoch(conversation.lastMessageAt), [HH, ':', nn, ':', ss]).toString() : '',
+                  conversation.lastMessageAt!=null ? SfDateHelper.formatTimeline(conversation.lastMessageAt) : '',
                   style: TextStyle(fontSize: 14.0, color: Color(0xFFa9a9a9)),
                 ),
               )
