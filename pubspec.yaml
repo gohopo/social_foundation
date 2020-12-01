@@ -2,6 +2,7 @@ name: social_foundation
 description: social foundation
 version: 0.0.22-beta1
 homepage: https://github.com/gohopo/social_foundation
+publish_to: none
 
 environment:
   sdk: ">=2.6.0 <3.0.0"

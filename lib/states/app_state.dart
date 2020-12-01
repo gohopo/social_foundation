@@ -86,12 +86,14 @@ class SfAppState extends SfViewState{
       splashColor: _themeColor.withAlpha(50),
       hintColor: themeData.hintColor.withAlpha(90),
       errorColor: Colors.red,
-      cursorColor: themeData.accentColor,
       textTheme: themeData.textTheme.copyWith(
         //subhead: themeData.textTheme.subhead.copyWith(textBaseline: TextBaseline.alphabetic)
       ),
-      textSelectionColor: themeData.accentColor.withAlpha(60),
-      textSelectionHandleColor: themeData.accentColor.withAlpha(60),
+      textSelectionTheme: themeData.textSelectionTheme.copyWith(
+        cursorColor: themeData.accentColor,
+        selectionColor: themeData.accentColor.withAlpha(60),
+        selectionHandleColor: themeData.accentColor.withAlpha(60),
+      ),
       toggleableActiveColor: themeData.accentColor,
       chipTheme: themeData.chipTheme.copyWith(
         pressElevation: 0,
