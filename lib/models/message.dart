@@ -85,9 +85,9 @@ class SfMessage {
       messages[i].id = results[i];
     }
   }
-  static Future<int> sumMessageCount(String userId) async {
+  static Future<int> sumMessageCount(String convId,String userId) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
-    return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where fromId="$userId"'));
+    return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where convId="$convId" and fromId="$userId"'));
   }
   static Future delete(int id) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
