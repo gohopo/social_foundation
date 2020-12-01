@@ -58,6 +58,7 @@ class SfBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.passthrough,
       clipBehavior: Clip.none,
       children: <Widget>[
         buildChild(),
