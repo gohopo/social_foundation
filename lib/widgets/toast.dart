@@ -199,7 +199,7 @@ class SfEasyDialog extends SfDialog{
     animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,
     clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor,duration:duration
   );
-  void onShowCustom({SfDialogBuilder builder,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,UniqueKey key,String groupKey,bool allowClick,bool clickClose,VoidCallback onClose,Color backgroundColor,Duration duration}) => onShow(
+  void onShowCustom({SfDialogBuilder builder,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,UniqueKey key,String groupKey,bool allowClick,bool clickClose,bool ignoreContentClick,VoidCallback onClose,Color backgroundColor,Duration duration}) => onShow(
     builder: builder,
     animationDuration: animationDuration,
     animationReverseDuration: animationReverseDuration,
@@ -208,6 +208,7 @@ class SfEasyDialog extends SfDialog{
     groupKey: groupKey??'SfEasyDialog',
     allowClick: allowClick,
     clickClose: clickClose,
+    ignoreContentClick: ignoreContentClick,
     onClose: onClose,
     backgroundColor: backgroundColor,
     duration: duration
