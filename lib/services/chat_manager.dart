@@ -40,7 +40,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     try{
       //保存
       message.status = SfMessageStatus.sending;
-      message = await saveMessage(message);
+      message = await saveMessage(message,message.id==null);
       //上传
       String filePath = message.attribute['filePath'];
       if(filePath!=null && !message.msgExtra.containsKey('fileKey')){
@@ -67,9 +67,8 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   void saveConversation(TConversation conversation,{bool fromReceived}){
     SfLocatorManager.chatState.saveConversation(conversation,fromReceived:fromReceived);
   }
-  Future<TMessage> saveMessage(TMessage message) async {
-    var isNew = message.id==null;
-    await message.save();
+  Future<TMessage> saveMessage(TMessage message,[bool isNew=false]) async {
+    if(!message.transient) await message.save();
     SfMessageEvent(message:message,isNew:isNew).emit();
     if(!message.transient && (message.fromOwner || !isNew)){
       var conversation = await SfLocatorManager.chatState.queryConversation(message.convId);
@@ -167,13 +166,13 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   void onMessageReceived(TConversation conversation,TMessage message){
     if(message.msgType==SfMessageType.notify) return onNotifyReceived(message);
     if(!message.transient) saveConversation(conversation,fromReceived:true);
-    saveMessage(message);
+    saveMessage(message,true);
   }
   void onUnreadMessagesCountUpdated(TConversation conversation) {
     saveConversation(conversation);
   }
   void onMessageRecalled(TMessage message){
-    saveMessage(message);
+    saveMessage(message,false);
   }
   void onNotifyReceived(TMessage message) => SfLocatorManager.appState.addNotify(message.msgExtra['notifyType']);
   Future<Conversation> _getConversation(String conversationId) async {

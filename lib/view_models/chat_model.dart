@@ -31,12 +31,12 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     await queryUnreadMessages();
   }
   void onMessageEvent(SfMessageEvent event){
-    if(event.isNew){
+    if(event.isNew && !event.message.transient){
       list.insert(0,event.message);
       convRead();
     }
     else{
-      var index = list.indexWhere((data) => data.id==event.message.id);
+      var index = list.indexWhere((data) => data.id==event.message.id || data.msgId==event.message.msgId || data==event.message);
       if(index != -1) list[index] = event.message;
     }
     notifyListeners();
