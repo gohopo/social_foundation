@@ -9,9 +9,9 @@ class SfBadge extends StatelessWidget {
     this.top = 0,
     this.right = 0,
     this.bottom,
-    this.width,
-    this.height,
-    this.padding = const EdgeInsets.symmetric(horizontal:3.5,vertical:2),
+    this.width = 10,
+    this.height = 10,
+    this.padding = const EdgeInsets.symmetric(horizontal:2,vertical:1),
     this.color = Colors.red,
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
     this.text,
@@ -41,10 +41,12 @@ class SfBadge extends StatelessWidget {
       top: top,
       right: right,
       bottom: bottom,
-      width: width,
-      height: height,
       child: Container(
         padding: padding,
+        constraints: BoxConstraints(
+          minWidth: width??0,
+          minHeight: height??0
+        ),
         decoration: BoxDecoration(
           color: color,
           borderRadius: borderRadius
