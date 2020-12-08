@@ -148,5 +148,8 @@ class SfNinePatchImagePainter extends CustomPainter{
   }
   
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate){
+    var painter = oldDelegate as SfNinePatchImagePainter;
+    return painter?.image != image;
+  }
 }
