@@ -9,6 +9,12 @@ class SfRouteName {
 
 class SfRouterManager extends NavigatorObserver{
   void showPhotoViewer({List<ImageProvider> images,int index,String heroPrefix,PageController controller}) => navigator.pushNamed(SfRouteName.photo_viewer,arguments:{'images':images,'index':index,'heroPrefix':heroPrefix,'controller':controller});
+  @override
+  void didPop(Route route, Route previousRoute) {
+    super.didPush(route, previousRoute);
+    final focus = FocusManager.instance.primaryFocus;
+    focus?.unfocus();
+  }
   Route<dynamic> generateRoute(RouteSettings settings){
     switch (settings.name) {
       case SfRouteName.photo_viewer:
