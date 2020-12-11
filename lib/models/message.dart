@@ -65,6 +65,7 @@ class SfMessage {
         return '';
     }
   }
+  bool equalTo(SfMessage other) => msgId!=null&&msgId==other.msgId || id!=null&&id==other.id || this==other;
   String resolveFileUri() => msgExtra['fileKey']!=null ? SfAliyunOss.getFileUrl(msgType,msgExtra['fileKey']) : (attribute['filePath'] ?? '');
   ImageProvider resolveImage() => msgExtra['fileKey']!=null ? SfCacheManager.provder(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) :(attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : null);
   Future save() async {

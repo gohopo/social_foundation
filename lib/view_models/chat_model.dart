@@ -36,7 +36,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       convRead();
     }
     else{
-      var index = list.indexWhere((data) => data.id==event.message.id || data.msgId==event.message.msgId || data==event.message);
+      var index = list.indexWhere((data) => data.equalTo(event.message));
       if(index != -1) list[index] = event.message;
     }
     notifyListeners();
