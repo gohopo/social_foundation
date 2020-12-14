@@ -30,8 +30,9 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   Future onResumed() async {
     await queryUnreadMessages();
   }
+  bool onMessageEventWhere(SfMessageEvent event) => event.message.convId==conversation.convId;
   void onMessageEvent(SfMessageEvent event){
-    if(event.isNew && !event.message.transient){
+    if(event.isNew){
       list.insert(0,event.message);
       convRead();
     }
@@ -55,12 +56,10 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       await SfMessage.insertAll(messages);
       convRead();
     }
-    _messageEvent.listen(onMessageEvent,onWhere:(event) => event.message.convId==conversation.convId);
+    _messageEvent.listen(onMessageEvent,onWhere:onMessageEventWhere);
   }
   void convRead() => SfLocatorManager.chatState.read(conversation.convId);
-  void onUnreadMessages(List<TMessage> messages){
-
-  }
+  void onUnreadMessages(List<TMessage> messages){}
   void onInitInputModel(){
     inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage:onPickImage,onRecordVoice:onRecordVoice,onAccessoryChanged:onAccessoryChanged);
   }
@@ -108,9 +107,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     list.removeWhere((data) => data.id==message.id);
     notifyListeners();
   }
-  void onAccessoryChanged(SfChatInputModel model){
-
-  }
+  void onAccessoryChanged(SfChatInputModel model){}
 
   @override
   Future initData() async {
