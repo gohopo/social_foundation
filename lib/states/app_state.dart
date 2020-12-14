@@ -128,6 +128,8 @@ class SfAppState extends SfViewState{
     SfApp.removeNotify(SfLocatorManager.userState.curUserId, notifyType);
   }
   void processNotifyList(){}
+  //关键字
+  String filterKeyword(String content) => content;
 
   @override
   Future initData() async {
