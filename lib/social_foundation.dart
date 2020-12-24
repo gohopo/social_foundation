@@ -52,6 +52,7 @@ export './widgets/bottom_navigation_bar_item.dart';
 export './widgets/path.dart';
 export './widgets/paint.dart';
 export './widgets/text.dart';
+export './widgets/sliver.dart';
 //pages
 export './pages/photo_viewer.dart';
 //viewmodels
