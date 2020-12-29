@@ -21,7 +21,9 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra);
   }
   Future<TMessage> sendNotifyMsg({@required String convId,@required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType},{'transient':true});
-  Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute}) async {
+  Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute,bool saveConv = true}) async {
+    if(attribute == null) attribute = {};
+    attribute['saveConv'] = saveConv;
     var message = convertMessage({
       'ownerId': SfLocatorManager.userState.curUserId,
       'convId': convId,
@@ -70,7 +72,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   Future<TMessage> saveMessage(TMessage message,[bool isNew=false]) async {
     if(!message.transient) await message.save();
     SfMessageEvent(message:message,isNew:isNew).emit();
-    if(!message.transient && (message.fromOwner || !isNew)){
+    if(!message.transient && message.attribute['saveConv']!=false && (message.fromOwner || !isNew)){
       var conversation = await SfLocatorManager.chatState.queryConversation(message.convId);
       if(conversation!=null && (isNew || conversation.lastMessage==null || conversation.lastMessage.id==message.id)){
         conversation.lastMessage = message;
