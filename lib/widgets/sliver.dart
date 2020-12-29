@@ -53,7 +53,7 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
     this.titleBuilder,
     this.title,
     this.actionProvider,
-    this.actions,
+    this.actions = const [],
     this.iconSize = 16
   });
   final double collapsedHeight;
@@ -130,7 +130,7 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
     onTap: () => Navigator.pop(context),
     child: Icon(Icons.arrow_back_ios,size:iconSize),
   );
-  Widget buildTitle(BuildContext context) => titleBuilder!=null ? titleBuilder(context,this) : Text(title,style:TextStyle(fontSize:20,fontWeight:FontWeight.w500,color:textColor));
+  Widget buildTitle(BuildContext context) => titleBuilder!=null ? titleBuilder(context,this) : Text(title,style:TextStyle(fontSize:iconSize,fontWeight:FontWeight.w500,color:textColor));
   List<Widget> buildActionList(BuildContext context) => actionProvider!=null ? actionProvider(context,this) : actions;
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent){
