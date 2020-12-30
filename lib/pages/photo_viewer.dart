@@ -1,6 +1,5 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
