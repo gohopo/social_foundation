@@ -54,10 +54,12 @@ class SfPhotoGalleryViewer extends StatelessWidget {
     if(result != 0) return;
     try{
       var bytes = await SfImageHelper.convertProviderToBytes(model.images[index]);
-      await ImageGallerySaver.saveImage(bytes,quality:100,name:'${model.heroPrefix}_${DateTime.now().millisecondsSinceEpoch}');
+      var result = await SfImageHelper.saveImage(bytes,quality:100,name:'${model.heroPrefix}_${DateTime.now().millisecondsSinceEpoch}');
+      if(result['isSuccess']==false) throw result['errorMessage'];
       GetIt.instance<SfToast>().onShowText('保存成功');
     }
     catch(error){
+      print(error);
       GetIt.instance<SfToast>().onShowText('保存失败');
     }
   }

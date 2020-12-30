@@ -4,6 +4,8 @@ import 'dart:ui' as ui show Image,ImageByteFormat,window;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SfImageHelper{
   static Future<ui.Image> captureToImage(GlobalKey key,{double pixelRatio}){
@@ -27,5 +29,11 @@ class SfImageHelper{
     var image = await convertProviderToImage(provider,configuration:configuration);
     var bytes = await image.toByteData(format:format??ui.ImageByteFormat.png);
     return bytes.buffer.asUint8List();
+  }
+  static Future saveImage(Uint8List imageBytes,{int quality=80,String name,bool isReturnImagePathOfIOS=false}) async {
+    var status = await Permission.storage.status;
+    if(status.isUndetermined) status = await Permission.storage.request();
+    if(!status.isGranted) throw '没有存储权限!';
+    return ImageGallerySaver.saveImage(imageBytes,quality:quality,name:name,isReturnImagePathOfIOS:isReturnImagePathOfIOS);
   }
 }

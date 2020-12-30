@@ -14,6 +14,7 @@ export 'package:fluwx/fluwx.dart';
 export 'package:get_it/get_it.dart';
 export 'package:image_gallery_saver/image_gallery_saver.dart';
 export 'package:image_picker/image_picker.dart';
+export 'package:permission_handler/permission_handler.dart';
 export 'package:provider/provider.dart';
 export 'package:pull_to_refresh/pull_to_refresh.dart';
 export 'package:shimmer/shimmer.dart';
