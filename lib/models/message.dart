@@ -41,7 +41,7 @@ class SfMessage {
     return map;
   }
   bool get fromOwner => fromId==ownerId;
-  bool get transient => attribute['transient']??false;
+  bool get transient => msgExtra['transient']??false;
   String get origin => json.encode({
     'msg': msg,
     'msgType': msgType,

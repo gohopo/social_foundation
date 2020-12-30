@@ -72,7 +72,6 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
   Color iconColor;
 
   void updateStatusBarBrightness(){
-    print(shrinkOffset);
     if(shrinkOffset<=collapsedHeight && this.statusBarMode=='dark') {
       this.statusBarMode = 'light';
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

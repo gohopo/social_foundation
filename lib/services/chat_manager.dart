@@ -20,10 +20,8 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     msgExtra['systemType'] = systemType;
     return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra);
   }
-  Future<TMessage> sendNotifyMsg({@required String convId,@required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType},{'transient':true});
-  Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute,bool saveConv = true}) async {
-    if(attribute == null) attribute = {};
-    attribute['saveConv'] = saveConv;
+  Future<TMessage> sendNotifyMsg({@required String convId,@required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType,'transient':true});
+  Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute,bool transient=false,bool saveConv=true}) async {
     var message = convertMessage({
       'ownerId': SfLocatorManager.userState.curUserId,
       'convId': convId,
@@ -35,6 +33,8 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       'msgType': msgType,
       'msgExtra': msgExtra
     });
+    message.msgExtra['transient'] = transient;
+    message.attribute['saveConv'] = saveConv;
     resendMessage(message);
     return message;
   }
@@ -51,7 +51,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
         await saveMessage(message);
       }
       //发送
-      var data = await _sendMessage(message.convId,message.msg,message.msgType,message.msgExtra,message.attribute);
+      var data = await _sendMessage(message.convId,message.msg,message.msgType,message.msgExtra);
       message.msgId = data.msgId;
       message.timestamp = data.timestamp;
       message.status = data.status;
@@ -104,9 +104,6 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     map['timestamp'] = message.sentTimestamp;
     map['status'] = message.status.index;
     map['receiptTimestamp'] = message.deliveredTimestamp;
-    map['attribute'] = {
-      'transient': message.isTransient
-    };
     if(message is TextMessage){
       map.addAll(json.decode(message.text));
     }
@@ -127,6 +124,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     await _client?.close();
     _client = null;
   }
+  Future reconnect() => _client.open(reconnect:true);
   Future<TConversation> getConversation(String conversationId) async {
     var conversation = await _getConversation(conversationId);
     return conversation!=null ? _convertConversation(conversation) : null;
@@ -191,7 +189,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     }
     return conversation;
   }
-  Future<TMessage> _sendMessage(String conversationId,String msg,String msgType,Map msgExtra,Map attribute) async {
+  Future<TMessage> _sendMessage(String conversationId,String msg,String msgType,Map msgExtra) async {
     var conversation = await _getConversation(conversationId);
     var message = json.encode({
       'msg': msg,
@@ -200,7 +198,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     });
     var result = await conversation.send(
       message: TextMessage.from(text:message),
-      transient: attribute['transient']??false
+      transient: msgExtra['transient']??false
     );
     return _convertMessage(result);
   }
