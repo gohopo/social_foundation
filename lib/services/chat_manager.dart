@@ -21,7 +21,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra);
   }
   Future<TMessage> sendNotifyMsg({@required String convId,@required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType,'transient':true});
-  Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute,bool transient=false,bool saveConv=true}) async {
+  Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute,bool transient,bool saveConv}) async {
     var message = convertMessage({
       'ownerId': SfLocatorManager.userState.curUserId,
       'convId': convId,
@@ -33,8 +33,8 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       'msgType': msgType,
       'msgExtra': msgExtra
     });
-    message.msgExtra['transient'] = transient;
-    message.attribute['saveConv'] = saveConv;
+    if(transient!=null) message.msgExtra['transient'] = transient;
+    if(saveConv!=null) message.attribute['saveConv'] = saveConv;
     resendMessage(message);
     return message;
   }
