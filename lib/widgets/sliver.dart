@@ -54,7 +54,7 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
     this.title,
     this.actionProvider,
     this.actions = const [],
-    this.iconSize = 16
+    this.iconSize = 20
   });
   final double collapsedHeight;
   final double expandedHeight;
@@ -102,7 +102,7 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
     }
   }
   Widget buildBar(BuildContext context) => IconTheme(
-    data: IconThemeData(color:iconColor),
+    data: IconThemeData(color:iconColor,size:iconSize),
     child: Row(
       children: [
         if(Navigator.canPop(context)) Padding(
