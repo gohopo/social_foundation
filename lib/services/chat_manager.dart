@@ -115,6 +115,8 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   //sdk
   Future login(String userId) {
     _client = Client(id:userId);
+    _client.onDisconnected = ({client,exception}) => onClientDisconnected();
+    _client.onResuming = ({client}) => onClientResuming();
     _client.onMessage = ({client,conversation,message}) => onMessageReceived(_convertConversation(conversation),_convertMessage(message));
     _client.onUnreadMessageCountUpdated = ({client,conversation}) => onUnreadMessagesCountUpdated(_convertConversation(conversation));
     _client.onMessageRecalled = ({client,conversation,recalledMessage}) => onMessageRecalled(_convertMessage(recalledMessage));
@@ -163,12 +165,19 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     var conversation = await _getConversation(conversationId);
     return conversation.recallMessage(messageID:messageID,messageTimestamp:timestamp);
   }
+  void onClientDisconnected(){
+    SfClientDisconnectedEvent().emit();
+  }
+  void onClientResuming(){
+    SfClientResumingEvent().emit();
+  }
   void onMessageReceived(TConversation conversation,TMessage message){
     if(message.msgType==SfMessageType.notify) return onNotifyReceived(message);
     if(!message.transient) saveConversation(conversation,fromReceived:true);
     saveMessage(message,true);
   }
   void onUnreadMessagesCountUpdated(TConversation conversation) {
+    print('onUnreadMessagesCountUpdated:${conversation.unreadMessagesCount}');
     saveConversation(conversation);
   }
   void onMessageRecalled(TMessage message){

@@ -25,6 +25,9 @@ class SfEvent<T extends _SfEventBase> extends _SfEventBase{
   }
 }
 
+class SfClientDisconnectedEvent extends SfEvent<SfClientDisconnectedEvent>{}
+class SfClientResumingEvent extends SfEvent<SfClientResumingEvent>{}
+
 class SfMessageEvent extends SfEvent<SfMessageEvent>{
   SfMessage message;
   bool isNew;

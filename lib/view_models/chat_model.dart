@@ -12,10 +12,11 @@ import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/widgets/chat_input.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
-abstract class SfChatModel<TConversation extends SfConversation,TMessage extends SfMessage> extends SfRefreshListViewState<TMessage> with WidgetsBindingObserver{
+abstract class SfChatModel<TConversation extends SfConversation,TMessage extends SfMessage> extends SfRefreshListViewState<TMessage>{
   TConversation conversation;
   String name;
   bool anonymous;
+  SfClientResumingEvent _clientResumingEvent = SfClientResumingEvent();
   SfMessageEvent _messageEvent = SfMessageEvent();
   SfChatInputModel inputModel;
   ScrollController scrollController = ScrollController();
@@ -35,7 +36,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   void onMessageEvent(SfMessageEvent event){
     if(event.isNew){
       list.insert(0,event.message);
-      convRead();
+      if(!event.message.fromOwner) convRead();
     }
     else{
       var index = list.indexWhere((data) => data.equalTo(event.message));
@@ -109,28 +110,21 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     notifyListeners();
   }
   void onAccessoryChanged(SfChatInputModel model){}
+  void onClientResuming(){
+    print('onClientResuming:${conversation.unreadMessagesCount}');
+    conversation.unreadMessagesCount = 50;
+    queryUnreadMessages();
+  }
 
   @override
   Future initData() async {
-    WidgetsBinding.instance.addObserver(this);
+    _clientResumingEvent.listen((event) => onClientResuming());
     await super.initData();
     await queryUnreadMessages();
   }
   @override
   void dispose(){
-    WidgetsBinding.instance.removeObserver(this);
     _messageEvent?.dispose();
     super.dispose();
-  }
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state){
-    super.didChangeAppLifecycleState(state);
-    switch (state){
-      case AppLifecycleState.resumed:
-        onResumed();
-        break;
-      default:
-        break;
-    }
   }
 }
