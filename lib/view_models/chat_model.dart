@@ -111,9 +111,9 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   }
   void onAccessoryChanged(SfChatInputModel model){}
   void onClientResuming(){
-    print('onClientResuming:${conversation.unreadMessagesCount}');
     conversation.unreadMessagesCount = 50;
     queryUnreadMessages();
+    conversation.unreadMessagesCount = 0;
   }
 
   @override

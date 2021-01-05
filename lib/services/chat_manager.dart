@@ -177,7 +177,6 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     saveMessage(message,true);
   }
   void onUnreadMessagesCountUpdated(TConversation conversation) {
-    print('onUnreadMessagesCountUpdated:${conversation.unreadMessagesCount}');
     saveConversation(conversation);
   }
   void onMessageRecalled(TMessage message){
