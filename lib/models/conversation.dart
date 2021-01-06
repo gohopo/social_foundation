@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/message.dart';
+import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/services/storage_manager.dart';
 
 abstract class SfConversation<TMessage extends SfMessage>{
@@ -43,5 +44,11 @@ abstract class SfConversation<TMessage extends SfMessage>{
     this.top = this.top==0 ? 1 : 0;
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     await database.update('conversation', {'top':top}, where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
+  }
+  Future queryUnreadMessagesCount() async {
+    var result = await SfLocatorManager.requestManager.invokeFunction('app', 'queryConversationUnreadCount', {
+      'userId':ownerId,'convId':convId
+    });
+    unreadMessagesCount = result['count'];
   }
 }

@@ -28,9 +28,6 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     await GetIt.instance<SfChatManager>().sendMsg(convId:conversation.convId,msg:await filterKeyword(msg,msgType),msgType:msgType,msgExtra:msgExtra,attribute:attribute);
     scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
-  Future onResumed() async {
-    await queryUnreadMessages();
-  }
   Future<String> filterKeyword(String msg,String msgType) async => SfLocatorManager.appState.filterKeyword(msg);
   bool onMessageEventWhere(SfMessageEvent event) => event.message.convId==conversation.convId;
   void onMessageEvent(SfMessageEvent event){
@@ -110,10 +107,9 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     notifyListeners();
   }
   void onAccessoryChanged(SfChatInputModel model){}
-  void onClientResuming(){
-    conversation.unreadMessagesCount = 50;
+  void onClientResuming() async {
+    await conversation.queryUnreadMessagesCount();
     queryUnreadMessages();
-    conversation.unreadMessagesCount = 0;
   }
 
   @override
@@ -124,6 +120,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   }
   @override
   void dispose(){
+    _clientResumingEvent?.dispose();
     _messageEvent?.dispose();
     super.dispose();
   }
