@@ -20,6 +20,7 @@ export 'package:pull_to_refresh/pull_to_refresh.dart';
 export 'package:shimmer/shimmer.dart';
 export 'package:sqflite/sqflite.dart';
 //utils
+export './utils/list.dart';
 export './utils/utils.dart';
 export './utils/file_helper.dart';
 export './utils/aliyun_oss.dart';
