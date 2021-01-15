@@ -1,11 +1,9 @@
 import 'package:social_foundation/widgets/view_state.dart';
 
-class SfSimpleRefreshListModel<T> extends SfRefreshListViewState<T>{
-  SfSimpleRefreshListModel(this.dataLoader);
-  Future Function(String nextToken) dataLoader;
+abstract class SfEasyRefreshListModel<T> extends SfRefreshListViewState<T>{
   String _nextToken;
 
-  Future loadDataOverride(String nextToken) => dataLoader?.call(nextToken);
+  Future loadDataOverride(String nextToken);
 
   @override
   Future<List<T>> loadData(bool refresh) async {
@@ -15,4 +13,12 @@ class SfSimpleRefreshListModel<T> extends SfRefreshListViewState<T>{
   }
   @override
   bool loadNoData(int length) => _nextToken==null;
+}
+
+class SfSimpleRefreshListModel<T> extends SfEasyRefreshListModel<T>{
+  SfSimpleRefreshListModel(this.dataLoader);
+  Future Function(String nextToken) dataLoader;
+
+  @override
+  Future loadDataOverride(String nextToken) => dataLoader?.call(nextToken);
 }
