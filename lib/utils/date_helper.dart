@@ -69,11 +69,13 @@ class SfDateHelper{
 
   static bool isSameYear(DateTime dateLeft, DateTime dateRight) => dateLeft.year==dateRight.year;
   static bool isSameMonth(DateTime dateLeft, DateTime dateRight) => dateLeft.month==dateRight.month && isSameYear(dateLeft,dateRight);
+  static bool isSameWeek(DateTime dateLeft, DateTime dateRight) => startOfWeek(dateLeft)==startOfWeek(dateRight);
   static bool isSameDay(DateTime dateLeft, DateTime dateRight) => dateLeft.day==dateRight.day && isSameMonth(dateLeft,dateRight);
   static bool isSameHour(DateTime dateLeft, DateTime dateRight) => dateLeft.hour==dateRight.hour && isSameDay(dateLeft,dateRight);
   static bool isFirstDayOfMonth(DateTime date) => date.day==1;
   static bool isThisYear(DateTime date) => isSameYear(date,DateTime.now());
   static bool isThisMonth(DateTime date) => isSameMonth(date,DateTime.now());
+  static bool isThisWeek(DateTime date) => isSameWeek(date,DateTime.now());
   static bool isToday(DateTime date) => isSameDay(date,DateTime.now());
   static bool isThisHour(DateTime date) => isSameHour(date,DateTime.now());
   static DateTime startOfYear(DateTime date) => DateTime(date.year);
