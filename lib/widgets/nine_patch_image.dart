@@ -64,7 +64,7 @@ class SfNinePatchImageModel extends SfViewState{
     _imageStream?.removeListener(ImageStreamListener(
       _handleImage,
     ));
-    image?.dispose();
+    //image?.dispose();
     image = null;
     super.dispose();
   }

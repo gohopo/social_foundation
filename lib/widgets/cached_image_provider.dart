@@ -139,7 +139,7 @@ class SfCachedImage extends StatelessWidget{
     this.imagePath,
     this.fit,
     this.imageBuilder
-  }):super(key:key);
+  }):super(key:key??ValueKey(imagePath));
   final String imagePath;
   final BoxFit fit;
   final ValueWidgetBuilder<ImageProvider> imageBuilder;
