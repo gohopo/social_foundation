@@ -73,6 +73,9 @@ class SfMessage {
     if(id != null){
       await database.update('message', toMap(),where: 'id=?',whereArgs: [id]);
     }
+    else if(msgType == SfMessageType.recall){
+      await database.update('message', toMap(),where: 'msgId=?',whereArgs: [msgId]);
+    }
     else{
       this.id = await database.insert('message',toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
     }
