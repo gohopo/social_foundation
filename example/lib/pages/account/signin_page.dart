@@ -64,20 +64,19 @@ class SigninPage extends StatelessWidget {
         SizedBox(
           height: 30.0,
         ),
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
-          width: double.infinity,
-          child: RaisedButton(
+        GestureDetector(
+          onTap: model.signin,
+          child: Container(
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
             padding: EdgeInsets.all(12.0),
-            shape: StadiumBorder(),
+            color: Colors.green,
             child: Text(
               '登陆',
               style: TextStyle(color: Colors.white),
-            ),
-            color: Colors.green,
-            onPressed: model.signin
-          ),
-        ),
+            )
+          )
+        )
       ]
     ),
   );
