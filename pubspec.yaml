@@ -28,7 +28,7 @@ dependencies:
   flutter_plugin_record: 0.1.9
   audioplayers: 0.15.1
   image_picker: 0.6.3+4
-  bot_toast: 3.0.5
+  bot_toast: 4.0.1
   leancloud_official_plugin: 1.0.0-beta.12
   flutter_screenutil: 1.1.0
   shimmer: 1.1.1

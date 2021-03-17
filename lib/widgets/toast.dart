@@ -20,7 +20,17 @@ class SfDialog{
     },
     animationDuration: animationDuration ?? Duration(milliseconds:250),
     animationReverseDuration: animationReverseDuration,
-    wrapAnimation: wrapAnimation ?? (controller,cancelFunc,widget) => Material(color:Colors.transparent,child:widget,type:MaterialType.transparency),
+    wrapAnimation: wrapAnimation ?? (controller,cancelFunc,widget) => Material(
+      color: Colors.transparent,
+      type: MaterialType.transparency,
+      child: Overlay(
+        initialEntries: [
+          OverlayEntry(
+            builder: (_) => widget
+          )
+        ],
+      )
+    ),
     wrapToastAnimation: wrapToastAnimation ?? (controller,cancelFunc,widget) => SfTranslateAnimation(controller:controller,child:widget),
     key: key,
     groupKey: groupKey ?? 'SfDialog',
