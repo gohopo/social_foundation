@@ -46,11 +46,11 @@ class SfNinePatchImageModel extends SfViewState{
   }
   void _handleImage(ImageInfo value, bool synchronousCall){
     if(image == value) return;
-    // if(image!=null && image?.isCloneOf(value)==true){
-    //   value.dispose();
-    //   return;
-    // }
-    // image?.dispose();
+    if(image!=null && image?.isCloneOf(value)==true){
+      value.dispose();
+      return;
+    }
+    image?.dispose();
     image = value;
     if(!synchronousCall) notifyListeners();
   }
@@ -64,7 +64,7 @@ class SfNinePatchImageModel extends SfViewState{
     _imageStream?.removeListener(ImageStreamListener(
       _handleImage,
     ));
-    //image?.dispose();
+    image?.dispose();
     image = null;
     super.dispose();
   }

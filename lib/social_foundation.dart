@@ -19,6 +19,7 @@ export 'package:provider/provider.dart';
 export 'package:pull_to_refresh/pull_to_refresh.dart';
 export 'package:shimmer/shimmer.dart';
 export 'package:sqflite/sqflite.dart';
+export 'package:svgaplayer_flutter/svgaplayer_flutter.dart';
 //utils
 export './utils/list.dart';
 export './utils/utils.dart';
