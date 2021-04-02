@@ -138,11 +138,13 @@ class SfCachedImage extends StatelessWidget{
     Key key,
     this.imagePath,
     this.fit,
-    this.imageBuilder
+    this.imageBuilder,
+    this.svgaPlayerKey
   }):super(key:key??ValueKey(imagePath));
   final String imagePath;
   final BoxFit fit;
   final ValueWidgetBuilder<ImageProvider> imageBuilder;
+  final Key svgaPlayerKey;
 
   Widget _imageBuilder(BuildContext context,ImageProvider image,Widget child) => Image(
     image: image,
@@ -157,6 +159,7 @@ class SfCachedImage extends StatelessWidget{
         return (imageBuilder??_imageBuilder).call(context,model.file!=null?FileImage(model.file):AssetImage(imagePath),null);
       case '.svga':
         return SVGASimpleImage(
+          key: svgaPlayerKey,
           assetsName: model.file!=null ? null : imagePath,
           file: model.file,
         );
