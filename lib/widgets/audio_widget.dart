@@ -84,7 +84,6 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
     _recordPlugin?.stop();
     _overlayEntry?.remove();
     _overlayEntry = null;
-    _startY = _offsetY = 0;
   }
 
   @override
@@ -98,6 +97,7 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
         }
         else if(data.msg == 'onStop'){
           if(!isCancelled) widget.onStopRecord?.call(data.path,data.audioTimeLength.toInt()*1000);
+          _startY = _offsetY = 0;
         }
       })
       ..responseFromAmplitude.listen((data){
