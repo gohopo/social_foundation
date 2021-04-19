@@ -55,4 +55,5 @@ class SfAudioPlayerModel extends SfViewState{
       if(!isPlaying) play();
     }
   }
+  @override bool get wantKeepAlive => isPlaying;
 }

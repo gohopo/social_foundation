@@ -18,6 +18,7 @@ abstract class SfViewState extends ChangeNotifier {
   Future initDataVsync(TickerProviderStateMixin vsync) => initData();
   Future initData() async {}
   void onRefactor(SfViewState newState){}
+  bool get wantKeepAlive => false;
   SfViewStatus get viewStatus => _viewStatus;
   dynamic get error => _error;
   set viewStatus(SfViewStatus viewStatus){

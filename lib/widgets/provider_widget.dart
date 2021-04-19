@@ -46,7 +46,7 @@ class SfProviderEnhanced<T extends SfViewState> extends StatefulWidget{
   @override
   _SfProviderEnhancedState<T> createState() => _SfProviderEnhancedState<T>();
 }
-class _SfProviderEnhancedState<T extends SfViewState> extends State<SfProviderEnhanced<T>> with TickerProviderStateMixin{
+class _SfProviderEnhancedState<T extends SfViewState> extends State<SfProviderEnhanced<T>> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin{
   T model;
 
   @override
@@ -65,9 +65,13 @@ class _SfProviderEnhancedState<T extends SfViewState> extends State<SfProviderEn
     super.didUpdateWidget(oldWidget);
     if(model!=widget.model) widget?.onModelRefactor?.call(model,widget.model);
   }
+  @override
+  bool get wantKeepAlive => model.wantKeepAlive;
 
   @override
   Widget build(BuildContext context){
+    super.build(context);
+    updateKeepAlive();
     return ChangeNotifierProvider<T>.value(
       value: model,
       child: Consumer<T>(
