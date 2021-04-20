@@ -18,7 +18,6 @@ class SfAudioRecorderConsumer extends StatefulWidget {
   @override
   _SfAudioRecorderConsumerState createState() => _SfAudioRecorderConsumerState();
 }
-
 class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
   FlutterPluginRecord _recordPlugin;
   OverlayEntry _overlayEntry;
@@ -142,7 +141,7 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPressStart: (details){
-        _startY = details.globalPosition.dy;
+        _startY = _offsetY = details.globalPosition.dy;
         start();
       },
       onLongPressEnd: (details) => stop(),
