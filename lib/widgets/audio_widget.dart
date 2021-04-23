@@ -7,7 +7,7 @@ import 'package:social_foundation/widgets/provider_widget.dart';
 class SfAudioRecorderConsumer extends StatefulWidget {
   final Widget child;
   final Function() onStartRecord;
-  final Function(String path,int duration) onStopRecord;
+  final Function(String path,int duration,bool isCancelled) onStopRecord;
   SfAudioRecorderConsumer({
     Key key,
     this.child,
@@ -95,7 +95,7 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
           widget.onStartRecord?.call();
         }
         else if(data.msg == 'onStop'){
-          if(!isCancelled) widget.onStopRecord?.call(data.path,data.audioTimeLength.toInt()*1000);
+          widget.onStopRecord?.call(data.path,data.audioTimeLength.toInt()*1000,isCancelled);
           _startY = _offsetY = 0;
         }
       })
@@ -193,7 +193,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
     );
   }
   onTapContainer(SfAudioPlayerModel model){
-    if(model.position < 0){
+    if(model.position <= 0){
       model.play();
     }
     else{

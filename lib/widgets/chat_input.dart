@@ -180,10 +180,10 @@ class SfChatInputModel extends SfViewState {
     recorderTips = '松开 结束';
     notifyListeners();
   }
-  void onStopRecord(String path,int duration){
+  void onStopRecord(String path,int duration,bool isCancelled){
     recorderTips = '按住 说话';
     notifyListeners();
-    onRecordVoice(path,duration);
+    if(!isCancelled) onRecordVoice(path,duration);
   }
 
   @override
