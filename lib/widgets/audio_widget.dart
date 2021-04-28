@@ -140,6 +140,7 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onLongPressStart: (details){
         _startY = _offsetY = details.globalPosition.dy;
         start();
