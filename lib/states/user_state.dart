@@ -10,6 +10,7 @@ class SfUserState<TUser extends SfUser> extends SfViewState{
   String get curUserId => _curUserId;
   TUser get curUser => _users[_curUserId];
   Future<TUser> queryUser(String userId,bool fetch) async => this[userId];
+  Future<TUser> queryUserEx(bool Function(TUser user) test) async => _users.values.firstWhere(test,orElse:()=>null);
   void updateStateUser(dynamic user) => setUser(user);
   void updateStateUsers(dynamic users){
     if(users==null) return;

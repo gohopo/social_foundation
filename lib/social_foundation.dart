@@ -29,6 +29,7 @@ export './utils/date_helper.dart';
 export './utils/image_helper.dart';
 export './utils/wechat_helper.dart';
 export './utils/contracts.dart';
+export './utils/extensions.dart';
 //models
 export './models/app.dart';
 export './models/message.dart';
