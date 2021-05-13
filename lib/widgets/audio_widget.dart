@@ -181,6 +181,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
   final VoidCallback onTap;
   final bool earpieceMode;
 
+  int getSecond(SfAudioPlayerModel model) => ((model.position>0?duration-model.position:duration)/1000).ceil();
   Widget buildContainer(BuildContext context,SfAudioPlayerModel model){
     return Container(
       width: width,
@@ -222,7 +223,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
     );
   }
   Widget buildText(BuildContext context,SfAudioPlayerModel model){
-    return Text('${duration ~/1000}"',style:TextStyle(color:textColor));
+    return Text('${getSecond(model)}"',style:TextStyle(color:textColor));
   }
 
   @override
