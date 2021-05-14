@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:social_foundation/services/locator_manager.dart';

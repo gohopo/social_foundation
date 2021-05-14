@@ -25,7 +25,7 @@ dependencies:
   cached_network_image: 3.0.0
   flutter_cache_manager: 3.0.2
   http: 0.13.3
-  flutter_sound: 8.1.1
+  flutter_sound_lite: 8.1.1
   audioplayers: 0.19.0
   image_picker: 0.6.3+4
   bot_toast: 4.0.1
