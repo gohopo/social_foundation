@@ -51,7 +51,7 @@ class SfAudioRecorderConsumerVM extends SfViewState{
     if(!status.isGranted) status = await Permission.microphone.request();
     if(!status.isGranted) throw '没有录音权限!';
     buildOverLay();
-    await _soundRecorder.startRecorder(toFile:'${SfLocatorManager.storageManager.voiceDirectory}/record.aac');
+    await _soundRecorder.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.voiceDirectory}/record.aac');
     widget.onStartRecord?.call();
   }
   Future stop() async {
