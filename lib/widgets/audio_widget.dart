@@ -122,6 +122,7 @@ class SfAudioRecorderConsumerVM extends SfViewState{
 
   Future initData() async {
     _soundRecorder = await FlutterSoundRecorder().openAudioSession();
+    await _soundRecorder.setSubscriptionDuration(Duration(milliseconds:100));
     _soundRecorder.onProgress.listen((event){
       duration = event.duration;
       decibels = event.decibels;
