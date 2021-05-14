@@ -32,7 +32,7 @@ class SfImageHelper{
   }
   static Future saveImage(Uint8List imageBytes,{int quality=80,String name,bool isReturnImagePathOfIOS=false}) async {
     var status = await Permission.storage.status;
-    if(status.isUndetermined) status = await Permission.storage.request();
+    if(!status.isGranted) status = await Permission.storage.request();
     if(!status.isGranted) throw '没有存储权限!';
     return ImageGallerySaver.saveImage(imageBytes,quality:quality,name:name,isReturnImagePathOfIOS:isReturnImagePathOfIOS);
   }

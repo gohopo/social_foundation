@@ -13,14 +13,14 @@ import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/utils/utils.dart';
 import 'package:svgaplayer_flutter/svgaplayer_flutter.dart';
 
-class SfCacheManager extends BaseCacheManager {
+class SfCacheManager extends CacheManager with ImageCacheManager {
   factory SfCacheManager() {
     if (_instance == null) {
       _instance = new SfCacheManager._();
     }
     return _instance;
   }
-  SfCacheManager._() : super(key,fileService:FileServiceCompat(_fileFetcher));
+  SfCacheManager._() : super(Config(key,fileService:FileServiceCompat(_fileFetcher)));
 
   static CachedNetworkImageProvider provder(String url) => CachedNetworkImageProvider(url,cacheManager:SfCacheManager());
   static const key = "libCachedImageData";
@@ -30,7 +30,7 @@ class SfCacheManager extends BaseCacheManager {
     return GetIt.instance<SfStorageManager>().imageDirectory;
   }
   static Future<FileFetcherResponse> _fileFetcher(String url,{Map<String, String> headers}) async {
-    var httpResponse = await http.get(url, headers: headers);
+    var httpResponse = await http.get(Uri.parse(url), headers: headers);
     var encrypt = SfAliyunOss.getEncryptFromFileUrl(url);
     if(encrypt > 0){
       switch(encrypt){
@@ -109,7 +109,6 @@ class SfCachedNetworkImage extends StatelessWidget{
     return CachedNetworkImage(
       imageUrl: imageUrl,
       imageBuilder: imageBuilder,
-      placeholder: buildPlaceholder,
       progressIndicatorBuilder: buildProgressIndicator,
       errorWidget: buildError,
       fadeOutDuration: fadeOutDuration ?? Duration(milliseconds: 1000),

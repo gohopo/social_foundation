@@ -7,7 +7,7 @@ import 'package:leancloud_official_plugin/leancloud_plugin.dart';
 import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/event_manager.dart';
-import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 

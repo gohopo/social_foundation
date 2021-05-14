@@ -1,38 +1,82 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_plugin_record/index.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/view_models/audio_model.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
+import 'package:social_foundation/widgets/view_state.dart';
 
-class SfAudioRecorderConsumer extends StatefulWidget {
-  final Widget child;
-  final Function() onStartRecord;
-  final Function(String path,int duration,bool isCancelled) onStopRecord;
+class SfAudioRecorderConsumer extends StatelessWidget{
   SfAudioRecorderConsumer({
     Key key,
     this.child,
     this.onStartRecord,
     this.onStopRecord
-  }) : super(key:key);
+  }):super(key:key);
+  final Widget child;
+  final Function() onStartRecord;
+  final Function(String path,int duration,bool isCancelled) onStopRecord;
 
-  @override
-  _SfAudioRecorderConsumerState createState() => _SfAudioRecorderConsumerState();
+  Widget build(BuildContext context) => SfProvider<SfAudioRecorderConsumerVM>(
+    model: SfAudioRecorderConsumerVM(this),
+    builder: (context,model,child) => GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onLongPressStart: model.onLongPressStart,
+      onLongPressEnd: model.onLongPressEnd,
+      onLongPressMoveUpdate: model.onLongPressMoveUpdate,
+      child: child
+    ),
+    child: child,
+  );
 }
-class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
-  FlutterPluginRecord _recordPlugin;
+class SfAudioRecorderConsumerVM extends SfViewState{
+  SfAudioRecorderConsumerVM(this.widget);
+  SfAudioRecorderConsumer widget;
+  FlutterSoundRecorder _soundRecorder;
   OverlayEntry _overlayEntry;
-  String _voiceIconBasePath = 'assets/images/audio_recorder/';
-  int _voiceIcon = 1;
+  String decibelsIconDir = 'assets/images/audio_recorder/';
+  Duration duration = Duration.zero;
+  double decibels = 0;
   String _tips = '手指上滑,取消录音';
   double _startY = 0;
   double _offsetY = 0;
-
   bool get isCancelled => _startY-_offsetY>100;
+  int get decibelsIcon => max(1, min(decibels*7~/120,7));
+  Future start() async {
+    var status = await Permission.microphone.status;
+    if(!status.isGranted) status = await Permission.microphone.request();
+    if(!status.isGranted) throw '没有录音权限!';
+    buildOverLay();
+    await _soundRecorder.startRecorder(toFile:'${SfLocatorManager.storageManager.voiceDirectory}/record.aac');
+    widget.onStartRecord?.call();
+  }
+  Future stop() async {
+    if(_overlayEntry==null) return;
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    var path = await _soundRecorder.stopRecorder();
+    widget.onStopRecord?.call(path,duration.inMilliseconds,isCancelled);
+    _startY = _offsetY = 0;
+  }
+  void onLongPressStart(LongPressStartDetails details){
+    _startY = _offsetY = details.globalPosition.dy;
+    start();
+  }
+  void onLongPressEnd(LongPressEndDetails details) => stop();
+  void onLongPressMoveUpdate(LongPressMoveUpdateDetails details){
+    _offsetY = details.globalPosition.dy;
+    _tips = isCancelled ? '松开 取消 录音' : '手指上滑,取消录音';
+    notifyListeners();
+  }
   buildOverLay(){
     if(_overlayEntry != null) return;
     _overlayEntry = OverlayEntry(builder: (content) => Positioned(
-      top: MediaQuery.of(context).size.height * 0.5 - 80,
-      left: MediaQuery.of(context).size.width * 0.5 - 80,
+      top: ScreenUtil.screenHeightDp * 0.5 - 80,
+      left: ScreenUtil.screenWidthDp * 0.5 - 80,
       child: Material(
         type: MaterialType.transparency,
         child: Center(
@@ -50,7 +94,7 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
                   Container(
                     margin: EdgeInsets.only(top: 10),
                     child: Image.asset(
-                      '$_voiceIconBasePath$_voiceIcon.png',
+                      '$decibelsIconDir$decibelsIcon.png',
                       width: 100,
                       height: 100,
                       package: 'social_foundation',
@@ -73,90 +117,26 @@ class _SfAudioRecorderConsumerState extends State<SfAudioRecorderConsumer> {
         ),
       )
     );
-    Overlay.of(context).insert(_overlayEntry);
-  }
-  void start(){
-    buildOverLay();
-    _recordPlugin.start();
-  }
-  void stop(){
-    _recordPlugin?.stop();
-    _overlayEntry?.remove();
-    _overlayEntry = null;
+    SfLocatorManager.routerManager.navigator.overlay.insert(_overlayEntry);
   }
 
-  @override
-  void initState(){
-    super.initState();
-    _recordPlugin = FlutterPluginRecord()
-      ..init()
-      ..response.listen((data){
-        if(data.msg == 'onStart'){
-          widget.onStartRecord?.call();
-        }
-        else if(data.msg == 'onStop'){
-          widget.onStopRecord?.call(data.path,data.audioTimeLength.toInt()*1000,isCancelled);
-          _startY = _offsetY = 0;
-        }
-      })
-      ..responseFromAmplitude.listen((data){
-        var voiceData = double.parse(data.msg);
-        setState(() {
-          if(voiceData > 0 && voiceData < 0.1){
-            _voiceIcon = 2;
-          }
-          else if(voiceData > 0.2 && voiceData < 0.3){
-            _voiceIcon = 3;
-          }
-          else if(voiceData > 0.3 && voiceData < 0.4){
-            _voiceIcon = 4;
-          }
-          else if(voiceData > 0.4 && voiceData < 0.5){
-            _voiceIcon = 5;
-          }
-          else if(voiceData > 0.5 && voiceData < 0.6){
-            _voiceIcon = 6;
-          }
-          else if(voiceData > 0.6 && voiceData < 0.7){
-            _voiceIcon = 7;
-          }
-          else if(voiceData > 0.7 && voiceData < 1){
-            _voiceIcon = 7;
-          }
-          else{
-            _voiceIcon = 1;
-          }
-          _overlayEntry?.markNeedsBuild();
-        });
-        if(_startY == 0) stop();
-      });
+  Future initData() async {
+    _soundRecorder = await FlutterSoundRecorder().openAudioSession();
+    _soundRecorder.onProgress.listen((event){
+      duration = event.duration;
+      decibels = event.decibels;
+      notifyListeners();
+      _overlayEntry?.markNeedsBuild();
+      if(_startY == 0) stop();
+    });
+    return super.initData();
   }
-  @override
-  void dispose() {
-    stop();
-    _recordPlugin?.dispose();
+  void dispose() async {
+    await stop();
+    await _soundRecorder?.closeAudioSession();
     super.dispose();
   }
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onLongPressStart: (details){
-        _startY = _offsetY = details.globalPosition.dy;
-        start();
-      },
-      onLongPressEnd: (details) => stop(),
-      onLongPressMoveUpdate: (details){
-        _offsetY = details.globalPosition.dy;
-        setState((){
-          _tips = isCancelled ? '松开 取消 录音' : '手指上滑,取消录音';
-        });
-      },
-      child: widget.child
-    );
-  }
 }
-
 
 class SfAudioPlayerWidget extends StatelessWidget {
   SfAudioPlayerWidget({

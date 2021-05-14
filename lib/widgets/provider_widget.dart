@@ -21,7 +21,7 @@ class SfProvider<T extends SfViewState> extends StatelessWidget{
     return SfProviderEnhanced<T>(
       onModelReady: (vsync, model) => model.initDataVsync(vsync),
       onModelRefactor: (model, newModel) => model.onRefactor(newModel),
-      key:key,model:model,builder:builder,autoDispose:autoDispose,
+      key:key,model:model,builder:builder,child:child,autoDispose:autoDispose,
     );
   }
 }
