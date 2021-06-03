@@ -172,7 +172,8 @@ class SfChatInputModel extends SfViewState {
     else if(index == 2) onTapPhoto(ImageSource.camera);
   }
   void onTapPhoto(ImageSource source) async {
-    File image = await ImagePicker.pickImage(source:source,maxWidth:imageMaxWidth,maxHeight:imageMaxHeight,imageQuality:imageQuality);
+    var file = await ImagePicker().getImage(source:source,maxWidth:imageMaxWidth,maxHeight:imageMaxHeight,imageQuality:imageQuality);
+    var image = File(file.path);
     if(image==null || onPickImage==null) return;
     onPickImage(image);
   }
