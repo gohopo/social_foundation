@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ class SfAudioRecorderConsumerVM extends SfViewState{
     if(!status.isGranted) status = await Permission.microphone.request();
     if(!status.isGranted) throw '没有录音权限!';
     buildOverLay();
-    await _soundRecorder.setAudioFocus();
+    if(Platform.isIOS) await _soundRecorder.setAudioFocus();
     await _soundRecorder.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.voiceDirectory}/record.aac');
     widget.onStartRecord?.call();
   }
