@@ -6,58 +6,68 @@ import 'package:social_foundation/widgets/view_state.dart';
 class SfAudioPlayerModel extends SfViewState{
   SfAudioPlayerModel({
     this.uri,
-    this.earpieceMode = false
+    this.earpieceMode = false,
+    this.compatible = false
   });
   String uri;
   bool earpieceMode;
+  bool compatible;
   AudioPlayer _player = new AudioPlayer();
   StreamSubscription _stateSubscription;
   StreamSubscription _positionSubscription;
   int position = 0;
   static SfAudioPlayerModel playingVM;
   
-  bool get isPlaying => position>0;
+  bool get isPlaying => _player.state==PlayerState.PLAYING;
   Future play() async {
-    await playingVM?.stop();
+    if(!compatible) await playingVM?.stop();
     return _player.play(uri);
+  }
+  Future pause(){
+    return _player.pause();
   }
   Future stop(){
     return _player.stop();
   }
+  void setGlobal(bool enable){
+    if(compatible) return;
+    playingVM = enable ? this : null;
+  }
+  void onPlayerStateChanged(PlayerState s){
+    setGlobal(false);
+    if(s!=PlayerState.PAUSED) position = 0;
+    notifyListeners();
+  }
+  void onAudioPositionChanged(Duration p){
+    setGlobal(true);
+    position = p.inMilliseconds;
+    notifyListeners();
+  }
 
-  @override
   Future initData() async {
-    _stateSubscription = _player.onPlayerStateChanged.listen((s){
-      playingVM = null;
-      position = 0;
-      notifyListeners();
-    });
-    _positionSubscription = _player.onAudioPositionChanged.listen((p){
-      playingVM = this;
-      position = p.inMilliseconds;
-      notifyListeners();
-    });
+    _stateSubscription = _player.onPlayerStateChanged.listen(onPlayerStateChanged);
+    _positionSubscription = _player.onAudioPositionChanged.listen(onAudioPositionChanged);
     
     await _player.setUrl(uri);
-    if(earpieceMode){
-      await _player.earpieceOrSpeakersToggle();
-    }
+    if(earpieceMode) await _player.earpieceOrSpeakersToggle();
   }
-  @override
   void dispose(){
     _player.stop();
     _stateSubscription.cancel();
     _positionSubscription.cancel();
     super.dispose();
   }
-  @override
   void onRefactor(newState) async {
     var state = newState as SfAudioPlayerModel;
+    if(uri!=state.uri){
+      uri = state.uri;
+      await _player.setUrl(uri);
+    }
     if(earpieceMode!=state.earpieceMode){
       earpieceMode = state.earpieceMode;
       await _player.earpieceOrSpeakersToggle();
       if(!isPlaying) play();
     }
   }
-  @override bool get wantKeepAlive => isPlaying;
+  bool get wantKeepAlive => isPlaying;
 }
