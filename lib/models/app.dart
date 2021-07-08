@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:social_foundation/services/locator_manager.dart';
+import 'package:social_foundation/utils/file_helper.dart';
 
 class SfApp{
   static Future<List<String>> queryNotifyList(String userId) async {
@@ -16,5 +20,24 @@ class SfApp{
     return SfLocatorManager.requestManager.invokeFunction('app', 'removeNotify', {
       'userId':userId,'notifyType':notifyType
     });
+  }
+  static Future playSound(String url,{double volume=1.0,bool loop=false}) async {
+    if(!SfFileHelper.isUrl(url)){
+      var dir = SfFileHelper.getDirname(url);
+      var audioCache = AudioCache(prefix:'$dir/');
+      var uri = await audioCache.load(SfFileHelper.getFileName(url));
+      url = uri.toString();
+    }
+    StreamSubscription stateSubscription;
+    var player = new AudioPlayer();
+    stateSubscription = player.onPlayerStateChanged.listen((x){
+      if(x==PlayerState.STOPPED||x==PlayerState.COMPLETED){
+        stateSubscription.cancel();
+        player.dispose();
+      }
+    });
+    if(loop) player.setReleaseMode(ReleaseMode.LOOP);
+    player.play(url);
+    return player;
   }
 }

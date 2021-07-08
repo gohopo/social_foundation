@@ -12,22 +12,22 @@ class SfAudioPlayerModel extends SfViewState{
   String uri;
   bool earpieceMode;
   bool compatible;
-  AudioPlayer _player = new AudioPlayer();
+  AudioPlayer player = new AudioPlayer();
   StreamSubscription _stateSubscription;
   StreamSubscription _positionSubscription;
   int position = 0;
   static SfAudioPlayerModel playingVM;
   
-  bool get isPlaying => _player.state==PlayerState.PLAYING;
+  bool get isPlaying => player.state==PlayerState.PLAYING;
   Future play() async {
     if(!compatible) await playingVM?.stop();
-    return _player.play(uri);
+    return player.play(uri);
   }
   Future pause(){
-    return _player.pause();
+    return player.pause();
   }
   Future stop(){
-    return _player.stop();
+    return player.stop();
   }
   void setGlobal(bool enable){
     if(compatible) return;
@@ -45,14 +45,13 @@ class SfAudioPlayerModel extends SfViewState{
   }
 
   Future initData() async {
-    _stateSubscription = _player.onPlayerStateChanged.listen(onPlayerStateChanged);
-    _positionSubscription = _player.onAudioPositionChanged.listen(onAudioPositionChanged);
+    _stateSubscription = player.onPlayerStateChanged.listen(onPlayerStateChanged);
+    _positionSubscription = player.onAudioPositionChanged.listen(onAudioPositionChanged);
     
-    await _player.setUrl(uri);
-    if(earpieceMode) await _player.earpieceOrSpeakersToggle();
+    if(earpieceMode) await player.earpieceOrSpeakersToggle();
   }
   void dispose(){
-    _player.stop();
+    player.dispose();
     _stateSubscription.cancel();
     _positionSubscription.cancel();
     super.dispose();
@@ -61,11 +60,11 @@ class SfAudioPlayerModel extends SfViewState{
     var state = newState as SfAudioPlayerModel;
     if(uri!=state.uri){
       uri = state.uri;
-      await _player.setUrl(uri);
+      await player.setUrl(uri);
     }
     if(earpieceMode!=state.earpieceMode){
       earpieceMode = state.earpieceMode;
-      await _player.earpieceOrSpeakersToggle();
+      await player.earpieceOrSpeakersToggle();
       if(!isPlaying) play();
     }
   }
