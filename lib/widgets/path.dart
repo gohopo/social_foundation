@@ -56,3 +56,63 @@ class SfPath{
       ..close();
   }
 }
+
+class SfTrapezoidClipper extends CustomClipper<Path> {
+  SfTrapezoidClipper(this.cutLength, this.edge);
+  final double cutLength;
+  final AxisDirection edge;
+
+  Path _getLeftPath(Size size) {
+    var path = Path();
+    path.moveTo(0.0, cutLength);
+    path.lineTo(0.0, size.height - cutLength);
+    path.lineTo(size.width, size.height);
+    path.lineTo(size.width, 0.0);
+    path.close();
+    return path;
+  }
+  Path _getUpPath(Size size) {
+    var path = Path();
+    path.moveTo(cutLength, 0.0);
+    path.lineTo(size.width - cutLength, 0.0);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0.0, size.height);
+    path.close();
+    return path;
+  }
+  Path _getRightPath(Size size) {
+    var path = Path();
+    path.lineTo(size.width, cutLength);
+    path.lineTo(size.width, size.height - cutLength);
+    path.lineTo(0.0, size.height);
+    path.close();
+    return path;
+  }
+  Path _getDownPath(Size size) {
+    var path = Path();
+    path.lineTo(cutLength, size.height);
+    path.lineTo(size.width - cutLength, size.height);
+    path.lineTo(size.width, 0.0);
+    path.close();
+    return path;
+  }
+
+  @override
+  Path getClip(Size size) {
+    switch (edge) {
+      case AxisDirection.left:
+        return _getLeftPath(size);
+      case AxisDirection.up:
+        return _getUpPath(size);
+      case AxisDirection.right:
+        return _getRightPath(size);
+      default:
+        return _getDownPath(size);
+    }
+  }
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    SfTrapezoidClipper oldie = oldClipper as SfTrapezoidClipper;
+    return cutLength != oldie.cutLength || edge != oldie.edge;
+  }
+}
