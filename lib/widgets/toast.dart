@@ -47,10 +47,10 @@ class SfDialog{
 }
 
 class SfEasyDialog extends SfDialog{
-  @protected Widget buildDialog({Widget child,BoxConstraints constraints}){
+  Widget buildDialog({Widget child,BoxConstraints constraints}){
     return Container(
+      constraints: constraints ?? BoxConstraints.tightFor(width:250),
       padding: EdgeInsets.all(3),
-      constraints: constraints,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10)
@@ -58,15 +58,12 @@ class SfEasyDialog extends SfDialog{
       child: child
     );
   }
-  @protected Widget buildTitle(String title) => Padding(
-    padding: EdgeInsets.only(left:7),
-    child: Text(title,style:TextStyle(fontSize:18,color:Colors.black.withOpacity(0.85))),
-  );
-  @protected Widget buildContent(String content) => Container(
+  Widget buildTitle(String title) => Text(title,style:TextStyle(fontSize:18,color:Colors.black.withOpacity(0.85)),textAlign:TextAlign.center);
+  Widget buildContent(String content) => Container(
     margin: EdgeInsets.only(left:7,bottom:10),
     child: Text(content,style:TextStyle(fontSize:14,color:Color.fromARGB(255,51,51,51))),
   );
-  @protected Widget buildAction(int index,String action) => Container(
+  Widget buildAction(int index,String action) => Container(
     margin: EdgeInsets.symmetric(horizontal:15),
     padding: EdgeInsets.symmetric(horizontal:14,vertical:4),
     decoration: BoxDecoration(
@@ -75,7 +72,7 @@ class SfEasyDialog extends SfDialog{
     ),
     child: Text(action,style:TextStyle(fontSize:14,color:Color.fromARGB(255,51,51,51))),
   );
-  @protected Widget buildSheetActionContainer({int length,int index,Widget child,bool split,bool splitLast}) => Container(
+  Widget buildSheetActionContainer({int length,int index,Widget child,bool split,bool splitLast}) => Container(
     margin: EdgeInsets.only(left:10,top:splitLast==true&&index==length-1?10:0,right:10,bottom:index==length-1?10:0),
     decoration: BoxDecoration(
       color: Colors.white,
@@ -89,7 +86,7 @@ class SfEasyDialog extends SfDialog{
     ),
     child: child
   );
-  @protected Widget buildSheetAction(int index,String action) => Container(
+  Widget buildSheetAction(int index,String action) => Container(
     height: 44,
     alignment: Alignment.center,
     child: Text(action,style:TextStyle(fontSize:15,color:Color.fromARGB(255,51,51,51))),
@@ -115,7 +112,6 @@ class SfEasyDialog extends SfDialog{
     var completer = Completer<int>();
     onShowFrame(
       title: title,
-      close: Container(),
       body: content,
       footer: Container(
         margin: EdgeInsets.only(top:10,bottom:3),
@@ -178,16 +174,10 @@ class SfEasyDialog extends SfDialog{
     );
     return completer.future;
   }
-  void onShowFrame({Widget title,Widget close,Widget body,Widget footer,Alignment alignment,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,bool clickClose,VoidCallback onClose,Color backgroundColor,Duration duration}) => onShowCustomFrame(
-    header: Container(
+  void onShowFrame({Widget title,Widget body,Widget footer,Alignment alignment,Duration animationDuration,Duration animationReverseDuration,WrapAnimation wrapToastAnimation,bool clickClose,VoidCallback onClose,Color backgroundColor,Duration duration}) => onShowCustomFrame(
+    header: Padding(
       padding: EdgeInsets.only(bottom:3),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          if(title != null) title,
-          if(close != null) close
-        ],
-      ),
+      child: title,
     ),
     body:body,footer:footer,alignment:alignment,animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor,duration:duration
   );
@@ -195,10 +185,10 @@ class SfEasyDialog extends SfDialog{
     builder: (_) => Align(
       alignment: alignment ?? Alignment.center,
       child: buildDialog(
-        constraints: constraints ?? BoxConstraints.tightFor(width:250),
+        constraints: constraints,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if(header != null) header,
             if(body != null) body,
