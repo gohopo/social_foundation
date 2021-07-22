@@ -21,13 +21,17 @@ class SfApp{
       'userId':userId,'notifyType':notifyType
     });
   }
-  static Future playSound(String url,{double volume=1.0,bool loop=false}) async {
+  static Future<String> prepareSound(String url) async {
     if(!SfFileHelper.isUrl(url)){
       var dir = SfFileHelper.getDirname(url);
       var audioCache = AudioCache(prefix:'$dir/');
       var uri = await audioCache.load(SfFileHelper.getFileName(url));
       url = uri.toString();
     }
+    return url;
+  }
+  static Future<AudioPlayer> playSound(String url,{double volume=1.0,bool loop=false}) async {
+    url = await prepareSound(url);
     StreamSubscription stateSubscription;
     var player = new AudioPlayer();
     stateSubscription = player.onPlayerStateChanged.listen((x){

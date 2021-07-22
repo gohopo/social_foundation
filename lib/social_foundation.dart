@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+export 'package:audioplayers/audioplayers.dart';
 export 'package:bot_toast/bot_toast.dart';
 export 'package:common_utils/common_utils.dart';
 export 'package:device_info/device_info.dart';
@@ -9,7 +10,7 @@ export 'package:dio/dio.dart';
 export 'package:event_bus/event_bus.dart';
 export 'package:extended_image/extended_image.dart' hide MultipartFile;
 export 'package:flutter_screenutil/flutter_screenutil.dart';
-export 'package:flutter_sound_lite/flutter_sound.dart';
+export 'package:flutter_sound_lite/flutter_sound.dart' hide PlayerState;
 export 'package:flutter_spinkit/flutter_spinkit.dart';
 export 'package:fluwx/fluwx.dart';
 export 'package:get_it/get_it.dart';

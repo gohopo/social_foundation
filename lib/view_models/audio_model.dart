@@ -7,11 +7,13 @@ class SfAudioPlayerModel extends SfViewState{
   SfAudioPlayerModel({
     this.uri,
     this.earpieceMode = false,
-    this.compatible = false
+    this.compatible = false,
+    this.volume = 1.0
   });
   String uri;
   bool earpieceMode;
   bool compatible;
+  double volume;
   AudioPlayer player = new AudioPlayer();
   StreamSubscription _stateSubscription;
   StreamSubscription _positionSubscription;
@@ -21,7 +23,7 @@ class SfAudioPlayerModel extends SfViewState{
   bool get isPlaying => player.state==PlayerState.PLAYING;
   Future play() async {
     if(!compatible) await playingVM?.stop();
-    return player.play(uri);
+    return player.play(uri,volume:volume);
   }
   Future pause(){
     return player.pause();
@@ -66,6 +68,10 @@ class SfAudioPlayerModel extends SfViewState{
       earpieceMode = state.earpieceMode;
       await player.earpieceOrSpeakersToggle();
       if(!isPlaying) play();
+    }
+    if(volume!=state.volume){
+      volume = state.volume;
+      await player.setVolume(volume);
     }
   }
   bool get wantKeepAlive => isPlaying;
