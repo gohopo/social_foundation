@@ -11,7 +11,7 @@ class SfBottomNavigationBarItem extends BottomNavigationBarItem{
   }) : super(
     icon: iconWrapper(icon),
     label: label,
-    activeIcon: iconWrapper(activeIcon),
+    activeIcon: iconWrapper(activeIcon??icon),
     backgroundColor: backgroundColor
   );
 }
