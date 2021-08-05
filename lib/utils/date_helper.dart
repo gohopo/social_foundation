@@ -105,6 +105,10 @@ class SfDateHelper{
   static Duration distanceToNowMs(int timestamp) => distanceToNow(DateTime.fromMillisecondsSinceEpoch(timestamp));
   static Duration distanceToTomorrow() => distanceToNow(startOfTomorrow());
   static Duration distanceToYesterday() => distanceToNow(startOfToday());
+  static bool isAfter(DateTime date, DateTime baseDate) => distanceBetweenDates(baseDate,date).inMilliseconds>0;
+  static bool isBefore(DateTime date, DateTime baseDate) => distanceBetweenDates(baseDate,date).inMilliseconds<0;
+  static bool isAfterNow(DateTime date) => isAfter(date,DateTime.now());
+  static bool isBeforeNow(DateTime date) => isBefore(date,DateTime.now());
 }
 
 String _formatValue(int value,bool full,String unit) => '${full&&value<10 ? 0 : ''}$value$unit';
