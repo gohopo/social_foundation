@@ -33,7 +33,7 @@ class SfAudioPlayerModel extends SfViewState{
   }
   void setGlobal(bool enable){
     if(compatible) return;
-    playingVM = enable ? this : null;
+    playingVM = enable ? this : (playingVM!=this ? playingVM : null);
   }
   void onPlayerStateChanged(PlayerState s){
     setGlobal(false);
@@ -53,6 +53,7 @@ class SfAudioPlayerModel extends SfViewState{
     if(earpieceMode) await player.earpieceOrSpeakersToggle();
   }
   void dispose(){
+    setGlobal(false);
     player.dispose();
     _stateSubscription.cancel();
     _positionSubscription.cancel();
