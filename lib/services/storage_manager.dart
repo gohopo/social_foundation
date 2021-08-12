@@ -72,6 +72,8 @@ class SfSharedPreferencesStore{
   Future<bool> setDouble(String key,double value) => setAppDouble(key,value);
   Map getJson(String key) => getAppJson(_convertUserKey(key));
   Future<bool> setJson(String key,Map value) => setAppJson(_convertUserKey(key),value);
+  List getArray(String key) => getAppArray(_convertUserKey(key));
+  Future<bool> setArray(String key,List value) => setAppArray(_convertUserKey(key),value);
   Future<bool> removeApp(String key) => sp.remove(key);
   String getAppString(String key) => sp.getString(key);
   Future<bool> setAppString(String key,String value) => sp.setString(key,value);
@@ -85,6 +87,8 @@ class SfSharedPreferencesStore{
   Future<bool> setAppDouble(String key,double value) => sp.setDouble(key,value);
   Map getAppJson(String key) => jsonDecode(getAppString(key) ?? '{}');
   Future<bool> setAppJson(String key,Map value) => setAppString(key,jsonEncode(value));
+  List getAppArray(String key) => jsonDecode(getAppString(key) ?? '[]');
+  Future<bool> setAppArray(String key,List value) => setAppString(key,jsonEncode(value));
 }
 
 class SfStorageManagerKey{
