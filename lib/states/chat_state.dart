@@ -1,6 +1,4 @@
-import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/conversation.dart';
-import 'package:social_foundation/services/chat_manager.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatState<TConversation extends SfConversation> extends SfRefreshListViewState<TConversation> {
@@ -11,11 +9,14 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
   Future<TConversation> queryConversation(String convId) async {
     return getConversation(convId);
   }
-  void saveConversation(TConversation conversation,{bool fromReceived}){
+  void saveConversation(TConversation conversation,{bool fromReceived,bool unreadMessageCountUpdated}){
     var index = list.indexWhere((data) => data.convId==conversation.convId);
     if(index != -1){
       if(fromReceived == true){
         conversation.unreadMessagesCount = list[index].unreadMessagesCount;
+      }
+      else if(unreadMessageCountUpdated == true){
+        conversation.unreadMessagesCount += list[index].unreadMessagesCount;
       }
       conversation = list[index]..copyWith(conversation);
       list.removeWhere((e) => e.convId==conversation.convId);
@@ -44,7 +45,6 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
     var conv = await this.queryConversation(convId);
     conv.unreadMessagesCount = 0;
     this.saveConversation(conv);
-    GetIt.instance<SfChatManager>().convRead(convId);
   }
   Future toggleTop(TConversation conversation) async {
     await conversation.toggleTop();

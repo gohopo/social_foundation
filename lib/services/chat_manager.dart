@@ -66,9 +66,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     message.msgType = SfMessageType.recall;
     return saveMessage(message);
   }
-  void saveConversation(TConversation conversation,{bool fromReceived}){
-    SfLocatorManager.chatState.saveConversation(conversation,fromReceived:fromReceived);
-  }
+  void saveConversation(TConversation conversation,{bool fromReceived,bool unreadMessageCountUpdated}) => SfLocatorManager.chatState.saveConversation(conversation,fromReceived:fromReceived,unreadMessageCountUpdated:unreadMessageCountUpdated);
   Future<TMessage> saveMessage(TMessage message,[bool isNew=false]) async {
     if(!message.transient) await message.save();
     SfMessageEvent(message:message,isNew:isNew).emit();
@@ -176,8 +174,9 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     if(!message.transient) saveConversation(conversation,fromReceived:true);
     saveMessage(message,true);
   }
-  void onUnreadMessagesCountUpdated(TConversation conversation) {
-    saveConversation(conversation);
+  void onUnreadMessagesCountUpdated(TConversation conversation) async {
+    saveConversation(conversation,unreadMessageCountUpdated:true);
+    convRead(conversation.convId);
   }
   void onMessageRecalled(TMessage message){
     saveMessage(message,false);

@@ -49,6 +49,6 @@ abstract class SfConversation<TMessage extends SfMessage>{
     var result = await SfLocatorManager.requestManager.invokeFunction('app', 'queryConversationUnreadCount', {
       'userId':ownerId,'convId':convId
     });
-    unreadMessagesCount = result['count'];
+    unreadMessagesCount += result['count'];
   }
 }
