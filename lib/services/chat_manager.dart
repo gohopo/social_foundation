@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -131,8 +132,16 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   }
   Future<List<TMessage>> queryMessages(String conversationId,int limit) async {
     var conversation = await _getConversation(conversationId);
-    var result = await conversation.queryMessage(limit:limit);
-    return result.map((data) => _convertMessage(data)).toList();
+    List<TMessage> messages = [];
+    TMessage startMessage;
+    while(limit > 0){
+      var count = min(limit,100);
+      var result = await conversation.queryMessage(startMessageID:startMessage?.msgId,startTimestamp:startMessage?.timestamp,startClosed:startMessage!=null?false:null,limit:count);
+      messages.addAll(result.map((data) => _convertMessage(data)));
+      startMessage = messages.last;
+      limit -= count;
+    }
+    return messages;
   }
   Future<TConversation> convCreate(String name,List<String> members,bool isUnique,Map attributes) async {
     var result = await _client.createConversation(name:name,members:members.toSet(),isUnique:isUnique,attributes:attributes);
