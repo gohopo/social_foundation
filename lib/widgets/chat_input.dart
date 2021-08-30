@@ -38,6 +38,7 @@ class SfChatInput extends StatelessWidget {
         decoration: InputDecoration(
           hintText: '说点什么吧~',
           hintStyle: TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8)),
+          contentPadding: EdgeInsets.symmetric(vertical:14),
           border: InputBorder.none,
           errorBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
