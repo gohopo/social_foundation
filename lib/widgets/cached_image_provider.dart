@@ -137,17 +137,20 @@ class SfCachedImage extends StatelessWidget{
     Key key,
     this.imagePath,
     this.fit,
+    this.alignment,
     this.imageBuilder,
     this.svgaPlayerKey
   }):super(key:key??ValueKey(imagePath));
   final String imagePath;
   final BoxFit fit;
+  final Alignment alignment;
   final ValueWidgetBuilder<ImageProvider> imageBuilder;
   final Key svgaPlayerKey;
 
   Widget _imageBuilder(BuildContext context,ImageProvider image,Widget child) => Image(
     image: image,
-    fit: fit
+    fit: fit,
+    alignment: alignment ?? Alignment.center,
   );
   Widget buildImage(BuildContext context,_SfCachedImageModel model){
     switch(model.ext){
