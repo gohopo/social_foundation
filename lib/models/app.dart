@@ -6,6 +6,12 @@ import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 
 class SfApp{
+  static const ColorFilter greyColorFilter = ColorFilter.matrix(<double>[
+    0.2126, 0.7152, 0.0722, 0, 0,
+    0.2126, 0.7152, 0.0722, 0, 0,
+    0.2126, 0.7152, 0.0722, 0, 0,
+    0,      0,      0,      1, 0,
+  ]);
   static Future<List<String>> queryNotifyList(String userId) async {
     var result = await SfLocatorManager.requestManager.invokeFunction('app', 'queryNotifyList', {
       'userId':userId
