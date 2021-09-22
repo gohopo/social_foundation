@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:flutter_screenutil/screenutil.dart';
+
 extension RegExpExtension on RegExp {
   List<String> splitWithDelim(String input, [int start = 0]) {
     var result = <String>[];
@@ -13,4 +17,8 @@ extension RegExpExtension on RegExp {
 
 extension StringExtension on String {
   List<String> splitWithDelim(RegExp pattern) => pattern.splitWithDelim(this);
+}
+
+extension SfSizeExtension on num {
+  num get wh => this * min(ScreenUtil().scaleWidth, ScreenUtil().scaleHeight);
 }
