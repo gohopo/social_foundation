@@ -1,13 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_sound_lite/flutter_sound.dart';
+import 'package:flutter_sound_lite/flutter_sound.dart' hide PlayerState;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:social_foundation/services/locator_manager.dart';
-import 'package:social_foundation/view_models/audio_model.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
@@ -218,5 +219,123 @@ class SfAudioPlayerWidget extends StatelessWidget {
         child: buildContainer(context, model),
       ),
     );
+  }
+}
+class SfAudioPlayerModel extends SfViewState{
+  SfAudioPlayerModel({
+    this.uri,
+    this.earpieceMode = false,
+    this.compatible = false,
+    this.volume = 1.0
+  });
+  String uri;
+  bool earpieceMode;
+  bool compatible;
+  double volume;
+  AudioPlayer player = new AudioPlayer();
+  StreamSubscription _stateSubscription;
+  StreamSubscription _positionSubscription;
+  int position = 0;
+  static SfAudioPlayerModel playingVM;
+  
+  bool get isPlaying => player.state==PlayerState.PLAYING;
+  Future play() async {
+    if(!compatible) await playingVM?.stop();
+    return player.play(uri,volume:volume);
+  }
+  Future pause(){
+    return player.pause();
+  }
+  Future stop(){
+    return player.stop();
+  }
+  void setGlobal(bool enable){
+    if(compatible) return;
+    playingVM = enable ? this : (playingVM!=this ? playingVM : null);
+  }
+  void onPlayerStateChanged(PlayerState s){
+    setGlobal(false);
+    if(s!=PlayerState.PAUSED) position = 0;
+    notifyListeners();
+  }
+  void onAudioPositionChanged(Duration p){
+    setGlobal(true);
+    position = p.inMilliseconds;
+    notifyListeners();
+  }
+
+  Future initData() async {
+    _stateSubscription = player.onPlayerStateChanged.listen(onPlayerStateChanged);
+    _positionSubscription = player.onAudioPositionChanged.listen(onAudioPositionChanged);
+    
+    if(earpieceMode) await player.earpieceOrSpeakersToggle();
+  }
+  void dispose(){
+    setGlobal(false);
+    player.dispose();
+    _stateSubscription.cancel();
+    _positionSubscription.cancel();
+    super.dispose();
+  }
+  void onRefactor(newState) async {
+    var state = newState as SfAudioPlayerModel;
+    if(uri!=state.uri){
+      uri = state.uri;
+      await player.setUrl(uri);
+    }
+    if(earpieceMode!=state.earpieceMode){
+      earpieceMode = state.earpieceMode;
+      await player.earpieceOrSpeakersToggle();
+      if(!isPlaying) play();
+    }
+    if(volume!=state.volume){
+      volume = state.volume;
+      await player.setVolume(volume);
+    }
+  }
+  bool get wantKeepAlive => isPlaying;
+}
+
+class SfAudioPlayer extends StatelessWidget{
+  SfAudioPlayer({
+    Key key,
+    this.uri,
+    this.builder,
+    this.autoplay = true,
+    this.loop = true,
+    this.compatible = true,
+    this.volume = 1.0,
+    this.onInit,
+    this.onDispose
+  }):super(key:key);
+  final String uri;
+  final Widget Function(SfAudioPlayerVM model) builder;
+  final bool autoplay;
+  final bool loop;
+  final bool compatible;
+  final double volume;
+  final Future Function(SfAudioPlayerVM model) onInit;
+  final void Function(SfAudioPlayerVM model) onDispose;
+  SfAudioPlayerVM createModel() => SfAudioPlayerVM(this);
+  Widget build(BuildContext context) => SfProvider<SfAudioPlayerVM>(
+    model: createModel(),
+    builder: (_,model,__) => builder?.call(model)
+  );
+}
+class SfAudioPlayerVM extends SfAudioPlayerModel{
+  SfAudioPlayerVM(this.widget):super(uri:widget.uri,compatible:widget.compatible);
+  SfAudioPlayer widget;
+  Future initData() async {
+    await super.initData();
+    await widget.onInit?.call(this);
+    if(widget.autoplay) await play();
+  }
+  void dispose(){
+    widget.onDispose?.call(this);
+    super.dispose();
+  }
+  void onPlayerStateChanged(PlayerState s){
+    super.onPlayerStateChanged(s);
+    if(widget.loop && s==PlayerState.COMPLETED) play();
   }
 }
