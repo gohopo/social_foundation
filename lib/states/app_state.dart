@@ -37,10 +37,19 @@ class SfAppState extends SfViewState{
     return onThemeData(ThemeData(
       brightness: isDark ? Brightness.dark : Brightness.light,
       primaryColorBrightness: Brightness.dark,
-      accentColorBrightness: Brightness.dark,
       primarySwatch: _themeColor,
-      accentColor: isDark ? _themeColor[700] : _themeColor,
-      fontFamily: fontList[fontIndex]
+      colorScheme: ColorScheme.fromSwatch(
+        brightness: isDark ? Brightness.dark : Brightness.light,
+        primarySwatch: _themeColor,
+        accentColor: isDark ? _themeColor[700] : _themeColor
+      ),
+      fontFamily: fontList[fontIndex],
+      appBarTheme: AppBarTheme(
+        titleTextStyle: TextStyle(fontSize:16,color:Colors.black,fontWeight:FontWeight.w500,height:1),
+        iconTheme: IconThemeData(
+          color: Colors.black
+        )
+      )
     ));
   }
   Future saveTheme(bool userDarkMode, MaterialColor themeColor) async {
@@ -77,7 +86,7 @@ class SfAppState extends SfViewState{
   ThemeData onThemeData(ThemeData themeData){
     return themeData.copyWith(
       brightness: themeData.brightness,
-      accentColor: themeData.accentColor,
+      colorScheme: themeData.colorScheme,
       cupertinoOverrideTheme: CupertinoThemeData(
         primaryColor: _themeColor,
         brightness: themeData.brightness,
@@ -89,12 +98,6 @@ class SfAppState extends SfViewState{
       textTheme: themeData.textTheme.copyWith(
         //subhead: themeData.textTheme.subhead.copyWith(textBaseline: TextBaseline.alphabetic)
       ),
-      textSelectionTheme: themeData.textSelectionTheme.copyWith(
-        cursorColor: themeData.accentColor,
-        selectionColor: themeData.accentColor.withAlpha(60),
-        selectionHandleColor: themeData.accentColor.withAlpha(60),
-      ),
-      toggleableActiveColor: themeData.accentColor,
       chipTheme: themeData.chipTheme.copyWith(
         pressElevation: 0,
         padding: EdgeInsets.symmetric(horizontal: 10),
