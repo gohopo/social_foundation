@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/size_extension.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
@@ -270,7 +269,10 @@ class SfFlipNumberEnhanced extends StatelessWidget{
     this.height,
     this.style = const TextStyle(fontSize:32,color:Colors.white,fontWeight:FontWeight.bold,height:1),
     this.dividerHeight = 2,
-    this.numberContainerBuilder
+    this.numberContainerBuilder,
+    this.numberContainerSize = const Size(33,46),
+    this.numberContainerMargin = const EdgeInsets.symmetric(horizontal:1.5),
+    this.numberContainerDecoration = numberContainerDefaultDecoration
   }) : super(key:key);
   final String number;
   final Duration duration;
@@ -279,10 +281,16 @@ class SfFlipNumberEnhanced extends StatelessWidget{
   final TextStyle style;
   final double dividerHeight;
   final Widget Function(Widget child) numberContainerBuilder;
-  static double zeroAngle = 0.0001;
+  final Size numberContainerSize;
+  final EdgeInsetsGeometry numberContainerMargin;
+  final BoxDecoration numberContainerDecoration;
+  static const BoxDecoration numberContainerDefaultDecoration = BoxDecoration(
+    color: Colors.black,
+    borderRadius: BorderRadius.all(Radius.circular(4))
+  );
   Widget buildNumberColumn(SfFlipNumberEnhancedVM model,int index){
     var number = model.getNumber(index);
-    if(number == null) return buildNumber(model.numbers[index]);
+    if(number == null) return buildNumber(model.numbers[index],style.copyWith(color:numberContainerDecoration.color));
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -292,27 +300,24 @@ class SfFlipNumberEnhanced extends StatelessWidget{
       ],
     );
   }
-  Widget buildNumber(String ch){
-    if(path==null) return buildNumberText(ch);
+  Widget buildNumber(String ch,TextStyle style){
+    if(path==null) return buildNumberText(ch,style);
     return buildNumberImage(ch);
   }
-  Widget buildNumberText(String ch) => Text(ch,style:style);
+  Widget buildNumberText(String ch,TextStyle style) => Text(ch,style:style);
   Widget buildNumberImage(String ch) => Image.asset('$path/$ch.png',height:height);
   Widget buildNumberContainer(Widget child) => Container(
-    width:66.w,height:92.w,
-    margin: EdgeInsets.symmetric(horizontal:4.w),
+    width:numberContainerSize.width,height:numberContainerSize.height,
+    margin: numberContainerMargin,
     alignment: Alignment.center,
-    decoration: BoxDecoration(
-      color: Colors.black,
-      borderRadius: BorderRadius.circular(6.w),
-    ),
+    decoration: numberContainerDecoration,
     child: child
   );
   Widget buildNumberClip(String ch,Alignment alignment) => ClipRect(
     child: Align(
       alignment: alignment,
       heightFactor: 0.5,
-      child: (numberContainerBuilder??buildNumberContainer).call(buildNumber(ch)),
+      child: (numberContainerBuilder??buildNumberContainer).call(buildNumber(ch,style)),
     ),
   );
   Widget buildNumberAnimation(SfFlipNumberEnhancedVM model,String number,String oldNumber,bool top) => Stack(
@@ -375,7 +380,7 @@ class SfFlipNumberEnhancedVM extends SfViewState{
         notifyListeners();
       }
     });
-    rotateX = Tween(begin:SfFlipNumberEnhanced.zeroAngle,end:pi/2).animate(controller);
+    rotateX = Tween(begin:0.0001,end:pi/2).animate(controller);
     flip();
   }
   void dispose(){
