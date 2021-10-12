@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/size_extension.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
@@ -169,12 +170,14 @@ class SfRollingNumberEnhancedModel extends SfViewState{
     notifyListeners();
   }
 
-  @override
   Future initDataVsync(vsync) async {
     controller = AnimationController(duration:widget.duration,vsync:vsync);
     rolling();
   }
-  @override
+  void dispose(){
+    controller?.dispose();
+    super.dispose();
+  }
   void onRefactor(SfViewState newState){
     var state = newState as SfRollingNumberEnhancedModel;
     if(state.widget.number!=widget.number){
@@ -254,6 +257,136 @@ class SfAnimatedNumberModel extends SfViewState{
     if(state.widget.number!=widget.number){
       widget = state.widget;
       animate();
+    }
+  }
+}
+
+class SfFlipNumberEnhanced extends StatelessWidget{
+  SfFlipNumberEnhanced({
+    Key key,
+    this.number,
+    this.duration = const Duration(milliseconds:400),
+    this.path,
+    this.height,
+    this.style = const TextStyle(fontSize:32,color:Colors.white,fontWeight:FontWeight.bold,height:1),
+    this.dividerHeight = 2,
+    this.numberContainerBuilder
+  }) : super(key:key);
+  final String number;
+  final Duration duration;
+  final String path;
+  final double height;
+  final TextStyle style;
+  final double dividerHeight;
+  final Widget Function(Widget child) numberContainerBuilder;
+  static double zeroAngle = 0.0001;
+  Widget buildNumberColumn(SfFlipNumberEnhancedVM model,int index){
+    var number = model.getNumber(index);
+    if(number == null) return buildNumber(model.numbers[index]);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        buildNumberAnimation(model,number.toString(),model.getOldNumber(index).toString(),true),
+        SizedBox(height:dividerHeight),
+        buildNumberAnimation(model,number.toString(),model.getOldNumber(index).toString(),false),
+      ],
+    );
+  }
+  Widget buildNumber(String ch){
+    if(path==null) return buildNumberText(ch);
+    return buildNumberImage(ch);
+  }
+  Widget buildNumberText(String ch) => Text(ch,style:style);
+  Widget buildNumberImage(String ch) => Image.asset('$path/$ch.png',height:height);
+  Widget buildNumberContainer(Widget child) => Container(
+    width:66.w,height:92.w,
+    margin: EdgeInsets.symmetric(horizontal:4.w),
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: Colors.black,
+      borderRadius: BorderRadius.circular(6.w),
+    ),
+    child: child
+  );
+  Widget buildNumberClip(String ch,Alignment alignment) => ClipRect(
+    child: Align(
+      alignment: alignment,
+      heightFactor: 0.5,
+      child: (numberContainerBuilder??buildNumberContainer).call(buildNumber(ch)),
+    ),
+  );
+  Widget buildNumberAnimation(SfFlipNumberEnhancedVM model,String number,String oldNumber,bool top) => Stack(
+    children: [
+      buildNumberClip(top?number:oldNumber,top?Alignment.topCenter:Alignment.bottomCenter),
+      if(number!=oldNumber) Transform(
+        transform: Matrix4.identity()
+          ..setEntry(3,2,0.006)
+          ..rotateX(top ? (model.isReversePhase?pi/2:model.rotateX.value) : (model.isReversePhase?-model.rotateX.value:pi/2)),
+        alignment: top ? Alignment.bottomCenter : Alignment.topCenter,
+        child: buildNumberClip(!top?number:oldNumber,!top?Alignment.bottomCenter:Alignment.topCenter),
+      )
+    ],
+  );
+
+  Widget build(BuildContext context) => SfProvider<SfFlipNumberEnhancedVM>(
+    model: SfFlipNumberEnhancedVM(this),
+    builder: (_,model,__) => AnimatedBuilder(
+      animation: model.controller,
+      builder: (_,__) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: model.numbers.asMap().keys.map((index)=>buildNumberColumn(model,index)).toList(),
+      )
+    )
+  );
+}
+class SfFlipNumberEnhancedVM extends SfViewState{
+  SfFlipNumberEnhancedVM(this.widget);
+  SfFlipNumberEnhanced widget;
+  AnimationController controller;
+  List<String> oldNumbers;
+  List<String> numbers;
+  Animation<double> rotateX;
+  bool isReversePhase = false;
+  int getNumber(int index) => int.tryParse(numbers[index]);
+  int getOldNumber(int index) => int.tryParse(oldNumbers[index])??0;
+  void flip() async {
+    isReversePhase = false;
+    oldNumbers = numbers ?? [];
+    numbers = widget.number?.split('') ?? [];
+    if(oldNumbers.length < numbers.length){
+      oldNumbers.insertAll(0, List.filled(numbers.length-oldNumbers.length, '0'));
+    }
+    else if(oldNumbers.length > numbers.length){
+      numbers.insertAll(0, List.filled(oldNumbers.length-numbers.length, '0'));
+    }
+    notifyListeners();
+    controller.reset();
+    await controller.forward();
+    numbers = widget.number?.split('') ?? [];
+    notifyListeners();
+  }
+
+  Future initDataVsync(vsync) async {
+    controller = AnimationController(duration:widget.duration,vsync:vsync);
+    controller.addStatusListener((status){
+      if(status == AnimationStatus.completed) {
+        controller.reverse();
+        isReversePhase = true;
+        notifyListeners();
+      }
+    });
+    rotateX = Tween(begin:SfFlipNumberEnhanced.zeroAngle,end:pi/2).animate(controller);
+    flip();
+  }
+  void dispose(){
+    controller?.dispose();
+    super.dispose();
+  }
+  void onRefactor(SfViewState newState){
+    var state = newState as SfFlipNumberEnhancedVM;
+    if(state.widget.number!=widget.number){
+      widget = state.widget;
+      flip();
     }
   }
 }

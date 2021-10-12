@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sound_lite/flutter_sound.dart' hide PlayerState;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:social_foundation/models/app.dart';
 import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
@@ -269,6 +270,7 @@ class SfAudioPlayerModel extends SfViewState{
     _positionSubscription = player.onAudioPositionChanged.listen(onAudioPositionChanged);
     
     if(earpieceMode) await player.earpieceOrSpeakersToggle();
+    if(uri!=null) uri = await SfApp.prepareSound(uri);
   }
   void dispose(){
     setGlobal(false);
@@ -281,6 +283,7 @@ class SfAudioPlayerModel extends SfViewState{
     var state = newState as SfAudioPlayerModel;
     if(uri!=state.uri){
       uri = state.uri;
+      uri = await SfApp.prepareSound(uri);
       await player.setUrl(uri);
     }
     if(earpieceMode!=state.earpieceMode){
