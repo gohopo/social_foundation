@@ -267,7 +267,7 @@ class SfFlipNumberEnhanced extends StatelessWidget{
     this.duration = const Duration(milliseconds:400),
     this.path,
     this.height,
-    this.style = const TextStyle(fontSize:32,color:Colors.white,fontWeight:FontWeight.bold,height:1),
+    this.style = const TextStyle(fontSize:32,color:Colors.white,fontWeight:FontWeight.bold),
     this.dividerHeight = 2,
     this.numberContainerBuilder,
     this.numberContainerSize = const Size(33,46),
