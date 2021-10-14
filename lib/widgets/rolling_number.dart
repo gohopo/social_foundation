@@ -94,12 +94,14 @@ class SfRollingNumberEnhanced extends StatelessWidget{
     this.number,
     this.duration = const Duration(milliseconds:400),
     @required this.height,
-    @required this.path
+    @required this.path,
+    this.slotImage = '8'
   }) : super(key:key);
   final String number;
   final Duration duration;
   final double height;
   final String path;
+  final String slotImage;
 
   Widget buildNumberColumn(BuildContext context,SfRollingNumberEnhancedModel model,int index){
     var number = model.getNumber(index);
@@ -116,7 +118,7 @@ class SfRollingNumberEnhanced extends StatelessWidget{
   }
   Widget buildNumberSlot(BuildContext context) => Opacity(
     opacity: 0,
-    child: buildNumber(context,'7'),
+    child: buildNumber(context,slotImage),
   );
   Widget buildNumberAnimation(BuildContext context,SfRollingNumberEnhancedModel model,int number,oldNumber){
     return Positioned(
