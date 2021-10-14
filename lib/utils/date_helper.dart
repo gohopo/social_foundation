@@ -30,35 +30,35 @@ class SfDateHelper{
     var format = ''; 
     int millisecondsUnit = Duration.millisecondsPerDay*365;
     if(minUnits==5-minUnit || milliseconds>=millisecondsUnit){
-      format += _formatValue((milliseconds/millisecondsUnit).floor(), full, yearUnit??defaultUnit);
+      format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, yearUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerDay;
     if(minUnit<4 && (minUnits==4-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
-      format += _formatValue((milliseconds/millisecondsUnit).floor(), full, dayUnit??defaultUnit);
+      format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, dayUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerHour;
     if(minUnit<3 && (minUnits==3-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
-      format += _formatValue((milliseconds/millisecondsUnit).floor(), full, hourUnit??defaultUnit);
+      format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, hourUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerMinute;
     if(minUnit<2 && (minUnits==2-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
-      format += _formatValue((milliseconds/millisecondsUnit).floor(), full, minuteUnit??defaultUnit);
+      format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, minuteUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerSecond;
     if(minUnit<1 && (minUnits==1-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
-      format += _formatValue((milliseconds/millisecondsUnit).floor(), full, secondUnit??defaultUnit);
+      format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, secondUnit??defaultUnit);
     }
     var index = format.lastIndexOf(defaultUnit);
     if(index+defaultUnit.length == format.length){
@@ -66,6 +66,7 @@ class SfDateHelper{
     }
     return format;
   }
+  static String formatDurationUnit(int value,bool full,String unit) => '${full&&value<10 ? 0 : ''}$value$unit';
 
   static bool isSameYear(DateTime dateLeft, DateTime dateRight) => dateLeft.year==dateRight.year;
   static bool isSameMonth(DateTime dateLeft, DateTime dateRight) => dateLeft.month==dateRight.month && isSameYear(dateLeft,dateRight);
@@ -110,5 +111,3 @@ class SfDateHelper{
   static bool isAfterNow(DateTime date) => isAfter(date,DateTime.now());
   static bool isBeforeNow(DateTime date) => isBefore(date,DateTime.now());
 }
-
-String _formatValue(int value,bool full,String unit) => '${full&&value<10 ? 0 : ''}$value$unit';
