@@ -55,9 +55,40 @@ class SfPath{
           h * .15962)
       ..close();
   }
+  static Path getCubicPath({@required List<Offset> dots,double smoothness=0.35,bool preventCurveOverShooting=true,double preventCurveOvershootingThreshold=10.0}){
+    var path = Path();
+    path.moveTo(dots.first.dx, dots.first.dy);
+    
+    var temp = Offset.zero;
+    for(var i=1;i<dots.length;++i){
+      final current=dots[i],previous=dots[i-1],next=dots[i+1<dots.length ? i+1 : i];
+      final controlPoint1 = previous + temp;
+      temp = ((next - previous) / 2) * smoothness;
+      if(preventCurveOverShooting){
+        if((next - current).dy <= preventCurveOvershootingThreshold ||
+            (current - previous).dy <= preventCurveOvershootingThreshold){
+          temp = Offset(temp.dx, 0);
+        }
+        if((next - current).dx <= preventCurveOvershootingThreshold ||
+            (current - previous).dx <= preventCurveOvershootingThreshold){
+          temp = Offset(0, temp.dy);
+        }
+      }
+      final controlPoint2 = current - temp;
+      path.cubicTo(
+        controlPoint1.dx,
+        controlPoint1.dy,
+        controlPoint2.dx,
+        controlPoint2.dy,
+        current.dx,
+        current.dy,
+      );
+    }
+    return path;
+  }
 }
 
-class SfTrapezoidClipper extends CustomClipper<Path> {
+class SfTrapezoidClipper extends CustomClipper<Path>{
   SfTrapezoidClipper(this.cutLength, this.edge);
   final double cutLength;
   final AxisDirection edge;
@@ -115,4 +146,67 @@ class SfTrapezoidClipper extends CustomClipper<Path> {
     SfTrapezoidClipper oldie = oldClipper as SfTrapezoidClipper;
     return cutLength != oldie.cutLength || edge != oldie.edge;
   }
+}
+
+class SfCubicPathClipper extends CustomClipper<Path>{
+  SfCubicPathClipper({this.heightWeights,this.heightWeightFn}){
+    heightWeightFn ??= (index,heightWeight) => heightWeight;
+  }
+  List<double> heightWeights;
+  double Function(int index,double heightWeight) heightWeightFn;
+  static List<Offset> getDots({Size size,List<double> heightWeights,double Function(int index,double heightWeight) heightWeightFn}) => List.generate(heightWeights.length, (index) => Offset(size.width/(heightWeights.length-1)*index,(1-heightWeightFn.call(index,heightWeights[index]))*size.height));
+  Path getClip(Size size){
+    var dots = getDots(size:size,heightWeights:heightWeights,heightWeightFn:heightWeightFn);
+    return SfPath.getCubicPath(dots:dots)
+      ..lineTo(dots.last.dx,size.height)
+      ..close();
+  }
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper){
+    SfCubicPathClipper oldie = oldClipper as SfCubicPathClipper;
+    return heightWeights.length!=oldie.heightWeights.length || this!=oldie;
+  }
+}
+
+class SfCubicPathPainter extends CustomPainter{
+  SfCubicPathPainter({
+    this.heightWeights,this.heightWeightFn,this.currentDot,
+    this.lineColor=const Color.fromRGBO(120,152,188,0.3),this.dotColor=const Color.fromRGBO(120,152,188,0.5)
+  }){
+    heightWeightFn ??= (index,heightWeight) => heightWeight;
+  }
+  List<double> heightWeights;
+  double Function(int index,double heightWeight) heightWeightFn;
+  int currentDot;
+  Color lineColor;
+  Color dotColor;
+  void paintLine(List<Offset> dots,{Canvas canvas,Size size,Color color}){
+    var path = SfPath.getCubicPath(dots:dots);
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..color = color
+      ..strokeWidth = 2;
+    canvas.drawPath(path, paint);
+  }
+  void paintDots(List<Offset> dots,{Canvas canvas,Color color}){
+    for(var i=0;i<dots.length;++i){
+      if(currentDot==null || currentDot==i) paintDot(
+        canvas:canvas,offset:dots[i],color:color
+      );
+    }
+  }
+  void paintDot({Canvas canvas,Offset offset,Color color,double radius=4}){
+    final Paint paint = Paint()
+      ..style = PaintingStyle.fill
+      ..color = color;
+
+    canvas.drawCircle(offset, radius, paint);
+  }
+
+  void paint(Canvas canvas,Size size){
+    var dots = SfCubicPathClipper.getDots(size:size,heightWeights:heightWeights,heightWeightFn:heightWeightFn);
+    paintLine(dots,canvas:canvas,size:size,color:lineColor);
+    paintDots(dots,canvas:canvas,color:dotColor);
+  }
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
