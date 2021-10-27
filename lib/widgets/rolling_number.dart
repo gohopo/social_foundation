@@ -270,6 +270,7 @@ class SfFlipNumberEnhanced extends StatelessWidget{
     this.path,
     this.height,
     this.style = const TextStyle(fontSize:32,color:Colors.white,fontWeight:FontWeight.bold),
+    this.stringStyle,
     this.dividerHeight = 2,
     this.numberContainerBuilder,
     this.numberContainerSize = const Size(33,46),
@@ -281,6 +282,7 @@ class SfFlipNumberEnhanced extends StatelessWidget{
   final String path;
   final double height;
   final TextStyle style;
+  final TextStyle stringStyle;
   final double dividerHeight;
   final Widget Function(Widget child) numberContainerBuilder;
   final Size numberContainerSize;
@@ -292,7 +294,7 @@ class SfFlipNumberEnhanced extends StatelessWidget{
   );
   Widget buildNumberColumn(SfFlipNumberEnhancedVM model,int index){
     var number = model.getNumber(index);
-    if(number == null) return buildNumber(model.numbers[index],style.copyWith(color:numberContainerDecoration.color));
+    if(number == null) return buildNumber(model.numbers[index],stringStyle??style.copyWith(color:numberContainerDecoration.color));
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
