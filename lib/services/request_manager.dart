@@ -2,13 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:path/path.dart' as p;
 
 class SfRequestManager{
-  SfRequestManager(BaseOptions options) : _dio=Dio(options);
-  Dio _dio;
+  SfRequestManager(BaseOptions options):dio=Dio(options);
+  Dio dio;
 
   Future<dynamic> invokeFunction(String controller,String function,Map body) async {
     try{
       var path = controller.isNotEmpty ? p.join(controller,function) : function;
-      var response = await _dio.post(path,data: body);
+      var response = await dio.post(path,data: body);
       return response.data;
     }
     catch(e){

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:social_foundation/widgets/path.dart';
 
 class SfUnderlineTabIndicator extends Decoration{
   SfUnderlineTabIndicator({
@@ -144,4 +145,56 @@ class GradientRectSliderTrackShape extends SliderTrackShape with BaseSliderTrack
       rightTrackPaint,
     );
   }
+}
+
+class SfCubicPathPainter extends CustomPainter{
+  SfCubicPathPainter({
+    this.heightWeights,this.heightWeightFn,this.currentDot,
+    this.lineColor=const Color.fromRGBO(120,152,188,0.3),this.dotColor=const Color.fromRGBO(120,152,188,0.5)
+  }){
+    heightWeightFn ??= (index,heightWeight) => heightWeight;
+  }
+  List<double> heightWeights;
+  double Function(int index,double heightWeight) heightWeightFn;
+  int currentDot;
+  Color lineColor;
+  Color dotColor;
+  void paintLine(List<Offset> dots,{Canvas canvas,Size size,Color color}){
+    var path = SfPath.getCubicPath(dots:dots);
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..color = color
+      ..strokeWidth = 2;
+    canvas.drawPath(path, paint);
+  }
+  void paintDots(List<Offset> dots,{Canvas canvas,Color color}){
+    for(var i=0;i<dots.length;++i){
+      if(currentDot==null || currentDot==i) paintDot(
+        canvas:canvas,offset:dots[i],color:color
+      );
+    }
+  }
+  void paintDot({Canvas canvas,Offset offset,Color color,double radius=4}){
+    final Paint paint = Paint()
+      ..style = PaintingStyle.fill
+      ..color = color;
+
+    canvas.drawCircle(offset, radius, paint);
+  }
+
+  void paint(Canvas canvas,Size size){
+    var dots = SfCubicPathClipper.getDots(size:size,heightWeights:heightWeights,heightWeightFn:heightWeightFn);
+    paintLine(dots,canvas:canvas,size:size,color:lineColor);
+    paintDots(dots,canvas:canvas,color:dotColor);
+  }
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+class SfCustomPainter extends CustomPainter{
+  SfCustomPainter({this.onPaint,this.onShouldRepaint});
+  void Function(Canvas canvas, Size size) onPaint;
+  bool Function() onShouldRepaint;
+  void paint(Canvas canvas, Size size) => onPaint?.call(canvas,size);
+  bool shouldRepaint(_) => onShouldRepaint?.call() ?? true;
 }
