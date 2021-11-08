@@ -140,3 +140,48 @@ class _SfShakeAnimationModel extends SfViewState{
     super.dispose();
   }
 }
+
+class SfRotationAnimation extends StatelessWidget{
+  SfRotationAnimation({
+    @required this.child,
+    this.duration = const Duration(seconds:30),
+    this.alignment = Alignment.center
+  });
+  final Widget child;
+  final Duration duration;
+  final Alignment alignment;
+
+  Widget build(_) => SfProvider<_SfRotationAnimationModel>(
+    model: _SfRotationAnimationModel(this),
+    builder: (_,model,__) => AnimatedBuilder(
+      animation: model.controller,
+      builder: (_,child) => RotationTransition(
+        turns: model.controller,
+        alignment: alignment,
+        child: child
+      ),
+      child: child,
+    )
+  );
+}
+class _SfRotationAnimationModel extends SfViewState{
+  _SfRotationAnimationModel(this.widget);
+  SfRotationAnimation widget;
+  AnimationController controller;
+
+  Future initDataVsync(vsync) async {
+    controller = AnimationController(duration:widget.duration,vsync:vsync);
+    controller.addStatusListener((status){
+      if(status == AnimationStatus.completed){
+        controller.reset();
+        controller.forward();
+      }
+    });
+    controller.forward();
+    return super.initDataVsync(vsync);
+  }
+  void dispose(){
+    controller?.dispose();
+    super.dispose();
+  }
+}

@@ -149,18 +149,16 @@ class GradientRectSliderTrackShape extends SliderTrackShape with BaseSliderTrack
 
 class SfCubicPathPainter extends CustomPainter{
   SfCubicPathPainter({
-    this.heightWeights,this.heightWeightFn,this.currentDot,
+    this.controlPoints,CatmullRomSpline catmullRomSpline,this.currentDot,
     this.lineColor=const Color.fromRGBO(120,152,188,0.3),this.dotColor=const Color.fromRGBO(120,152,188,0.5)
-  }){
-    heightWeightFn ??= (index,heightWeight) => heightWeight;
-  }
-  List<double> heightWeights;
-  double Function(int index,double heightWeight) heightWeightFn;
+  }):catmullRomSpline=catmullRomSpline??SfCubicPath.getCatmullRomSpline(controlPoints);
+  List<Offset> controlPoints;
+  CatmullRomSpline catmullRomSpline;
   int currentDot;
   Color lineColor;
   Color dotColor;
-  void paintLine(List<Offset> dots,{Canvas canvas,Size size,Color color}){
-    var path = SfPath.getCubicPath(dots:dots);
+  void paintLine({Canvas canvas,Size size,Color color}){
+    var path = SfCubicPath.getPath(SfCubicPath.getDots(catmullRomSpline,size));
 
     final paint = Paint()
       ..style = PaintingStyle.stroke
@@ -168,10 +166,10 @@ class SfCubicPathPainter extends CustomPainter{
       ..strokeWidth = 2;
     canvas.drawPath(path, paint);
   }
-  void paintDots(List<Offset> dots,{Canvas canvas,Color color}){
-    for(var i=0;i<dots.length;++i){
+  void paintDots({Canvas canvas,Size size,Color color}){
+    for(var i=0;i<controlPoints.length;++i){
       if(currentDot==null || currentDot==i) paintDot(
-        canvas:canvas,offset:dots[i],color:color
+        canvas:canvas,offset:SfCubicPath.getDot(controlPoints[i],size),color:color
       );
     }
   }
@@ -184,9 +182,8 @@ class SfCubicPathPainter extends CustomPainter{
   }
 
   void paint(Canvas canvas,Size size){
-    var dots = SfCubicPathClipper.getDots(size:size,heightWeights:heightWeights,heightWeightFn:heightWeightFn);
-    paintLine(dots,canvas:canvas,size:size,color:lineColor);
-    paintDots(dots,canvas:canvas,color:dotColor);
+    paintLine(canvas:canvas,size:size,color:lineColor);
+    paintDots(canvas:canvas,size:size,color:dotColor);
   }
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

@@ -148,22 +148,41 @@ class SfTrapezoidClipper extends CustomClipper<Path>{
   }
 }
 
-class SfCubicPathClipper extends CustomClipper<Path>{
-  SfCubicPathClipper({this.heightWeights,this.heightWeightFn}){
-    heightWeightFn ??= (index,heightWeight) => heightWeight;
+
+class SfCubicPath{
+  static CatmullRomSpline getCatmullRomSpline(List<Offset> controlPoints) => CatmullRomSpline(
+    controlPoints,
+    startHandle: Offset(0.099, 0.102),
+    endHandle: Offset(0.91, 0.66),
+    tension: 0.0,
+  );
+  static List<Offset> getDots(CatmullRomSpline catmullRomSpline,Size size,{double start=0,double end=1}){
+    var samples = catmullRomSpline.generateSamples(start:start,end:end);
+    return samples.map<Offset>((x) => getDot(x.value,size)).toList();
   }
-  List<double> heightWeights;
-  double Function(int index,double heightWeight) heightWeightFn;
-  static List<Offset> getDots({Size size,List<double> heightWeights,double Function(int index,double heightWeight) heightWeightFn}) => List.generate(heightWeights.length, (index) => Offset(size.width/(heightWeights.length-1)*index,(1-heightWeightFn.call(index,heightWeights[index]))*size.height));
+  static Offset getDot(Offset controlPoint,Size size) => Offset(size.width*controlPoint.dx,size.height*controlPoint.dy);
+  static Path getPath(List<Offset> dots){
+    var path = Path();
+    path.moveTo(dots.first.dx, dots.first.dy);
+    dots.forEach((x) => path.lineTo(x.dx, x.dy));
+    return path;
+  }
+}
+class SfCubicChartClipper extends CustomClipper<Path>{
+  SfCubicChartClipper({this.controlPoints,CatmullRomSpline catmullRomSpline,this.dotFn}):catmullRomSpline=catmullRomSpline??SfCubicPath.getCatmullRomSpline(controlPoints);
+  List<Offset> controlPoints;
+  CatmullRomSpline catmullRomSpline;
+  Offset Function(Size size,Offset dot) dotFn;
+  
   Path getClip(Size size){
-    var dots = getDots(size:size,heightWeights:heightWeights,heightWeightFn:heightWeightFn);
-    return SfPath.getCubicPath(dots:dots)
+    final dots = SfCubicPath.getDots(catmullRomSpline,size).map((x) => dotFn?.call(size,x)??x).toList();
+    return SfCubicPath.getPath(dots)
       ..lineTo(dots.last.dx,size.height)
-      ..lineTo(0,size.height)
+      ..lineTo(dots.first.dx,size.height)
       ..close();
   }
   bool shouldReclip(covariant CustomClipper<Path> oldClipper){
-    SfCubicPathClipper oldie = oldClipper as SfCubicPathClipper;
-    return heightWeights.length!=oldie.heightWeights.length || this!=oldie;
+    var oldie = oldClipper as SfCubicChartClipper;
+    return controlPoints.length!=oldie.controlPoints.length || this!=oldie;
   }
 }
