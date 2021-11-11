@@ -59,7 +59,7 @@ class SfSharedPreferencesStore{
   SharedPreferences sp;
   Future init() async => sp = await SharedPreferences.getInstance();
   String _convertUserKey(String key) => '${GetIt.instance<SfUserState>().curUserId}:$key';
-  Future<bool> remove(String key) => removeApp(key);
+  Future<bool> remove(String key) => removeApp(_convertUserKey(key));
   String getString(String key,{String defaultValue}) => getAppString(_convertUserKey(key),defaultValue:defaultValue);
   Future<bool> setString(String key,String value) => setAppString(_convertUserKey(key),value);
   bool getBool(String key,{bool defaultValue=false}) => getAppBool(_convertUserKey(key),defaultValue:defaultValue);
