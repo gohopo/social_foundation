@@ -50,13 +50,18 @@ class SfAudioRecorderConsumerVM extends SfViewState{
   bool get isCancelled => _startY-_offsetY>100;
   int get decibelsIcon => max(1, min(decibels*7~/120,7));
   Future start() async {
-    var status = await Permission.microphone.status;
-    if(!status.isGranted) status = await Permission.microphone.request();
-    if(!status.isGranted) throw '没有录音权限!';
-    buildOverLay();
-    if(Platform.isIOS) await _soundRecorder.setAudioFocus();
-    await _soundRecorder.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.voiceDirectory}/record.aac');
-    widget.onStartRecord?.call();
+    try{
+      var status = await Permission.microphone.status;
+      if(!status.isGranted) status = await Permission.microphone.request();
+      if(!status.isGranted) throw '没有录音权限!';
+      buildOverLay();
+      if(Platform.isIOS) await _soundRecorder.setAudioFocus();
+      await _soundRecorder.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.voiceDirectory}/record.aac');
+      widget.onStartRecord?.call();
+    }
+    catch(error){
+      SfLocatorManager.appState.showError(error);
+    }
   }
   Future stop() async {
     if(_overlayEntry==null) return;

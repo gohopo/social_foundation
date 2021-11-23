@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui show Image,ImageByteFormat,window;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SfImageHelper{
@@ -29,6 +31,17 @@ class SfImageHelper{
     var image = await convertProviderToImage(provider,configuration:configuration);
     var bytes = await image.toByteData(format:format??ui.ImageByteFormat.png);
     return bytes.buffer.asUint8List();
+  }
+  static Future<File> pickImage({@required ImageSource source,double maxWidth,double maxHeight,int imageQuality,CameraDevice preferredCameraDevice=CameraDevice.rear}) async {
+    try{
+      var file = await ImagePicker().getImage(
+        source:source,maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality,preferredCameraDevice:preferredCameraDevice
+      );
+      return file!=null ? File(file.path) : null;
+    }
+    catch(error){
+      throw '没有${source==ImageSource.gallery?'相册':'相机'}权限';
+    }
   }
   static Future saveImage(Uint8List imageBytes,{int quality=80,String name,bool isReturnImagePathOfIOS=false}) async {
     var status = await Permission.storage.status;

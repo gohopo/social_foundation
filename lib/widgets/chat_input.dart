@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:social_foundation/services/locator_manager.dart';
+import 'package:social_foundation/utils/image_helper.dart';
 import 'package:social_foundation/widgets/audio_widget.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
@@ -173,10 +175,14 @@ class SfChatInputModel extends SfViewState {
     else if(index == 2) onTapPhoto(ImageSource.camera);
   }
   void onTapPhoto(ImageSource source) async {
-    var file = await ImagePicker().getImage(source:source,maxWidth:imageMaxWidth,maxHeight:imageMaxHeight,imageQuality:imageQuality);
-    var image = File(file.path);
-    if(image==null || onPickImage==null) return;
-    onPickImage(image);
+    try{
+      var image = await SfImageHelper.pickImage(source:source,maxWidth:imageMaxWidth,maxHeight:imageMaxHeight,imageQuality:imageQuality);
+      if(image==null || onPickImage==null) return;
+      onPickImage(image);
+    }
+    catch(error){
+      SfLocatorManager.appState.showError(error);
+    }
   }
   void onStartRecord(){
     recorderTips = '松开 结束';
