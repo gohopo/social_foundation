@@ -29,7 +29,7 @@ class SfAvatar extends StatelessWidget{
   final int imageLongSide;
 
   ImageProvider get imageProvider{
-    return user?.icon!=null ? SfCacheManager.provder(SfAliyunOss.getImageUrl(user?.icon,long:imageLongSide)) : defaultImage;
+    return user?.icon!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(user?.icon,long:imageLongSide)) : defaultImage;
   }
   onTapOverride(){
     onTap?.call();

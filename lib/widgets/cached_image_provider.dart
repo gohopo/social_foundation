@@ -22,7 +22,7 @@ class SfCacheManager extends CacheManager with ImageCacheManager {
   }
   SfCacheManager._() : super(Config(key,fileService:FileServiceCompat(_fileFetcher)));
 
-  static CachedNetworkImageProvider provder(String url) => CachedNetworkImageProvider(url,cacheManager:SfCacheManager());
+  static CachedNetworkImageProvider provider(String url) => CachedNetworkImageProvider(url,cacheManager:SfCacheManager());
   static const key = "libCachedImageData";
   static SfCacheManager _instance;
 
