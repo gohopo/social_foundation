@@ -194,13 +194,15 @@ class SfAnimatedNumber extends StatelessWidget{
     this.style,
     this.duration = const Duration(milliseconds:400),
     this.framesPerSecond = 100,
-    this.numberBuilder
+    this.numberBuilder,
+    this.initialValue = 0
   });
   final double number;
   final TextStyle style;
   final Duration duration;
   final int framesPerSecond;
   final String Function(double number) numberBuilder;
+  final double initialValue;
 
   @override
   Widget build(BuildContext context){
@@ -211,15 +213,16 @@ class SfAnimatedNumber extends StatelessWidget{
   }
 }
 class SfAnimatedNumberModel extends SfViewState{
-  SfAnimatedNumberModel(this.widget);
+  SfAnimatedNumberModel(this.widget):number=widget.initialValue;
   SfAnimatedNumber widget;
-  double number = 0;
+  double number;
   Timer _timer;
   List<double> _frameList = [];
 
   void animate() async {
     stop();
     if(widget.number==null || widget.number==number) return;
+    if(number==null) number = widget.number;
     _frameList = [];
     var random = Random();
     int count = widget.duration.inMilliseconds*widget.framesPerSecond~/1000;
