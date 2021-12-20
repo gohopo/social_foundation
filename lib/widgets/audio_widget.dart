@@ -334,6 +334,7 @@ class SfAudioPlayerVM extends SfAudioPlayerModel{
   SfAudioPlayerVM(this.widget):super(uri:widget.uri,compatible:widget.compatible);
   SfAudioPlayer widget;
   Future initData() async {
+    if(widget.loop) player.setReleaseMode(ReleaseMode.LOOP);
     await super.initData();
     await widget.onInit?.call(this);
     if(widget.autoplay) await play();
@@ -341,9 +342,5 @@ class SfAudioPlayerVM extends SfAudioPlayerModel{
   void dispose(){
     widget.onDispose?.call(this);
     super.dispose();
-  }
-  void onPlayerStateChanged(PlayerState s){
-    super.onPlayerStateChanged(s);
-    if(widget.loop && s==PlayerState.COMPLETED) play();
   }
 }
