@@ -78,6 +78,7 @@ class SfPhotoGalleryViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context){
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SfProvider<_SfPhotoGalleryViewerModel>(
         model: _SfPhotoGalleryViewerModel(args),
         builder: (context,model,_) => Stack(
