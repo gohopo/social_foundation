@@ -92,7 +92,4 @@ class SfSharedPreferencesStore{
 }
 
 class SfStorageManagerKey{
-  static const themeUserDarkMode = 'themeUserDarkMode';
-  static const themeColorIndex = 'themeColorIndex';
-  static const fontIndex = 'fontIndex';
 }

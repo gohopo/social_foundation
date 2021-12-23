@@ -20,8 +20,7 @@ class App extends StatelessWidget {
           shouldFooterFollowWhenNotFull: (status) => false,
           child: MaterialApp(
             title: 'social foundation',
-            theme: appState.themeData(),
-            darkTheme: appState.themeData(platformDarkMode:true),
+            theme: appState.themeData(ThemeData.light()),
             localizationsDelegates: [
               RefreshLocalizations.delegate
             ],

@@ -1,112 +1,59 @@
-import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:social_foundation/models/app.dart';
+import 'package:social_foundation/models/theme.dart';
 import 'package:social_foundation/services/locator_manager.dart';
-import 'package:social_foundation/services/storage_manager.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
-class SfAppState extends SfViewState{
-  //主题
-  bool _userDarkMode;//用户选择的明暗模式
-  MaterialColor _themeColor;//当前主题颜色
-  int _fontIndex;//当前字体索引
-  List<String> fontList = ['system'];
-  int get fontIndex => _fontIndex;
-  void switchTheme({bool userDarkMode, MaterialColor color}) {
-    _userDarkMode = userDarkMode ?? _userDarkMode;
-    _themeColor = color ?? _themeColor;
-    notifyListeners();
-    saveTheme(_userDarkMode, _themeColor);
-  }
-  void switchRandomTheme({Brightness brightness}) {
-    int colorIndex = Random().nextInt(Colors.primaries.length - 1);
-    switchTheme(
-      userDarkMode: Random().nextBool(),
-      color: Colors.primaries[colorIndex],
-    );
-  }
-  void switchFont(int index) {
-    _fontIndex = index;
-    switchTheme();
-    saveFontIndex(index);
-  }
-  ThemeData themeData({bool platformDarkMode: false}){
-    var isDark = platformDarkMode || _userDarkMode;
-    return onThemeData(ThemeData(
-      brightness: isDark ? Brightness.dark : Brightness.light,
-      primaryColorBrightness: Brightness.dark,
-      primarySwatch: _themeColor,
-      colorScheme: ColorScheme.fromSwatch(
-        brightness: isDark ? Brightness.dark : Brightness.light,
-        primarySwatch: _themeColor,
-        accentColor: isDark ? _themeColor[700] : _themeColor
+class SfThemeState<TTheme extends SfTheme> extends SfViewState{
+  List<TTheme> _themes = [];
+  int _themeIndex = 0;
+  TTheme get theme => _themes[_themeIndex];
+  ThemeData themeData(ThemeData themeData) => onThemeData(themeData.copyWith(
+    colorScheme: themeData.colorScheme.copyWith(
+      primary:theme.primary,secondary:theme.primary,
+    ),
+    scaffoldBackgroundColor: theme.pageBackground,
+    dividerColor: theme.divider,
+    toggleableActiveColor: theme.primary,
+    appBarTheme: themeData.appBarTheme.copyWith(
+      backgroundColor:theme.navbarBackground,
+      titleTextStyle: TextStyle(fontSize:16,color:Colors.black,fontWeight:FontWeight.w500,height:1),
+      centerTitle:true,elevation:0,
+      iconTheme: IconThemeData(
+        color: Colors.black
       ),
-      fontFamily: fontList[fontIndex],
-      appBarTheme: AppBarTheme(
-        titleTextStyle: TextStyle(fontSize:16,color:Colors.black,fontWeight:FontWeight.w500,height:1),
-        iconTheme: IconThemeData(
-          color: Colors.black
-        )
-      )
-    ));
+    ),
+    inputDecorationTheme: themeData.inputDecorationTheme.copyWith(
+      hintStyle: TextStyle(fontSize:14,color:Color.fromRGBO(51,51,51,0.6)),
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      disabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      errorBorder: InputBorder.none,
+      focusedErrorBorder: InputBorder.none,
+      isDense: true,
+      contentPadding: EdgeInsets.zero
+    ),
+    primaryTextTheme: themeData.textTheme.copyWith(
+      headline6: TextStyle(fontSize:16,color:Color.fromRGBO(0,0,0,1)),
+      bodyText1: TextStyle(fontSize:12,color:Color.fromRGBO(0,0,0,1)),
+    ),
+    primaryIconTheme: themeData.primaryIconTheme.copyWith(
+      color: Color.fromRGBO(51,51,51,1)
+    ),
+    switchTheme: themeData.switchTheme.copyWith(
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    )
+  ));
+  
+  Future initData() async {
+    _themes.add(defaultTheme);
   }
-  Future saveTheme(bool userDarkMode, MaterialColor themeColor) async {
-    var index = Colors.primaries.indexOf(themeColor);
-    await Future.wait([
-      SfLocatorManager.storageManager.sharedPreferences.setAppBool(SfStorageManagerKey.themeUserDarkMode, userDarkMode),
-      SfLocatorManager.storageManager.sharedPreferences.setAppInt(SfStorageManagerKey.themeColorIndex, index)
-    ]);
-  }
-  Future saveFontIndex(int index) async {
-    await SfLocatorManager.storageManager.sharedPreferences.setAppInt(SfStorageManagerKey.fontIndex, index);
-  }
-  InputDecorationTheme inputDecorationTheme(ThemeData theme){
-    var width = 0.5;
-    return InputDecorationTheme(
-      hintStyle: TextStyle(fontSize: 14),
-      errorBorder: UnderlineInputBorder(
-          borderSide: BorderSide(width: width, color: theme.errorColor)),
-      focusedErrorBorder: UnderlineInputBorder(
-          borderSide: BorderSide(width: 0.7, color: theme.errorColor)),
-      focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(width: width, color: theme.primaryColor)),
-      enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(width: width, color: theme.dividerColor)),
-      border: UnderlineInputBorder(
-          borderSide: BorderSide(width: width, color: theme.dividerColor)),
-      disabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(width: width, color: theme.disabledColor)),
-    );
-  }
-  String fontName(index) {
-    return fontList[index];
-  }
-  ThemeData onThemeData(ThemeData themeData){
-    return themeData.copyWith(
-      brightness: themeData.brightness,
-      colorScheme: themeData.colorScheme,
-      cupertinoOverrideTheme: CupertinoThemeData(
-        primaryColor: _themeColor,
-        brightness: themeData.brightness,
-      ),
-      appBarTheme: themeData.appBarTheme.copyWith(elevation: 0),
-      splashColor: _themeColor.withAlpha(50),
-      hintColor: themeData.hintColor.withAlpha(90),
-      errorColor: Colors.red,
-      textTheme: themeData.textTheme.copyWith(
-        //subhead: themeData.textTheme.subhead.copyWith(textBaseline: TextBaseline.alphabetic)
-      ),
-      chipTheme: themeData.chipTheme.copyWith(
-        pressElevation: 0,
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        labelStyle: themeData.textTheme.caption,
-        backgroundColor: themeData.chipTheme.backgroundColor.withOpacity(0.1),
-      ),
-      inputDecorationTheme: inputDecorationTheme(themeData),
-    );
-  }
+  TTheme get defaultTheme => null;
+  ThemeData onThemeData(ThemeData themeData) => themeData;
+}
+
+class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
   void showError(error){}
   //通知
   List<String> notifyList = [];
@@ -133,11 +80,4 @@ class SfAppState extends SfViewState{
   void processNotifyList(){}
   //关键字
   String filterKeyword(String content) => content;
-
-  @override
-  Future initData() async {
-    _userDarkMode = SfLocatorManager.storageManager.sharedPreferences.getAppBool(SfStorageManagerKey.themeUserDarkMode) ?? false;
-    _themeColor = Colors.primaries[SfLocatorManager.storageManager.sharedPreferences.getAppInt(SfStorageManagerKey.themeColorIndex) ?? 5];
-    _fontIndex = SfLocatorManager.storageManager.sharedPreferences.getAppInt(SfStorageManagerKey.fontIndex) ?? 0;
-  }
 }
