@@ -84,8 +84,8 @@ class SfColorFiltered extends StatelessWidget{
   }
 }
 
-class SfColorImage extends StatelessWidget{
-  SfColorImage({Key key,this.color,this.child,this.blendMode=BlendMode.srcIn}):super(key:key);
+class SfColorWidget extends StatelessWidget{
+  SfColorWidget({Key key,this.color,this.child,this.blendMode=BlendMode.srcIn}):super(key:key);
   final Color color;
   final Widget child;
   final BlendMode blendMode;
