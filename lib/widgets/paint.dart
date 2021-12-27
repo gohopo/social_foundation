@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:social_foundation/widgets/path.dart';
 
@@ -194,4 +196,59 @@ class SfCustomPainter extends CustomPainter{
   bool Function() onShouldRepaint;
   void paint(Canvas canvas, Size size) => onPaint?.call(canvas,size);
   bool shouldRepaint(_) => onShouldRepaint?.call() ?? true;
+}
+
+class SfGradientCircularProgressIndicator extends StatelessWidget{
+  SfGradientCircularProgressIndicator({
+    Key key,this.value=0.5,this.backgroundColor=Colors.transparent,this.strokeWidth=4,this.radius,
+    this.gradientStops=const[0,1],this.gradientColors,this.child
+  }):super(key:key);
+  final double value;
+  final Color backgroundColor;
+  final double strokeWidth;
+  final double radius;
+  final List<double> gradientStops;
+  final List<Color> gradientColors;
+  final Widget child;
+  void onPaint(Canvas canvas, Size size){
+    final total = 2 * pi;
+    size = radius!=null ? Size.fromRadius(radius) : size;
+
+    double _value = value.clamp(0,1) * total;
+    const double _start = 0.05;
+    final double _offset = strokeWidth / 2;
+    final Rect rect = Offset(_offset, _offset) & Size(size.width - strokeWidth, size.height - strokeWidth);
+
+    final paint = Paint()
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke
+      ..isAntiAlias = true;
+
+    if (backgroundColor != Colors.transparent) {
+      paint.color = backgroundColor;
+      canvas.drawArc(rect, _start, total, false, paint);
+    }
+
+    if (_value > 0) {
+      paint.shader = SweepGradient(
+        colors: gradientColors, endAngle: _value, stops: gradientStops
+      ).createShader(rect);
+      canvas.drawArc(rect, _start, _value, false, paint);
+    }
+  }
+
+  Widget build(_) => Stack(
+    alignment: Alignment.center,
+    children: [
+      Transform.rotate(
+        angle: -pi / 2,
+        child: CustomPaint(
+          size: Size.fromRadius(radius),
+          painter: SfCustomPainter(onPaint:onPaint),
+        )
+      ),
+      if(child!=null) child
+    ],
+  );
 }
