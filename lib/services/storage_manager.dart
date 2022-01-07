@@ -66,10 +66,10 @@ class SfSharedPreferencesStore{
   Future<bool> setBool(String key,bool value) => setAppBool(_convertUserKey(key),value);
   List<String> getStringList(String key) => getAppStringList(_convertUserKey(key));
   Future<bool> setStringList(String key,List<String> value) => setAppStringList(_convertUserKey(key),value);
-  int getInt(String key,{int defaultValue=0}) => getAppInt(key,defaultValue:defaultValue);
-  Future<bool> setInt(String key,int value) => setAppInt(key,value);
-  double getDouble(String key,{double defaultValue=0}) => getAppDouble(key,defaultValue:defaultValue);
-  Future<bool> setDouble(String key,double value) => setAppDouble(key,value);
+  int getInt(String key,{int defaultValue=0}) => getAppInt(_convertUserKey(key),defaultValue:defaultValue);
+  Future<bool> setInt(String key,int value) => setAppInt(_convertUserKey(key),value);
+  double getDouble(String key,{double defaultValue=0}) => getAppDouble(_convertUserKey(key),defaultValue:defaultValue);
+  Future<bool> setDouble(String key,double value) => setAppDouble(_convertUserKey(key),value);
   Map getJson(String key) => getAppJson(_convertUserKey(key));
   Future<bool> setJson(String key,Map value) => setAppJson(_convertUserKey(key),value);
   List getArray(String key) => getAppArray(_convertUserKey(key));
