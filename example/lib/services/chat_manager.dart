@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
 import '../models/message.dart';
 import '../models/conversation.dart';

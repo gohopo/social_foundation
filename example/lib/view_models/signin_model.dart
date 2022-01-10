@@ -1,4 +1,3 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/services/router_manager.dart';

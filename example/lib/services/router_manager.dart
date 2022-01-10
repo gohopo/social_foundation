@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/pages/account/signin_page.dart';
 import 'package:social_foundation_example/pages/chat/chat_page.dart';

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/models/message.dart';
 import 'package:social_foundation_example/models/user.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:social_foundation/social_foundation.dart';
 
 class SfSkeletonList extends StatelessWidget{
   SfSkeletonList({

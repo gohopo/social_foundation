@@ -8,9 +8,9 @@ import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' as p;
 import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/storage_manager.dart';
-import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 import 'package:social_foundation/utils/utils.dart';
+import 'package:social_foundation/widgets/cached_image_provider.dart';
 
 class SfAliyunOss {
   static String accessKeyId;

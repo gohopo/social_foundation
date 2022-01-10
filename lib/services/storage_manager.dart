@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation/states/user_state.dart';
 import 'package:social_foundation/utils/utils.dart';
+import 'package:social_foundation/widgets/cached_image_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class SfStorageManager{

@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/user.dart';
-import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation/states/user_state.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
+import 'package:social_foundation/widgets/view_state.dart';
 
 class SfUserConsumer<TUser extends SfUser> extends StatelessWidget {
   SfUserConsumer({

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:social_foundation/pages/photo_viewer.dart';
 import 'package:social_foundation/widgets/page_route.dart';
 

@@ -1,4 +1,3 @@
-import 'package:get_it/get_it.dart';
 import 'package:social_foundation/social_foundation.dart';
 import 'package:social_foundation_example/models/user.dart';
 

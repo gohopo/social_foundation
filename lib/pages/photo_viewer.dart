@@ -1,7 +1,9 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:social_foundation/social_foundation.dart';
+import 'package:get_it/get_it.dart';
+import 'package:social_foundation/utils/image_helper.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
+import 'package:social_foundation/widgets/toast.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfPhotoGalleryViewer extends StatelessWidget {
