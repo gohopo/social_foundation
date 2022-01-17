@@ -13,6 +13,59 @@ import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
+typedef SfAudioRecorderStopCallback = Function(String path,int duration,bool isCancelled);
+
+class SfAudioRecorder extends SfViewState{
+  SfAudioRecorder({this.onStartRecord,this.onStopRecord});
+  VoidCallback onStartRecord;
+  SfAudioRecorderStopCallback onStopRecord;
+  FlutterSoundRecorder _soundRecorder;
+  Duration duration = Duration.zero;
+  double decibels = 0;
+  bool get isRecording => _soundRecorder?.isRecording??false;
+  Future checkPermission() async {
+    var status = await Permission.microphone.status;
+    if(!status.isGranted) status = await Permission.microphone.request();
+    if(!status.isGranted) throw '没有录音权限!';
+  }
+  Future start() async {
+    try{
+      await checkPermission();
+      await onStart();
+    }
+    catch(error){
+      SfLocatorManager.appState.showError(error);
+    }
+  }
+  Future stop({bool isCancelled}) => onStop(isCancelled:isCancelled);
+  Future onStart() async {
+    if(Platform.isIOS) await _soundRecorder.setAudioFocus();
+    await _soundRecorder.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.voiceDirectory}/record.aac');
+    onStartRecord?.call();
+  }
+  Future onStop({bool isCancelled}) async {
+    var path = await _soundRecorder.stopRecorder();
+    onStopRecord?.call(path,duration.inMilliseconds,isCancelled??false);
+  }
+  void onProgress(RecordingDisposition event){
+    duration = event.duration;
+    decibels = event.decibels;
+    notifyListeners();
+  }
+
+  Future initData() async {
+    _soundRecorder = await FlutterSoundRecorder().openAudioSession();
+    await _soundRecorder.setSubscriptionDuration(Duration(milliseconds:100));
+    _soundRecorder.onProgress.listen(onProgress);
+    return super.initData();
+  }
+  void dispose() async {
+    await stop(isCancelled:true);
+    await _soundRecorder?.closeAudioSession();
+    super.dispose();
+  }
+}
+
 class SfAudioRecorderConsumer extends StatelessWidget{
   SfAudioRecorderConsumer({
     Key key,
@@ -21,12 +74,12 @@ class SfAudioRecorderConsumer extends StatelessWidget{
     this.onStopRecord
   }):super(key:key);
   final Widget child;
-  final Function() onStartRecord;
-  final Function(String path,int duration,bool isCancelled) onStopRecord;
+  final VoidCallback onStartRecord;
+  final SfAudioRecorderStopCallback onStopRecord;
 
-  Widget build(BuildContext context) => SfProvider<SfAudioRecorderConsumerVM>(
-    model: SfAudioRecorderConsumerVM(this),
-    builder: (context,model,child) => GestureDetector(
+  Widget build(context) => SfProvider<SfAudioRecorderConsumerVM>(
+    model: SfAudioRecorderConsumerVM(onStartRecord:onStartRecord,onStopRecord:onStopRecord),
+    builder: (_,model,child) => GestureDetector(
       behavior: HitTestBehavior.opaque,
       onLongPressStart: model.onLongPressStart,
       onLongPressEnd: model.onLongPressEnd,
@@ -36,46 +89,20 @@ class SfAudioRecorderConsumer extends StatelessWidget{
     child: child,
   );
 }
-class SfAudioRecorderConsumerVM extends SfViewState{
-  SfAudioRecorderConsumerVM(this.widget);
-  SfAudioRecorderConsumer widget;
-  FlutterSoundRecorder _soundRecorder;
+class SfAudioRecorderConsumerVM extends SfAudioRecorder{
+  SfAudioRecorderConsumerVM({VoidCallback onStartRecord,SfAudioRecorderStopCallback onStopRecord}):super(onStartRecord:onStartRecord,onStopRecord:onStopRecord);
   OverlayEntry _overlayEntry;
   String decibelsIconDir = 'assets/images/audio_recorder/';
-  Duration duration = Duration.zero;
-  double decibels = 0;
   String _tips = '手指上滑,取消录音';
   double _startY = 0;
   double _offsetY = 0;
   bool get isCancelled => _startY-_offsetY>100;
   int get decibelsIcon => max(1, min(decibels*7~/120,7));
-  Future start() async {
-    try{
-      var status = await Permission.microphone.status;
-      if(!status.isGranted) status = await Permission.microphone.request();
-      if(!status.isGranted) throw '没有录音权限!';
-      buildOverLay();
-      if(Platform.isIOS) await _soundRecorder.setAudioFocus();
-      await _soundRecorder.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.voiceDirectory}/record.aac');
-      widget.onStartRecord?.call();
-    }
-    catch(error){
-      SfLocatorManager.appState.showError(error);
-    }
-  }
-  Future stop() async {
-    if(_overlayEntry==null) return;
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-    var path = await _soundRecorder.stopRecorder();
-    widget.onStopRecord?.call(path,duration.inMilliseconds,isCancelled);
-    _startY = _offsetY = 0;
-  }
   void onLongPressStart(LongPressStartDetails details){
     _startY = _offsetY = details.globalPosition.dy;
     start();
   }
-  void onLongPressEnd(LongPressEndDetails details) => stop();
+  void onLongPressEnd(LongPressEndDetails details) => stop(isCancelled:isCancelled);
   void onLongPressMoveUpdate(LongPressMoveUpdateDetails details){
     _offsetY = details.globalPosition.dy;
     _tips = isCancelled ? '松开 取消 录音' : '手指上滑,取消录音';
@@ -129,22 +156,21 @@ class SfAudioRecorderConsumerVM extends SfViewState{
     SfLocatorManager.routerManager.navigator.overlay.insert(_overlayEntry);
   }
 
-  Future initData() async {
-    _soundRecorder = await FlutterSoundRecorder().openAudioSession();
-    await _soundRecorder.setSubscriptionDuration(Duration(milliseconds:100));
-    _soundRecorder.onProgress.listen((event){
-      duration = event.duration;
-      decibels = event.decibels;
-      notifyListeners();
-      _overlayEntry?.markNeedsBuild();
-      if(_startY == 0) stop();
-    });
-    return super.initData();
+  Future onStart() async {
+    buildOverLay();
+    return super.onStart();
   }
-  void dispose() async {
-    await stop();
-    await _soundRecorder?.closeAudioSession();
-    super.dispose();
+  Future onStop({bool isCancelled}) async {
+    if(_overlayEntry==null) return;
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    await super.onStop(isCancelled:isCancelled);
+    _startY = _offsetY = 0;
+  }
+  void onProgress(RecordingDisposition event){
+    super.onProgress(event);
+    _overlayEntry?.markNeedsBuild();
+    if(_startY == 0) stop(isCancelled:isCancelled);
   }
 }
 
