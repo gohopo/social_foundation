@@ -303,7 +303,6 @@ class SfAudioPlayerModel extends SfViewState{
     position = p.inMilliseconds;
     notifyListeners();
     if(duration<=0) player.getDuration().then((d) => duration = d);
-    if(loop && duration>=1000 && position+1200>=duration) player.seek(Duration.zero);
   }
 
   Future initData() async {
