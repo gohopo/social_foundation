@@ -258,19 +258,27 @@ class SfAudioPlayerModel extends SfViewState{
     this.uri,
     this.earpieceMode = false,
     this.compatible = false,
-    this.volume = 1.0
+    this.volume = 1.0,
+    this.loop = false
   });
   String uri;
   bool earpieceMode;
   bool compatible;
   double volume;
+  bool loop;
   AudioPlayer player = new AudioPlayer();
   StreamSubscription _stateSubscription;
   StreamSubscription _positionSubscription;
   int position = 0;
+  int duration = 0;
   static SfAudioPlayerModel playingVM;
   
   bool get isPlaying => player.state==PlayerState.PLAYING;
+  Future setLoop(bool loop) async {
+    if(this.loop==loop) return;
+    await player.setReleaseMode(loop?ReleaseMode.LOOP:ReleaseMode.RELEASE);
+    this.loop = loop;
+  }
   Future play() async {
     if(!compatible) await playingVM?.stop();
     return player.play(uri,volume:volume);
@@ -294,12 +302,15 @@ class SfAudioPlayerModel extends SfViewState{
     setGlobal(true);
     position = p.inMilliseconds;
     notifyListeners();
+    if(duration<=0) player.getDuration().then((d) => duration = d);
+    if(loop && duration>=1000 && position+1200>=duration) player.seek(Duration.zero);
   }
 
   Future initData() async {
     _stateSubscription = player.onPlayerStateChanged.listen(onPlayerStateChanged);
     _positionSubscription = player.onAudioPositionChanged.listen(onAudioPositionChanged);
     
+    setLoop(loop);
     if(earpieceMode) await player.earpieceOrSpeakersToggle();
     if(uri!=null) uri = await SfApp.prepareSound(uri);
   }
@@ -313,6 +324,7 @@ class SfAudioPlayerModel extends SfViewState{
   void onRefactor(newState) async {
     var state = newState as SfAudioPlayerModel;
     if(uri!=state.uri){
+      duration = 0;
       uri = state.uri;
       uri = await SfApp.prepareSound(uri);
       await player.setUrl(uri);
@@ -325,6 +337,10 @@ class SfAudioPlayerModel extends SfViewState{
     if(volume!=state.volume){
       volume = state.volume;
       await player.setVolume(volume);
+    }
+    if(loop!=state.loop){
+      loop = state.loop;
+      await setLoop(loop);
     }
   }
   bool get wantKeepAlive => isPlaying;
@@ -357,10 +373,9 @@ class SfAudioPlayer extends StatelessWidget{
   );
 }
 class SfAudioPlayerVM extends SfAudioPlayerModel{
-  SfAudioPlayerVM(this.widget):super(uri:widget.uri,compatible:widget.compatible);
+  SfAudioPlayerVM(this.widget):super(uri:widget.uri,compatible:widget.compatible,loop:widget.loop);
   SfAudioPlayer widget;
   Future initData() async {
-    if(widget.loop) player.setReleaseMode(ReleaseMode.LOOP);
     await super.initData();
     await widget.onInit?.call(this);
     if(widget.autoplay) await play();
