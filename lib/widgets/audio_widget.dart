@@ -275,7 +275,6 @@ class SfAudioPlayerModel extends SfViewState{
   
   bool get isPlaying => player.state==PlayerState.PLAYING;
   Future setLoop(bool loop) async {
-    if(this.loop==loop) return;
     await player.setReleaseMode(loop?ReleaseMode.LOOP:ReleaseMode.RELEASE);
     this.loop = loop;
   }
