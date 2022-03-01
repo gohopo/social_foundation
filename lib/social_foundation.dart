@@ -38,6 +38,7 @@ export './models/message.dart';
 export './models/conversation.dart';
 export './models/user.dart';
 export './models/theme.dart';
+export './models/entity.dart';
 //widgets
 export './widgets/view_state.dart';
 export './widgets/provider_widget.dart';
