@@ -27,31 +27,32 @@ abstract class SfSyncEntity extends SfEntity{
   };
   SfSyncEntity fromDB(Map data) => fromJson(data);
   Map<String,dynamic> toDB() => toJson();
-  bool get isSynced => modifiedAt<=lastSyncedAt;
+  bool get isSynced => modifiedAt<=(SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap)[syncTable] ?? 0);
   String get syncTable => null;
-  static int get lastSyncedAt => SfLocatorManager.storageManager.sharedPreferences.getInt(SfStorageManagerKey.lastSyncedAt);
   static Future<Map<String,List<SfSyncEntity>>> sync({List<SfSyncEntity> schemas}) async {
     if(schemas?.isNotEmpty!=true) return {};
-    var unsyncedMap = {};
+    var syncedAtMap = SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap);
+    var syncingMap = {};
     for(var schema in schemas){
-      var list = await schema.queryUnsyncedList();
-      unsyncedMap[schema.syncTable] = {'list':list};
+      var list = await schema.queryUnsyncedList(syncedAtMap[schema.syncTable]);
+      syncingMap[schema.syncTable] = {
+        'at':syncedAtMap[schema.syncTable],'list':list
+      };
+      syncedAtMap[schema.syncTable] = DateTime.now().millisecondsSinceEpoch;
     }
-    var result = await SfLocatorManager.requestManager.invokeFunction('app', 'sync', {
-      'lastSyncedAt':lastSyncedAt,'unsyncedMap':unsyncedMap
-    });
-    Map<String,List<SfSyncEntity>> entitiesMap = {};
+    var result = await SfLocatorManager.requestManager.invokeFunction('app','sync',{'syncingMap':syncingMap});
+    Map<String,List<SfSyncEntity>> tableMap = {};
     for(var x in Map.from(result['map']).entries){
       var schema = schemas.firstWhere((schema) => schema.syncTable==x.key,orElse:()=>null);
       if(schema==null) continue;
       List<SfSyncEntity> list = x.value['list'].map<SfSyncEntity>((y) => schema.fromJson(y)).toList();
       await Future.wait(list.map((y) => y.saveToDB()));
-      entitiesMap[schema.syncTable] = list;
+      tableMap[schema.syncTable] = list;
     }
-    SfLocatorManager.storageManager.sharedPreferences.setInt(SfStorageManagerKey.lastSyncedAt,DateTime.now().millisecondsSinceEpoch);
-    return entitiesMap;
+    SfLocatorManager.storageManager.sharedPreferences.setJson(SfStorageManagerKey.syncedAtMap,syncedAtMap);
+    return tableMap;
   }
-  Future<List<SfSyncEntity>> queryUnsyncedList() async {
+  Future<List<SfSyncEntity>> queryUnsyncedList(int lastSyncedAt) async {
     var database = await SfLocatorManager.storageManager.getDatabase();
     var result = await database.query(syncTable,where:'userId=? and modifiedAt>?',whereArgs:[SfLocatorManager.userState.curUserId,lastSyncedAt]);
     return result.map(fromDB).toList();

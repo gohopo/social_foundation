@@ -94,5 +94,5 @@ class SfSharedPreferencesStore{
 }
 
 class SfStorageManagerKey{
-  static const String lastSyncedAt = 'lastSyncedAt';
+  static const String syncedAtMap = 'syncedAtMap';
 }
