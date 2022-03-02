@@ -54,7 +54,7 @@ abstract class SfSyncEntity extends SfEntity{
   }
   Future<List<SfSyncEntity>> queryUnsyncedList(int lastSyncedAt) async {
     var database = await SfLocatorManager.storageManager.getDatabase();
-    var result = await database.query(syncTable,where:'userId=? and modifiedAt>?',whereArgs:[SfLocatorManager.userState.curUserId,lastSyncedAt]);
+    var result = await database.query(syncTable,where:'userId=? and modifiedAt>?',whereArgs:[SfLocatorManager.userState.curUserId,lastSyncedAt??0]);
     return result.map(fromDB).toList();
   }
   Future saveToDB() async {
