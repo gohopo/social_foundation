@@ -29,7 +29,7 @@ abstract class SfSyncEntity extends SfEntity{
   Map<String,dynamic> toDB() => toJson();
   bool get isSynced => modifiedAt<=(SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap)[syncTable] ?? 0);
   String get syncTable => null;
-  static Future<Map<String,List<SfSyncEntity>>> sync({List<SfSyncEntity> schemas}) async {
+  static Future<Map<String,List<SfSyncEntity>>> sync({List<SfSyncEntity> schemas,bool onlyWhenModified}) async {
     if(schemas?.isNotEmpty!=true) return {};
     var syncedAtMap = SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap);
     var syncingMap = {};
@@ -40,6 +40,7 @@ abstract class SfSyncEntity extends SfEntity{
       };
       syncedAtMap[schema.syncTable] = DateTime.now().millisecondsSinceEpoch;
     }
+    if(onlyWhenModified==true && syncingMap.values.every((x) => x['list'].isEmpty)) return {};
     var result = await SfLocatorManager.requestManager.invokeFunction('app','sync',{'syncingMap':syncingMap});
     Map<String,List<SfSyncEntity>> tableMap = {};
     for(var x in Map.from(result['map']).entries){

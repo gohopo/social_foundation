@@ -80,4 +80,5 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
   void processNotifyList(){}
   //关键字
   String filterKeyword(String content) => content;
+  Future sync({bool onlyWhenModified}) async {}
 }
