@@ -32,16 +32,22 @@ class SfImageHelper{
     var bytes = await image.toByteData(format:format??ui.ImageByteFormat.png);
     return bytes.buffer.asUint8List();
   }
-  static Future<File> pickImage({@required ImageSource source,double maxWidth,double maxHeight,int imageQuality,CameraDevice preferredCameraDevice=CameraDevice.rear}) async {
+  static Future<File> pickImage({@required ImageSource source,double maxWidth,double maxHeight,int imageQuality,int maxFileSize=6,CameraDevice preferredCameraDevice=CameraDevice.rear}) async {
+    File file;
     try{
-      var file = await ImagePicker().getImage(
+      var pickedFile = await ImagePicker().getImage(
         source:source,maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality,preferredCameraDevice:preferredCameraDevice
       );
-      return file!=null ? File(file.path) : null;
+      file = pickedFile!=null ? File(pickedFile.path) : null;
     }
     catch(error){
       throw '没有${source==ImageSource.gallery?'相册':'相机'}权限';
     }
+    if(file!=null && maxFileSize>0){
+      var bytes = await file.readAsBytes();
+      if(bytes.lengthInBytes > (maxFileSize*1024*1024)) throw '文件大小超出最大限制';
+    }
+    return file;
   }
   static Future saveImage(Uint8List imageBytes,{int quality=80,String name,bool isReturnImagePathOfIOS=false}) async {
     var status = await Permission.storage.status;
