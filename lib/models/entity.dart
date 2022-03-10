@@ -16,7 +16,7 @@ abstract class SfSyncEntity extends SfEntity{
   void populate(Map data){
     userId = data['userId']??SfLocatorManager.userState.curUserId;
     modifiedAt = data['modifiedAt']??0;
-    isDeleted = data['isDeleted'];
+    isDeleted = data['isDeleted']??0;
   }
   void populateWith(covariant SfSyncEntity other) => populate(other.toJson());
   SfSyncEntity fromJson(Map data) => null;
