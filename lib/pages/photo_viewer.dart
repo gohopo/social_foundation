@@ -6,9 +6,18 @@ import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/toast.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
-class SfPhotoGalleryViewer extends StatelessWidget {
-  SfPhotoGalleryViewer(this.args);
-  final Map args;
+typedef SfLoadStateChanged = Widget Function(int index,ExtendedImageState state);
+
+class SfPhotoGalleryViewer extends StatelessWidget{
+  SfPhotoGalleryViewer(Map args)
+  :images=args['images']??[],_index=args['index']??0,heroPrefix=args['heroPrefix']??'SfPhotoGallery',_controller=args['controller']
+  ,canSave=args['canSave']??true,loadStateChanged=args['loadStateChanged'];
+  final List<ImageProvider> images;
+  final int _index;
+  final String heroPrefix;
+  final PageController _controller;
+  final bool canSave;
+  final SfLoadStateChanged loadStateChanged;
   
   Widget buildPhotoGallery(BuildContext context,_SfPhotoGalleryViewerModel model){
     return Positioned(
@@ -22,7 +31,7 @@ class SfPhotoGalleryViewer extends StatelessWidget {
         ),
         child: ExtendedImageGesturePageView.builder(
           controller: model.controller,
-          itemCount: model.images.length,
+          itemCount: images.length,
           onPageChanged: (index) => model.onPageChanged(index),
           itemBuilder: (context,index) => buildPhoto(context,model,index),
         ),
@@ -35,27 +44,28 @@ class SfPhotoGalleryViewer extends StatelessWidget {
       onLongPress: () => onLongPress(context,model,index),
       onLongPressUp: () => onLongPressUp(context,model,index),
       child: ExtendedImage(
-        image: model.images[index],
+        image: images[index],
         fit: BoxFit.contain,
         mode: ExtendedImageMode.gesture,
         initGestureConfigHandler: (_) => GestureConfig(
           inPageView: true, initialScale: 1.0,
           cacheGesture: false
         ),
+        loadStateChanged: (state) => loadStateChanged?.call(index,state)
       )
     );
     return index==model.index ? Hero(
-      tag: '${model.heroPrefix}_$index',
+      tag: '${heroPrefix}_$index',
       child: image,
     ) : image;
   }
   void onLongPress(BuildContext context,_SfPhotoGalleryViewerModel model,int index) async {
-    if(!model.canSave) return;
+    if(!canSave) return;
     var result = await GetIt.instance<SfEasyDialog>().onShowSheet(['保存到相册','取消'],clickClose:true);
     if(result != 0) return;
     try{
-      var bytes = await SfImageHelper.convertProviderToBytes(model.images[index]);
-      var result = await SfImageHelper.saveImage(bytes,quality:100,name:'${model.heroPrefix}_${DateTime.now().millisecondsSinceEpoch}');
+      var bytes = await SfImageHelper.convertProviderToBytes(images[index]);
+      var result = await SfImageHelper.saveImage(bytes,quality:100,name:'${heroPrefix}_${DateTime.now().millisecondsSinceEpoch}');
       if(result['isSuccess']==false) throw result['errorMessage'];
       GetIt.instance<SfToast>().onShowText('保存成功');
     }
@@ -72,39 +82,30 @@ class SfPhotoGalleryViewer extends StatelessWidget {
       top: MediaQuery.of(context).padding.top+15,
       width: MediaQuery.of(context).size.width,
       child: Center(
-        child: Text("${model.index+1}/${model.images.length}",style: TextStyle(color: Colors.white,fontSize: 16)),
+        child: Text("${model.index+1}/${images.length}",style: TextStyle(color: Colors.white,fontSize: 16)),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context){
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SfProvider<_SfPhotoGalleryViewerModel>(
-        model: _SfPhotoGalleryViewerModel(args),
-        builder: (context,model,_) => Stack(
-          children: <Widget>[
-            buildPhotoGallery(context,model),
-            if(model.images.length > 1) buildIndex(context,model),
-          ],
-        )
+  Widget build(_) => Scaffold(
+    backgroundColor: Colors.black,
+    body: SfProvider<_SfPhotoGalleryViewerModel>(
+      model: _SfPhotoGalleryViewerModel(this),
+      builder: (context,model,_) => Stack(
+        children: <Widget>[
+          buildPhotoGallery(context,model),
+          if(images.length > 1) buildIndex(context,model),
+        ],
       )
-    );
-  }
+    )
+  );
 }
 
 class _SfPhotoGalleryViewerModel extends SfViewState{
-  _SfPhotoGalleryViewerModel(Map args)
-    :images=args['images']??[],index=args['index']??0,heroPrefix=args['heroPrefix']??'SfPhotoGallery'
-    ,canSave=args['canSave']??true{
-      controller = args['controller']??PageController(initialPage:index);
-  }
-  List<ImageProvider> images;
+  _SfPhotoGalleryViewerModel(this.widget):index=widget._index,controller=widget._controller??PageController(initialPage:widget._index);
+  SfPhotoGalleryViewer widget;
   int index;
-  String heroPrefix;
   PageController controller;
-  bool canSave;
 
   void onPageChanged(index){
     this.index = index;

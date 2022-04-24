@@ -55,11 +55,9 @@ class SfNinePatchImageModel extends SfViewState{
     if(!synchronousCall) notifyListeners();
   }
 
-  @override
   Future initData() async {
     _resolveImage();
   }
-  @override
   void dispose() {
     _imageStream?.removeListener(ImageStreamListener(
       _handleImage,
@@ -67,6 +65,13 @@ class SfNinePatchImageModel extends SfViewState{
     image?.dispose();
     image = null;
     super.dispose();
+  }
+  void onRefactor(SfViewState newState){
+    var model = newState as SfNinePatchImageModel;
+    if(!(widget.image==model.widget.image && widget.centerSlice==model.widget.centerSlice)){
+      widget = model.widget;
+      _resolveImage();
+    }
   }
 }
 
