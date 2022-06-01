@@ -4,26 +4,24 @@ import 'package:social_foundation/widgets/view_state.dart';
 
 class SfProvider<T extends SfViewState> extends StatelessWidget{
   SfProvider({
-    this.key,
+    this.stateKey,
     @required this.model,
     @required this.builder,
     this.child,
     this.autoDispose = true,
   });
-  final Key key;
+  final Key stateKey;
   final T model;
   final ValueWidgetBuilder<T> builder;
   final Widget child;
   final bool autoDispose;
 
   @override
-  Widget build(BuildContext context) {
-    return SfProviderEnhanced<T>(
-      onModelReady: (vsync, model) => model.initDataVsync(vsync),
-      onModelRefactor: (model, newModel) => model.onRefactor(newModel),
-      key:key,model:model,builder:builder,child:child,autoDispose:autoDispose,
-    );
-  }
+  Widget build(_) => SfProviderEnhanced<T>(
+    onModelReady: (vsync, model) => model.initDataVsync(vsync),
+    onModelRefactor: (model, newModel) => model.onRefactor(newModel),
+    key:stateKey,model:model,builder:builder,child:child,autoDispose:autoDispose,
+  );
 }
 
 class SfProviderEnhanced<T extends SfViewState> extends StatefulWidget{
@@ -44,9 +42,9 @@ class SfProviderEnhanced<T extends SfViewState> extends StatefulWidget{
   final bool autoDispose;
 
   @override
-  _SfProviderEnhancedState<T> createState() => _SfProviderEnhancedState<T>();
+  SfProviderEnhancedState<T> createState() => SfProviderEnhancedState<T>();
 }
-class _SfProviderEnhancedState<T extends SfViewState> extends State<SfProviderEnhanced<T>> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin{
+class SfProviderEnhancedState<T extends SfViewState> extends State<SfProviderEnhanced<T>> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin{
   T model;
 
   @override
