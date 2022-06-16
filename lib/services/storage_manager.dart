@@ -27,10 +27,12 @@ abstract class SfStorageManager{
   Future init() async {
     cacheDirectory = await getApplicationDocumentsDirectory();
     await sharedPreferences.init();
+    return onInit();
+  }
+  Future initDeviceInfo() async {
     var deviceInfo = await SfUtils.getDeviceInfo();
     device = deviceInfo['device'];
     deviceId = deviceInfo['deviceId'];
-    return onInit();
   }
   String getFileDirectory(String dir) => p.join(cacheDirectory.path,dir);
   String get imageDirectory => getFileDirectory('image');
