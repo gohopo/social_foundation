@@ -10,10 +10,12 @@ import io.flutter.plugin.common.MethodChannel;
 
 /** SocialFoundationPlugin */
 public class SocialFoundationPlugin implements FlutterPlugin, ActivityAware {
+  public static FlutterPluginBinding FlutterPluginBinding;
   public static Activity Activity;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+      FlutterPluginBinding = flutterPluginBinding;
       final MethodChannel channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "social_foundation");
       channel.setMethodCallHandler(new SfMethodHandler());
   }

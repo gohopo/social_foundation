@@ -11,6 +11,10 @@ public class SfMethodHandler implements MethodChannel.MethodCallHandler {
                 result.success("Android " +  SfFunction.getPlatformVersion());
                 break;
             }
+            case "openMainActivity":{
+                SfFunction.openMainActivity();
+                break;
+            }
             default:{
                 result.notImplemented();
                 break;
