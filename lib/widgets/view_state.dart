@@ -97,7 +97,7 @@ abstract class SfRefreshListViewState<T> extends SfListViewState<T> {
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   RefreshController get refreshController => _refreshController;
-  Future<List<T>> loadMore() async {
+  Future<List<T>?> loadMore() async {
     try{
       var data = await loadData(false);
       if(data.isEmpty){

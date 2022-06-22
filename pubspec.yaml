@@ -4,8 +4,8 @@ version: 0.0.22-beta2
 homepage: https://github.com/gohopo/social_foundation
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
-  flutter: ">=1.10.0 <2.0.0"
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.8.1"
 
 dependencies:
   flutter:
@@ -13,11 +13,11 @@ dependencies:
   provider: 5.0.0
   dio: 4.0.0
   sqflite: 2.0.0+3
-  get_it: 3.1.0
+  get_it: 7.2.0
   path_provider: 2.0.2
   path: ^1.8.0-nullsafety.1
-  shared_preferences: 0.5.6+3
-  event_bus: 1.1.1
+  shared_preferences: 2.0.15
+  event_bus: 2.0.0
   crypto: 3.0.0
   uuid: 3.0.1
   pull_to_refresh: 2.0.0
@@ -29,13 +29,13 @@ dependencies:
   audioplayers: 0.19.1
   image_picker: 0.7.3
   bot_toast: 4.0.1
-  leancloud_official_plugin: 1.0.0-beta.12
-  flutter_screenutil: 1.1.0
-  shimmer: 1.1.1
+  leancloud_official_plugin: 1.0.1
+  flutter_screenutil: 5.5.3+2
+  shimmer: 2.0.0
   flutter_spinkit: 5.0.0
-  fluwx: 2.1.0
-  common_utils: 1.2.1
-  device_info: 0.4.2+4
+  fluwx: 3.9.0+2
+  common_utils: 2.1.0
+  device_info_plus: 4.0.0
   image_gallery_saver: 1.7.1
   svgaplayer_flutter: 2.0.0-nullsafety.0
   permission_handler: 8.1.6

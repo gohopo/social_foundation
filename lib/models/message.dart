@@ -9,9 +9,9 @@ import 'package:social_foundation/widgets/cached_image_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SfMessage {
-  int id;
+  int? id;
   String ownerId;
-  String msgId;
+  String? msgId;
   String convId;
   String fromId;
   int timestamp;
@@ -67,7 +67,7 @@ class SfMessage {
   }
   bool equalTo(SfMessage other) => msgId!=null&&msgId==other.msgId || id!=null&&id==other.id || this==other;
   String resolveFileUri() => msgExtra['fileKey']!=null ? SfAliyunOss.getFileUrl(msgType,msgExtra['fileKey']) : (attribute['filePath'] ?? '');
-  ImageProvider resolveImage() => msgExtra['fileKey']!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) :(attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : null);
+  ImageProvider? resolveImage() => msgExtra['fileKey']!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) as ImageProvider : (attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : null);
   Future save() async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     if(id != null){
@@ -86,10 +86,10 @@ class SfMessage {
     messages.forEach((message) => batch.insert('message',message.toMap(),conflictAlgorithm: ConflictAlgorithm.replace));
     var results = await batch.commit();
     for(var i=0;i<messages.length;++i){
-      messages[i].id = results[i];
+      messages[i].id = results[i] as int;
     }
   }
-  static Future<int> sumMessageCount(String convId,String userId,{int startTime,int endTime}) async {
+  static Future<int?> sumMessageCount(String convId,String userId,{int? startTime,int? endTime}) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     var where = 'convId="$convId" and fromId="$userId"';
     if(startTime!=null) where += ' and timestamp>=$startTime';

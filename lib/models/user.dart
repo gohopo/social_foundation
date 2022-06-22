@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 class SfUser{
   String userId;
   int gender;
-  String icon;
+  String? icon;
   SfUser(Map data) : userId=data['userId'],gender=data['gender']??0,icon=data['icon'];
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();

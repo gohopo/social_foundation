@@ -6,7 +6,7 @@ import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/toast.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
-typedef SfLoadStateChanged = Widget Function(int index,ExtendedImageState state);
+typedef SfLoadStateChanged = Widget? Function(int index,ExtendedImageState state);
 
 class SfPhotoGalleryViewer extends StatelessWidget{
   SfPhotoGalleryViewer(Map args)
@@ -15,9 +15,9 @@ class SfPhotoGalleryViewer extends StatelessWidget{
   final List<ImageProvider> images;
   final int _index;
   final String heroPrefix;
-  final PageController _controller;
+  final PageController? _controller;
   final bool canSave;
-  final SfLoadStateChanged loadStateChanged;
+  final SfLoadStateChanged? loadStateChanged;
   
   Widget buildPhotoGallery(BuildContext context,_SfPhotoGalleryViewerModel model){
     return Positioned(
@@ -65,6 +65,7 @@ class SfPhotoGalleryViewer extends StatelessWidget{
     if(result != 0) return;
     try{
       var bytes = await SfImageHelper.convertProviderToBytes(images[index]);
+      if(bytes==null) throw '';
       var result = await SfImageHelper.saveImage(bytes,quality:100,name:'${heroPrefix}_${DateTime.now().millisecondsSinceEpoch}');
       if(result['isSuccess']==false) throw result['errorMessage'];
       GetIt.instance<SfToast>().onShowText('保存成功');

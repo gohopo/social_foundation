@@ -4,11 +4,11 @@ import 'package:common_utils/common_utils.dart';
 
 class SfDateHelper{
   static String formatTimeline(int timestamp) => TimelineUtil.format(timestamp,locale:'zh');
-  static String formatDate(DateTime date,{String format}) => DateUtil.formatDate(date,format:format);
-  static String formatDateMs(int timestamp,{String format}) => DateUtil.formatDateMs(timestamp,format:format);
+  static String formatDate(DateTime date,{String? format}) => DateUtil.formatDate(date,format:format);
+  static String formatDateMs(int timestamp,{String? format}) => DateUtil.formatDateMs(timestamp,format:format);
   ///格式化持续时间
   ///使用请看[formatDurationMs]
-  static String formatDuration(Duration duration,{bool full,int minUnits,int maxUnits,String defaultUnit,String yearUnit,String dayUnit,String hourUnit,String minuteUnit,String secondUnit,int minUnit}) => formatDurationMs(duration.inMilliseconds,full:full,minUnits:minUnits,maxUnits:maxUnits,defaultUnit:defaultUnit,yearUnit:yearUnit,dayUnit:dayUnit,hourUnit:hourUnit,minuteUnit:minuteUnit,secondUnit:secondUnit,minUnit:minUnit);
+  static String formatDuration(Duration duration,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit}) => formatDurationMs(duration.inMilliseconds,full:full,minUnits:minUnits,maxUnits:maxUnits,defaultUnit:defaultUnit,yearUnit:yearUnit,dayUnit:dayUnit,hourUnit:hourUnit,minuteUnit:minuteUnit,secondUnit:secondUnit,minUnit:minUnit);
   ///格式化持续时间
   ///[milliseconds] 持续时间,单位毫秒
   ///[full] 是否有前導零
@@ -21,7 +21,7 @@ class SfDateHelper{
   ///[minuteUnit] 分单位
   ///[secondUnit] 秒单位
   ///[minUnit] 最小单位,默认为0.(年:4 天:3 时:2 分:1 秒:0)
-  static String formatDurationMs(int milliseconds,{bool full,int minUnits,int maxUnits,String defaultUnit,String yearUnit,String dayUnit,String hourUnit,String minuteUnit,String secondUnit,int minUnit}){
+  static String formatDurationMs(int milliseconds,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit}){
     full ??= true;
     minUnit = max(0,min(minUnit??0,4));
     minUnits = max(1,min(minUnits??1,5-minUnit));

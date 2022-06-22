@@ -5,9 +5,9 @@ typedef SfSliverStickyBuilder = Widget Function(BuildContext context, double shr
 
 class SfSliverStickyDelegate extends SliverPersistentHeaderDelegate{
   SfSliverStickyDelegate({
-    this.collapsedHeight,
-    this.expandedHeight,
-    this.builder
+    required this.collapsedHeight,
+    required this.expandedHeight,
+    required this.builder
   });
   final double collapsedHeight;
   final double expandedHeight;
@@ -26,12 +26,12 @@ class SfSliverStickyDelegate extends SliverPersistentHeaderDelegate{
 class SfSliverStickyDelegateBuilder{
   SfSliverStickyDelegateBuilder({
     this.child,
-    this.height
+    required this.height
   });
   SfSliverStickyDelegateBuilder.preferredSize({
-    PreferredSizeWidget child
+    required PreferredSizeWidget child
   }):this(child:child,height:child.preferredSize.height);
-  final Widget child;
+  final Widget? child;
   final double height;
 
   SfSliverStickyDelegate build() => SfSliverStickyDelegate(
@@ -46,7 +46,7 @@ class SfSliverStickyDelegateBuilder{
 class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
   SfSliverStickyAppBarDelegate({
     this.collapsedHeight = 32,
-    this.expandedHeight,
+    required this.expandedHeight,
     this.paddingTop = 0,
     this.background,
     this.titleBuilder,
@@ -58,17 +58,17 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
   final double collapsedHeight;
   final double expandedHeight;
   final double paddingTop;
-  final Widget background;
-  final Widget Function(BuildContext context,SfSliverStickyAppBarDelegate delegate) titleBuilder;
-  final String title;
-  final Widget Function(BuildContext context,SfSliverStickyAppBarDelegate delegate) actionProvider;
+  final Widget? background;
+  final Widget Function(BuildContext context,SfSliverStickyAppBarDelegate delegate)? titleBuilder;
+  final String? title;
+  final List<Widget> Function(BuildContext context,SfSliverStickyAppBarDelegate delegate)? actionProvider;
   final List<Widget> actions;
   final double iconSize;
-  double shrinkOffset;
-  bool overlapsContent;
+  late double shrinkOffset;
+  late bool overlapsContent;
   String statusBarMode = 'dark';
-  Color textColor;
-  Color iconColor;
+  late Color textColor;
+  late Color iconColor;
 
   void updateStatusBarBrightness(){
     if(shrinkOffset<=collapsedHeight && this.statusBarMode=='dark') {
@@ -128,8 +128,8 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
     onTap: () => Navigator.pop(context),
     child: Icon(Icons.arrow_back_ios,size:iconSize),
   );
-  Widget buildTitle(BuildContext context) => titleBuilder!=null ? titleBuilder(context,this) : Text(title,style:TextStyle(fontSize:iconSize,fontWeight:FontWeight.w500,color:textColor));
-  List<Widget> buildActionList(BuildContext context) => actionProvider!=null ? actionProvider(context,this) : actions;
+  Widget buildTitle(BuildContext context) => titleBuilder!=null ? titleBuilder!(context,this) : Text(title!,style:TextStyle(fontSize:iconSize,fontWeight:FontWeight.w500,color:textColor));
+  List<Widget> buildActionList(BuildContext context) => actionProvider!=null ? actionProvider!(context,this) : actions;
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent){
     this.shrinkOffset = shrinkOffset;
@@ -142,7 +142,7 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if(background!=null) background,
+          if(background!=null) background!,
           Positioned(
             left:0,top:0,right:0,
             child: Container(

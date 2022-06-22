@@ -3,11 +3,11 @@ import 'package:social_foundation/utils/contracts.dart';
 
 class SfBottomNavigationBarItem extends BottomNavigationBarItem{
   SfBottomNavigationBarItem({
-    @required WidgetWrapper iconWrapper,
-    @required Widget icon,
-    Widget activeIcon,
-    String label,
-    Color backgroundColor,
+    required WidgetWrapper iconWrapper,
+    required Widget icon,
+    Widget? activeIcon,
+    String? label,
+    Color? backgroundColor,
   }) : super(
     icon: iconWrapper(icon),
     label: label,

@@ -12,8 +12,10 @@ class SfRequestManager{
       return response.data;
     }
     catch(e){
-      if(e.response==null) throw '网络异常';
-      throw e.response.data['errorMessage'];
+      if(e is DioError){
+        if(e.response==null) throw '网络异常';
+        throw e.response?.data['errorMessage'];
+      }
     }
   }
 }

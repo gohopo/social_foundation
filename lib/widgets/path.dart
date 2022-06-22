@@ -55,7 +55,7 @@ class SfPath{
           h * .15962)
       ..close();
   }
-  static Path getCubicPath({@required List<Offset> dots,double smoothness=0.35,bool preventCurveOverShooting=true,double preventCurveOvershootingThreshold=10.0}){
+  static Path getCubicPath({required List<Offset> dots,double smoothness=0.35,bool preventCurveOverShooting=true,double preventCurveOvershootingThreshold=10.0}){
     var path = Path();
     path.moveTo(dots.first.dx, dots.first.dy);
     
@@ -169,10 +169,10 @@ class SfCubicPath{
   }
 }
 class SfCubicChartClipper extends CustomClipper<Path>{
-  SfCubicChartClipper({this.controlPoints,CatmullRomSpline catmullRomSpline,this.dotFn}):catmullRomSpline=catmullRomSpline??SfCubicPath.getCatmullRomSpline(controlPoints);
+  SfCubicChartClipper({required this.controlPoints,CatmullRomSpline? catmullRomSpline,this.dotFn}):catmullRomSpline=catmullRomSpline??SfCubicPath.getCatmullRomSpline(controlPoints);
   List<Offset> controlPoints;
   CatmullRomSpline catmullRomSpline;
-  Offset Function(Size size,Offset dot) dotFn;
+  Offset Function(Size size,Offset dot)? dotFn;
   
   Path getClip(Size size){
     final dots = SfCubicPath.getDots(catmullRomSpline,size).map((x) => dotFn?.call(size,x)??x).toList();

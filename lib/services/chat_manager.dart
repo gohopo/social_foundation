@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:leancloud_official_plugin/leancloud_plugin.dart';
 import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
@@ -13,16 +11,16 @@ import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 
 abstract class SfChatManager<TConversation extends SfConversation,TMessage extends SfMessage> {
-  Client _client;
+  late Client _client;
   TConversation convertConversation(Map data);
   TMessage convertMessage(Map data);
-  Future<TMessage> sendSystemMsg({@required String convId,String msg,String systemType,Map msgExtra}){
+  Future<TMessage> sendSystemMsg({required String convId,String? msg,required String systemType,Map? msgExtra}){
     if(msgExtra == null) msgExtra = {};
     msgExtra['systemType'] = systemType;
     return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra);
   }
-  Future<TMessage> sendNotifyMsg({@required String convId,@required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType,'transient':true});
-  Future<TMessage> sendMsg({@required String convId,String msg,@required String msgType,Map msgExtra,Map attribute,bool transient,bool saveConv}) async {
+  Future<TMessage> sendNotifyMsg({required String convId,required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType,'transient':true});
+  Future<TMessage> sendMsg({required String convId,String? msg,required String msgType,Map? msgExtra,Map? attribute,bool? transient,bool? saveConv}) async {
     var message = convertMessage({
       'ownerId': SfLocatorManager.userState.curUserId,
       'convId': convId,
@@ -45,7 +43,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       message.status = SfMessageStatus.sending;
       message = await saveMessage(message,message.id==null);
       //上传
-      String filePath = message.attribute['filePath'];
+      String? filePath = message.attribute['filePath'];
       if(filePath!=null && !message.msgExtra.containsKey('fileKey')){
         await SfAliyunOss.uploadFile(message.attribute['fileDir'],filePath);
         message.msgExtra['fileKey'] = SfFileHelper.getFileName(filePath);
@@ -67,16 +65,16 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     message.msgType = SfMessageType.recall;
     return saveMessage(message);
   }
-  void saveConversation(TConversation conversation,{bool fromReceived,bool unreadMessageCountUpdated}) => SfLocatorManager.chatState.saveConversation(conversation,fromReceived:fromReceived,unreadMessageCountUpdated:unreadMessageCountUpdated);
+  void saveConversation(TConversation conversation,{bool? fromReceived,bool? unreadMessageCountUpdated}) => SfLocatorManager.chatState.saveConversation(conversation,fromReceived:fromReceived,unreadMessageCountUpdated:unreadMessageCountUpdated);
   Future<TMessage> saveMessage(TMessage message,[bool isNew=false]) async {
     if(!message.transient) await message.save();
     SfMessageEvent(message:message,isNew:isNew).emit();
     if(!message.transient && message.attribute['saveConv']!=false && (message.fromOwner || !isNew)){
       var conversation = await SfLocatorManager.chatState.queryConversation(message.convId);
-      if(conversation!=null && (isNew || conversation.lastMessage==null || conversation.lastMessage.id==message.id)){
+      if(conversation!=null && (isNew || conversation.lastMessage==null || conversation.lastMessage?.id==message.id)){
         conversation.lastMessage = message;
         conversation.lastMessageAt = message.timestamp;
-        saveConversation(conversation);
+        saveConversation(conversation as TConversation);
       }
     }
     return message;
@@ -88,12 +86,12 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     map['name'] = conversation.name;
     map['creator'] = conversation.creator;
     map['members'] = conversation.members;
-    map['unreadMessagesCount'] = conversation.unreadMessageCount ?? 0;
+    map['unreadMessagesCount'] = conversation.unreadMessageCount;
     map['lastMessage'] = _convertMessage(conversation.lastMessage);
     map['lastMessageAt'] = conversation.lastMessage?.sentTimestamp;
     return convertConversation(map);
   }
-  TMessage _convertMessage(Message message){
+  TMessage? _convertMessage(Message? message){
     if(message==null) return null;
     var map = Map();
     map['ownerId'] = SfLocatorManager.userState.curUserId;
@@ -104,7 +102,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     map['status'] = message.status.index;
     map['receiptTimestamp'] = message.deliveredTimestamp;
     if(message is TextMessage){
-      map.addAll(json.decode(message.text));
+      map.addAll(json.decode(message.text!));
     }
     else if(message is RecalledMessage){
       map['msgType'] = SfMessageType.recall;
@@ -114,36 +112,35 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   //sdk
   Future login(String userId) {
     _client = Client(id:userId);
-    _client.onDisconnected = ({client,exception}) => onClientDisconnected();
-    _client.onResuming = ({client}) => onClientResuming();
-    _client.onMessage = ({client,conversation,message}) => onMessageReceived(_convertConversation(conversation),_convertMessage(message));
-    _client.onUnreadMessageCountUpdated = ({client,conversation}) => onUnreadMessagesCountUpdated(_convertConversation(conversation));
-    _client.onMessageRecalled = ({client,conversation,recalledMessage}) => onMessageRecalled(_convertMessage(recalledMessage));
+    _client.onDisconnected = ({required client,exception}) => onClientDisconnected();
+    _client.onResuming = ({required client}) => onClientResuming();
+    _client.onMessage = ({required client,required conversation,required message}) => onMessageReceived(_convertConversation(conversation),_convertMessage(message)!);
+    _client.onUnreadMessageCountUpdated = ({required client,required conversation}) => onUnreadMessagesCountUpdated(_convertConversation(conversation));
+    _client.onMessageRecalled = ({required client,required conversation,required recalledMessage}) => onMessageRecalled(_convertMessage(recalledMessage)!);
     return _client.open();
   }
   Future close() async {
-    await _client?.close();
-    _client = null;
+    await _client.close();
   }
   Future reconnect() => _client.open(reconnect:true);
   Future<TConversation> getConversation(String conversationId) async {
     var conversation = await _getConversation(conversationId);
-    return conversation!=null ? _convertConversation(conversation) : null;
+    return _convertConversation(conversation);
   }
   Future<List<TMessage>> queryMessages(String conversationId,int limit) async {
     var conversation = await _getConversation(conversationId);
     List<TMessage> messages = [];
-    TMessage startMessage;
+    TMessage? startMessage;
     while(limit > 0){
       var count = min(limit,100);
       var result = await conversation.queryMessage(startMessageID:startMessage?.msgId,startTimestamp:startMessage?.timestamp,startClosed:startMessage!=null?false:null,limit:count);
-      messages.addAll(result.map((data) => _convertMessage(data)));
+      messages.addAll(result.map((data) => _convertMessage(data)!));
       startMessage = messages.last;
       limit -= count;
     }
     return messages;
   }
-  Future<TConversation> convCreate(String name,List<String> members,bool isUnique,Map attributes) async {
+  Future<TConversation> convCreate(String name,List<String> members,bool isUnique,Map<String,dynamic> attributes) async {
     var result = await _client.createConversation(name:name,members:members.toSet(),isUnique:isUnique,attributes:attributes);
     return _convertConversation(result);
   }
@@ -168,7 +165,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     var conversation = await _getConversation(conversationId);
     return conversation.read();
   }
-  Future convRecall(String conversationId,String messageID,int timestamp) async {
+  Future convRecall(String conversationId,String? messageID,int? timestamp) async {
     var conversation = await _getConversation(conversationId);
     return conversation.recallMessage(messageID:messageID,messageTimestamp:timestamp);
   }
@@ -206,7 +203,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     }
     return conversation;
   }
-  Future<TMessage> _sendMessage(String conversationId,String msg,String msgType,Map msgExtra) async {
+  Future<TMessage> _sendMessage(String conversationId,String? msg,String msgType,Map msgExtra) async {
     var conversation = await _getConversation(conversationId);
     var message = json.encode({
       'msg': msg,
@@ -217,6 +214,6 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       message: TextMessage.from(text:message),
       transient: msgExtra['transient']??false
     );
-    return _convertMessage(result);
+    return _convertMessage(result)!;
   }
 }

@@ -1,9 +1,9 @@
 import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfEasyRefreshListModel<T> extends SfRefreshListViewState<T>{
-  String _nextToken;
+  String? _nextToken;
 
-  Future loadDataOverride(String nextToken);
+  Future loadDataOverride(String? nextToken);
 
   @override
   Future<List<T>> loadData(bool refresh) async {
@@ -17,8 +17,8 @@ abstract class SfEasyRefreshListModel<T> extends SfRefreshListViewState<T>{
 
 class SfSimpleRefreshListModel<T> extends SfEasyRefreshListModel<T>{
   SfSimpleRefreshListModel(this.dataLoader);
-  Future Function(String nextToken) dataLoader;
+  Future Function(String? nextToken) dataLoader;
 
   @override
-  Future loadDataOverride(String nextToken) => dataLoader?.call(nextToken);
+  Future loadDataOverride(String? nextToken) => dataLoader.call(nextToken);
 }

@@ -6,9 +6,9 @@ import 'package:social_foundation/widgets/view_state.dart';
 
 class SfTranslateAnimation extends StatelessWidget{
   SfTranslateAnimation({
-    this.controller,
-    @required this.child,
-    Animation<double> animation,
+    required this.controller,
+    required this.child,
+    Animation<double>? animation,
     this.offsetX = 0,
     this.offsetY = 70,
   }) : animation=animation??CurvedAnimation(parent:controller, curve: Curves.decelerate);
@@ -41,9 +41,9 @@ class SfTranslateAnimation extends StatelessWidget{
 
 class SfFadeAnimation extends StatelessWidget{
   SfFadeAnimation({
-    AnimationController controller,
-    @required this.child,
-    Animation<double> animation,
+    required AnimationController controller,
+    required this.child,
+    Animation<double>? animation,
   }) : animation=animation??CurvedAnimation(parent:controller, curve: Curves.decelerate);
   final Widget child;
   final Animation<double> animation;
@@ -61,7 +61,7 @@ class SfFadeAnimation extends StatelessWidget{
 
 class SfShakeAnimation extends StatelessWidget{
   SfShakeAnimation({
-    @required this.child,
+    required this.child,
     this.repeat = 3,
     this.duration = const Duration(milliseconds:200),
     this.delay = const Duration(seconds:1),
@@ -92,9 +92,9 @@ class SfShakeAnimation extends StatelessWidget{
 class _SfShakeAnimationModel extends SfViewState{
   _SfShakeAnimationModel(this.animation);
   SfShakeAnimation animation;
-  AnimationController controller;
-  Animation<double> turns;
-  Timer _timer;
+  late AnimationController controller;
+  late Animation<double> turns;
+  Timer? _timer;
 
   void startTimer(){
     closeTimer();
@@ -136,14 +136,14 @@ class _SfShakeAnimationModel extends SfViewState{
   @override
   void dispose(){
     closeTimer();
-    controller?.dispose();
+    controller.dispose();
     super.dispose();
   }
 }
 
 class SfRotationAnimation extends StatelessWidget{
   SfRotationAnimation({
-    @required this.child,
+    required this.child,
     this.duration = const Duration(seconds:30),
     this.alignment = Alignment.center
   });
@@ -167,7 +167,7 @@ class SfRotationAnimation extends StatelessWidget{
 class _SfRotationAnimationModel extends SfViewState{
   _SfRotationAnimationModel(this.widget);
   SfRotationAnimation widget;
-  AnimationController controller;
+  late AnimationController controller;
 
   Future initDataVsync(vsync) async {
     controller = AnimationController(duration:widget.duration,vsync:vsync);
@@ -181,7 +181,7 @@ class _SfRotationAnimationModel extends SfViewState{
     return super.initDataVsync(vsync);
   }
   void dispose(){
-    controller?.dispose();
+    controller.dispose();
     super.dispose();
   }
 }

@@ -4,7 +4,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
@@ -55,7 +55,7 @@ class SfUtils{
     }
     return index;
   }
-  static List<T> distinct<T,TKey>(List<T> source,TKey keySelector(T data)){
+  static List<T> distinct<T,TKey>(List<T> source,TKey Function(T data)? keySelector){
     keySelector ??= (T v) => v as TKey;
     List<T> list = [];
     var sets = <TKey>{};
@@ -85,8 +85,8 @@ class SfUtils{
     var result = await getDeviceInfo();
     return result['deviceId'];
   }
-  static Future<String> getClientIp() => getClientIpEnhanced();
-  static Future<String> getClientIpEnhanced({List<String> apiList,String converter(data),int timeout=2000}) async {
+  static Future<String?> getClientIp() => getClientIpEnhanced();
+  static Future<String?> getClientIpEnhanced({List<String>? apiList,String Function(dynamic)? converter,int timeout=2000}) async {
     apiList = apiList ?? [
       'http://www.trackip.net/ip','http://icanhazip.com/','https://www.fbisb.com/ip.php'
     ];

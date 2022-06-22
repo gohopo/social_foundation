@@ -10,8 +10,8 @@ import 'package:social_foundation/widgets/view_state.dart';
 
 class SfChatInput extends StatelessWidget {
   SfChatInput({
-    Key key,
-    this.model,
+    Key? key,
+    required this.model,
     this.backgroundColor = const Color.fromARGB(255,37,38,51),
     this.editorBackgroundColor = const Color.fromARGB(255,48,50,66),
     this.editorColor = Colors.white,
@@ -80,14 +80,14 @@ class SfChatInput extends StatelessWidget {
     ];
   }
   Widget buildAccessoryContainer(BuildContext context){
-    Widget accessory = buildAccessory(context);
+    var accessory = buildAccessory(context);
     return AnimatedContainer(
       duration: Duration(milliseconds: 200),
       height: accessory!=null ? accessoryHeight : 0,
       child: accessory
     );
   }
-  Widget buildAccessory(BuildContext context){
+  Widget? buildAccessory(BuildContext context){
     if(model.curAccessory == 0){
       return Center(
         child: SfAudioRecorderConsumer(
@@ -140,13 +140,13 @@ class SfChatInputModel extends SfViewState {
   TextInputAction textInputAction = TextInputAction.send;
   int _curAccessory = -1;
   String recorderTips = '按住 说话';
-  VoidCallback onTapSend;
+  VoidCallback? onTapSend;
   double imageMaxWidth = 1000;
   double imageMaxHeight = 1000;
   int imageQuality = 75;
-  final void Function(File image) onPickImage;
-  final void Function(String path,int duration) onRecordVoice;
-  final void Function(SfChatInputModel model) onAccessoryChanged;
+  final void Function(File image)? onPickImage;
+  final void Function(String path,int duration)? onRecordVoice;
+  final void Function(SfChatInputModel model)? onAccessoryChanged;
   bool editorHasFocus = false;
   SfChatInputModel({
     this.onTapSend,
@@ -176,8 +176,8 @@ class SfChatInputModel extends SfViewState {
   void onTapPhoto(ImageSource source) async {
     try{
       var image = await SfImageHelper.pickImage(source:source,maxWidth:imageMaxWidth,maxHeight:imageMaxHeight,imageQuality:imageQuality);
-      if(image==null || onPickImage==null) return;
-      onPickImage(image);
+      if(image==null) return;
+      onPickImage?.call(image);
     }
     catch(error){
       SfLocatorManager.appState.showError(error);
@@ -190,7 +190,7 @@ class SfChatInputModel extends SfViewState {
   void onStopRecord(String path,int duration,bool isCancelled){
     recorderTips = '按住 说话';
     notifyListeners();
-    if(!isCancelled) onRecordVoice(path,duration);
+    if(!isCancelled) onRecordVoice?.call(path,duration);
   }
 
   @override

@@ -18,11 +18,11 @@ abstract class SfStorageManager{
   });
   final String dbPath;
   final int dbVersion;
-  Directory cacheDirectory;
+  late Directory cacheDirectory;
   SfSharedPreferencesStore sharedPreferences = SfSharedPreferencesStore();
-  String device;
-  String deviceId;
-  Database _database;
+  String? device;
+  String? deviceId;
+  Database? _database;
 
   Future init() async {
     cacheDirectory = await getApplicationDocumentsDirectory();
@@ -41,7 +41,7 @@ abstract class SfStorageManager{
     if(_database == null){
       _database = await openDatabase(dbPath,version:dbVersion,onCreate: onCreateDatabase,onUpgrade: onUpgradeDatabase);
     }
-    return _database;
+    return _database!;
   }
   Future deleteDirectory(String dir) => Directory(p.join(cacheDirectory.path,dir)).delete(recursive:true);
   Future clear() async {
@@ -60,11 +60,11 @@ abstract class SfStorageManager{
 }
 
 class SfSharedPreferencesStore{
-  SharedPreferences sp;
+  late SharedPreferences sp;
   Future init() async => sp = await SharedPreferences.getInstance();
   String _convertUserKey(String key) => '${GetIt.instance<SfUserState>().curUserId}:$key';
   Future<bool> remove(String key) => removeApp(_convertUserKey(key));
-  String getString(String key,{String defaultValue}) => getAppString(_convertUserKey(key),defaultValue:defaultValue);
+  String? getString(String key,{String? defaultValue}) => getAppString(_convertUserKey(key),defaultValue:defaultValue);
   Future<bool> setString(String key,String value) => setAppString(_convertUserKey(key),value);
   bool getBool(String key,{bool defaultValue=false}) => getAppBool(_convertUserKey(key),defaultValue:defaultValue);
   Future<bool> setBool(String key,bool value) => setAppBool(_convertUserKey(key),value);
@@ -79,7 +79,7 @@ class SfSharedPreferencesStore{
   List getArray(String key) => getAppArray(_convertUserKey(key));
   Future<bool> setArray(String key,List value) => setAppArray(_convertUserKey(key),value);
   Future<bool> removeApp(String key) => sp.remove(key);
-  String getAppString(String key,{String defaultValue}) => sp.getString(key) ?? defaultValue;
+  String? getAppString(String key,{String? defaultValue}) => sp.getString(key) ?? defaultValue;
   Future<bool> setAppString(String key,String value) => sp.setString(key,value);
   bool getAppBool(String key,{bool defaultValue=false}) => sp.getBool(key) ?? defaultValue;
   Future<bool> setAppBool(String key,bool value) => sp.setBool(key,value);

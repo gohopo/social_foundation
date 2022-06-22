@@ -5,8 +5,8 @@ import 'package:social_foundation/widgets/cached_image_provider.dart';
 
 class SfAvatar extends StatelessWidget{
   SfAvatar({
-    Key key,
-    @required this.user,
+    Key? key,
+    required this.user,
     this.width = 45,
     this.height = 45,
     this.onTap,
@@ -17,19 +17,19 @@ class SfAvatar extends StatelessWidget{
     this.builder,
     this.imageLongSide = 200
   }) : super(key:key);
-  final SfUser user;
-  final double width;
-  final double height;
-  final VoidCallback onTap;
-  final BoxBorder border;
-  final BorderRadiusGeometry borderRadius;
-  final ImageProvider defaultImage;
+  final SfUser? user;
+  final double? width;
+  final double? height;
+  final VoidCallback? onTap;
+  final BoxBorder? border;
+  final BorderRadius? borderRadius;
+  final ImageProvider? defaultImage;
   final BoxFit fit;
-  final Widget Function(BuildContext context,SfAvatar avatar,ImageProvider image) builder;
+  final Widget Function(BuildContext context,SfAvatar avatar,ImageProvider image)? builder;
   final int imageLongSide;
 
   ImageProvider get imageProvider{
-    return user?.icon!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(user?.icon,long:imageLongSide)) : defaultImage;
+    return user?.icon!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(user!.icon!,long:imageLongSide)) : defaultImage!;
   }
   onTapOverride(){
     onTap?.call();
@@ -52,7 +52,7 @@ class SfAvatar extends StatelessWidget{
     );
   }
   Widget buildImage(BuildContext context){
-    return builder!=null ? builder(context,this,imageProvider) : Image(
+    return builder!=null ? builder!(context,this,imageProvider) : Image(
       width: width,
       height: height,
       image: imageProvider,

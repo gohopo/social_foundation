@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/services/storage_manager.dart';
 import 'package:sqflite/sqflite.dart';
@@ -7,9 +8,9 @@ abstract class SfEntity{
 }
 
 abstract class SfSyncEntity extends SfEntity{
-  String userId;
-  int modifiedAt;
-  int isDeleted;
+  late String userId;
+  late int modifiedAt;
+  late int isDeleted;
   SfSyncEntity(Map data){
     populate(data);
   }
@@ -19,7 +20,7 @@ abstract class SfSyncEntity extends SfEntity{
     isDeleted = data['isDeleted']??0;
   }
   void populateWith(covariant SfSyncEntity other) => populate(other.toJson());
-  SfSyncEntity fromJson(Map data) => null;
+  SfSyncEntity fromJson(Map data) => noSuchMethod(Invocation.method(Symbol('fromJson'),null));
   Map<String,dynamic> toJson() => {
     'userId': userId,
     'modifiedAt': modifiedAt,
@@ -28,9 +29,9 @@ abstract class SfSyncEntity extends SfEntity{
   SfSyncEntity fromDB(Map data) => fromJson(data);
   Map<String,dynamic> toDB() => toJson();
   bool get isSynced => modifiedAt<=(SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap)[syncTable] ?? 0);
-  String get syncTable => null;
-  static Future<Map<String,List<SfSyncEntity>>> sync({List<SfSyncEntity> schemas,bool onlyWhenModified}) async {
-    if(schemas?.isNotEmpty!=true) return {};
+  String get syncTable => noSuchMethod(Invocation.getter(Symbol('syncTable')));
+  static Future<Map<String,List<SfSyncEntity>>> sync({required List<SfSyncEntity> schemas,bool? onlyWhenModified}) async {
+    if(schemas.isNotEmpty!=true) return {};
     var syncedAtMap = SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap);
     var syncingMap = {};
     for(var schema in schemas){
@@ -44,7 +45,7 @@ abstract class SfSyncEntity extends SfEntity{
     var result = await SfLocatorManager.requestManager.invokeFunction('app','sync',{'syncingMap':syncingMap});
     Map<String,List<SfSyncEntity>> tableMap = {};
     for(var x in Map.from(result['map']).entries){
-      var schema = schemas.firstWhere((schema) => schema.syncTable==x.key,orElse:()=>null);
+      var schema = schemas.firstWhereOrNull((schema) => schema.syncTable==x.key);
       if(schema==null) continue;
       List<SfSyncEntity> list = x.value['list'].map<SfSyncEntity>((y) => schema.fromJson(y)).toList();
       await Future.wait(list.map((y) => y.saveToDB()));
@@ -53,7 +54,7 @@ abstract class SfSyncEntity extends SfEntity{
     SfLocatorManager.storageManager.sharedPreferences.setJson(SfStorageManagerKey.syncedAtMap,syncedAtMap);
     return tableMap;
   }
-  Future<List<SfSyncEntity>> queryUnsyncedList(int lastSyncedAt) async {
+  Future<List<SfSyncEntity>> queryUnsyncedList(int? lastSyncedAt) async {
     var database = await SfLocatorManager.storageManager.getDatabase();
     var result = await database.query(syncTable,where:'userId=? and modifiedAt>?',whereArgs:[SfLocatorManager.userState.curUserId,lastSyncedAt??0]);
     return result.map(fromDB).toList();

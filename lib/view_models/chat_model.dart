@@ -18,34 +18,34 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   bool anonymous;
   SfClientResumingEvent _clientResumingEvent = SfClientResumingEvent();
   SfMessageEvent _messageEvent = SfMessageEvent();
-  SfChatInputModel inputModel;
+  late SfChatInputModel inputModel;
   ScrollController scrollController = ScrollController();
 
   SfChatModel(Map args):conversation=args['conversation'],name=args['name']??'',anonymous=args['anonymous']??false{
     onInitInputModel();
   }
-  Future sendMessage({String msg,@required String msgType,Map msgExtra,Map attribute}) async {
+  Future sendMessage({String? msg,required String msgType,Map? msgExtra,Map? attribute}) async {
     await GetIt.instance<SfChatManager>().sendMsg(convId:conversation.convId,msg:await filterKeyword(msg,msgType),msgType:msgType,msgExtra:msgExtra,attribute:attribute);
     scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
-  Future<String> filterKeyword(String msg,String msgType) async => SfLocatorManager.appState.filterKeyword(msg);
-  bool onMessageEventWhere(SfMessageEvent event) => event.message.convId==conversation.convId;
+  Future<String?> filterKeyword(String? msg,String msgType) async => SfLocatorManager.appState.filterKeyword(msg);
+  bool onMessageEventWhere(SfMessageEvent event) => event.message?.convId==conversation.convId;
   void onMessageEvent(SfMessageEvent event){
+    var message = event.message as TMessage;
     if(event.isNew){
-      list.insert(0,event.message);
-      if(!event.message.fromOwner) convRead();
+      list.insert(0,message);
+      if(!message.fromOwner) convRead();
     }
     else{
-      var index = list.indexWhere((data) => data.equalTo(event.message));
-      if(index != -1) list[index] = event.message;
+      var index = list.indexWhere((data) => data.equalTo(message));
+      if(index != -1) list[index] = message;
     }
     notifyListeners();
   }
   Future queryUnreadMessages() async {
-    if(conversation==null) return;
-    _messageEvent?.dispose();
+    _messageEvent.dispose();
     if(conversation.unreadMessagesCount > 0){
-      List<TMessage> messages = await GetIt.instance<SfChatManager>().queryMessages(conversation.convId, conversation.unreadMessagesCount);
+      List<TMessage> messages = await GetIt.instance<SfChatManager>().queryMessages(conversation.convId, conversation.unreadMessagesCount) as List<TMessage>;
       onUnreadMessages(messages);
       messages = messages.where((message) => list.every((data) => data.msgId!=message.msgId)).toList();
       list.insertAll(0,messages);
@@ -102,7 +102,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     }
   }
   Future deleteMessage(TMessage message) async {
-    await SfMessage.delete(message.id);
+    await SfMessage.delete(message.id!);
     list.removeWhere((data) => data.id==message.id);
     notifyListeners();
   }
@@ -120,8 +120,8 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   }
   @override
   void dispose(){
-    _clientResumingEvent?.dispose();
-    _messageEvent?.dispose();
+    _clientResumingEvent.dispose();
+    _messageEvent.dispose();
     super.dispose();
   }
 }

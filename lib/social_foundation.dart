@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 export 'package:audioplayers/audioplayers.dart';
 export 'package:bot_toast/bot_toast.dart';
 export 'package:common_utils/common_utils.dart';
-export 'package:device_info/device_info.dart';
+export 'package:device_info_plus/device_info_plus.dart';
 export 'package:dio/dio.dart';
 export 'package:event_bus/event_bus.dart';
 export 'package:extended_image/extended_image.dart' hide MultipartFile;

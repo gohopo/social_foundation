@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 
 class SfKeepAlive extends StatefulWidget{
   SfKeepAlive({
-    Key key,
-    this.child,
+    Key? key,
+    required this.child,
     this.wantKeepAlive = true
   }) : super(key:key);
   final Widget child;

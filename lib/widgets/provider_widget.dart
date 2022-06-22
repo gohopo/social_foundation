@@ -5,15 +5,15 @@ import 'package:social_foundation/widgets/view_state.dart';
 class SfProvider<T extends SfViewState> extends StatelessWidget{
   SfProvider({
     this.stateKey,
-    @required this.model,
-    @required this.builder,
+    required this.model,
+    required this.builder,
     this.child,
     this.autoDispose = true,
   });
-  final Key stateKey;
+  final Key? stateKey;
   final T model;
   final ValueWidgetBuilder<T> builder;
-  final Widget child;
+  final Widget? child;
   final bool autoDispose;
 
   @override
@@ -26,9 +26,9 @@ class SfProvider<T extends SfViewState> extends StatelessWidget{
 
 class SfProviderEnhanced<T extends SfViewState> extends StatefulWidget{
   SfProviderEnhanced({
-    Key key,
-    @required this.model,
-    @required this.builder,
+    Key? key,
+    required this.model,
+    required this.builder,
     this.child,
     this.onModelReady,
     this.onModelRefactor,
@@ -36,16 +36,16 @@ class SfProviderEnhanced<T extends SfViewState> extends StatefulWidget{
   }) : super(key:key);
   final T model;
   final ValueWidgetBuilder<T> builder;
-  final Widget child;
-  final Function(TickerProviderStateMixin vsync,T model) onModelReady;
-  final Function(T model,T newModel) onModelRefactor;
+  final Widget? child;
+  final Function(TickerProviderStateMixin vsync,T model)? onModelReady;
+  final Function(T model,T newModel)? onModelRefactor;
   final bool autoDispose;
 
   @override
   SfProviderEnhancedState<T> createState() => SfProviderEnhancedState<T>();
 }
 class SfProviderEnhancedState<T extends SfViewState> extends State<SfProviderEnhanced<T>> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin{
-  T model;
+  late T model;
 
   @override
   void initState(){
@@ -61,7 +61,7 @@ class SfProviderEnhancedState<T extends SfViewState> extends State<SfProviderEnh
   @override
   void didUpdateWidget(oldWidget){
     super.didUpdateWidget(oldWidget);
-    if(model!=widget.model) widget?.onModelRefactor?.call(model,widget.model);
+    if(model!=widget.model) widget.onModelRefactor?.call(model,widget.model);
   }
   @override
   bool get wantKeepAlive => model.wantKeepAlive;

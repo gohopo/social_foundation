@@ -7,14 +7,14 @@ import 'package:social_foundation/widgets/view_state.dart';
 
 class SfNinePatchImage extends StatelessWidget{
   SfNinePatchImage({
-    Key key,
-    @required this.image,
-    @required this.centerSlice,
+    Key? key,
+    required this.image,
+    required this.centerSlice,
     this.child
   }):super(key:key);
   final ImageProvider image;
   final EdgeInsets centerSlice;
-  final Widget child;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) => SfProvider<SfNinePatchImageModel>(
@@ -29,9 +29,9 @@ class SfNinePatchImage extends StatelessWidget{
 }
 class SfNinePatchImageModel extends SfViewState{
   SfNinePatchImageModel(this.widget);
-  SfNinePatchImage widget;
-  ImageStream _imageStream;
-  ImageInfo image;
+  late SfNinePatchImage widget;
+  ImageStream? _imageStream;
+  ImageInfo? image;
 
   void _resolveImage(){
     final ImageStream newImageStream = widget.image.resolve(ImageConfiguration.empty);
@@ -41,7 +41,7 @@ class SfNinePatchImageModel extends SfViewState{
       );
       _imageStream?.removeListener(listener);
       _imageStream = newImageStream;
-      _imageStream.addListener(listener);
+      _imageStream?.addListener(listener);
     }
   }
   void _handleImage(ImageInfo value, bool synchronousCall){
@@ -76,12 +76,12 @@ class SfNinePatchImageModel extends SfViewState{
 }
 
 class SfNinePatchImagePainter extends CustomPainter{
-  SfNinePatchImagePainter(this.image,EdgeInsets centerSlice):centerSlice=centerSlice/ScreenUtil.pixelRatio;
-  ui.Image image;
+  SfNinePatchImagePainter(this.image,EdgeInsets centerSlice):centerSlice=centerSlice/ScreenUtil().pixelRatio!;
+  ui.Image? image;
   EdgeInsets centerSlice;
 
   void drawImageScale(Canvas canvas,double x,double y,double width,double height,double xSrc,double ySrc,double cxSrc,double cySrc,Paint paint){
-    canvas.drawImageRect(image,Rect.fromLTWH(xSrc*ScreenUtil.pixelRatio,ySrc*ScreenUtil.pixelRatio,cxSrc*ScreenUtil.pixelRatio,cySrc*ScreenUtil.pixelRatio),Rect.fromLTWH(x,y,width,height),paint);
+    canvas.drawImageRect(image!,Rect.fromLTWH(xSrc*ScreenUtil().pixelRatio!,ySrc*ScreenUtil().pixelRatio!,cxSrc*ScreenUtil().pixelRatio!,cySrc*ScreenUtil().pixelRatio!),Rect.fromLTWH(x,y,width,height),paint);
   }
   void drawImageHorizontal(Canvas canvas,Size size,Size imageSize,Paint paint){
 		//左
@@ -138,7 +138,7 @@ class SfNinePatchImagePainter extends CustomPainter{
   @override
   void paint(Canvas canvas, Size size) {
     if(image == null) return;
-    Size imageSize = Size(image.width.toDouble(),image.height.toDouble())/ScreenUtil.pixelRatio;
+    Size imageSize = Size(image!.width.toDouble(),image!.height.toDouble())/ScreenUtil().pixelRatio!;
     final Paint paint = Paint()..isAntiAlias=false;
     canvas.save();
     //宽分三列
@@ -155,6 +155,6 @@ class SfNinePatchImagePainter extends CustomPainter{
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate){
     var painter = oldDelegate as SfNinePatchImagePainter;
-    return painter?.image != image;
+    return painter.image != image;
   }
 }

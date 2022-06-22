@@ -10,11 +10,11 @@ class SfRouteName {
 }
 
 class SfRouterManager extends NavigatorObserver{
-  void showPhotoViewer({List<ImageProvider> images,int index,String heroPrefix,PageController controller,bool canSave,SfLoadStateChanged loadStateChanged}) => navigator.pushNamed(SfRouteName.photo_viewer,arguments:{
+  void showPhotoViewer({required List<ImageProvider> images,int? index,String? heroPrefix,PageController? controller,bool? canSave,SfLoadStateChanged? loadStateChanged}) => navigator?.pushNamed(SfRouteName.photo_viewer,arguments:{
     'images':images,'index':index,'heroPrefix':heroPrefix,'controller':controller,
     'canSave':canSave,'loadStateChanged':loadStateChanged
   });
-  void showPhotoViewer2({List<String> imageKeys,int index,String heroPrefix,PageController controller,bool canSave,SfLoadStateChanged loadStateChanged}) => showPhotoViewer(
+  void showPhotoViewer2({required List<String> imageKeys,int? index,String? heroPrefix,PageController? controller,bool? canSave,SfLoadStateChanged? loadStateChanged}) => showPhotoViewer(
     images:imageKeys.map((fileKey) => SfCacheManager.provider(SfAliyunOss.getImageUrl(fileKey))).toList(),
     index:index,heroPrefix:heroPrefix,controller:controller,canSave:canSave,
     loadStateChanged:(index,state) => state.extendedImageLoadState==LoadState.completed ? null : Center(
@@ -25,15 +25,15 @@ class SfRouterManager extends NavigatorObserver{
     )
   );
 
-  void didPop(Route route, Route previousRoute) {
-    super.didPush(route, previousRoute);
+  void didPop(Route route, Route? previousRoute) {
+    super.didPop(route, previousRoute);
     final focus = FocusManager.instance.primaryFocus;
     focus?.unfocus();
   }
   Route<dynamic> generateRoute(RouteSettings settings){
     switch (settings.name) {
       case SfRouteName.photo_viewer:
-        return SfFadeRoute(SfPhotoGalleryViewer(settings.arguments));
+        return SfFadeRoute(SfPhotoGalleryViewer(settings.arguments as Map));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

@@ -37,9 +37,9 @@ class SfApp{
     }
     return url;
   }
-  static Future<AudioPlayer> playSound(String url,{double volume=1.0,bool loop=false,ValueChanged<AudioPlayer> onStopped}) async {
+  static Future<AudioPlayer> playSound(String url,{double volume=1.0,bool loop=false,ValueChanged<AudioPlayer>? onStopped}) async {
     url = await prepareSound(url);
-    StreamSubscription stateSubscription;
+    late StreamSubscription stateSubscription;
     var player = new AudioPlayer();
     stateSubscription = player.onPlayerStateChanged.listen((x){
       if(x==PlayerState.STOPPED||x==PlayerState.COMPLETED){

@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:flutter/widgets.dart';
 
 class SfColorFiltered extends StatelessWidget{
-  SfColorFiltered({this.hue,this.saturation,this.brightness,this.child});
-  final double hue;
-  final double saturation;
-  final double brightness;
+  SfColorFiltered({this.hue,this.saturation,this.brightness,required this.child});
+  final double? hue;
+  final double? saturation;
+  final double? brightness;
   final Widget child;
   static List<double> hueAdjustMatrix(double value){
     value *= pi;
@@ -69,15 +69,15 @@ class SfColorFiltered extends StatelessWidget{
   Widget build(_){
     var c = child;
     if(hue!=null) c = ColorFiltered(
-      colorFilter: ColorFilter.matrix(hueAdjustMatrix(hue)),
+      colorFilter: ColorFilter.matrix(hueAdjustMatrix(hue!)),
       child: c,
     );
     if(saturation!=null) c = ColorFiltered(
-      colorFilter: ColorFilter.matrix(saturationAdjustMatrix(saturation)),
+      colorFilter: ColorFilter.matrix(saturationAdjustMatrix(saturation!)),
       child: c,
     );
     if(brightness!=null) c = ColorFiltered(
-      colorFilter: ColorFilter.matrix(brightnessAdjustMatrix(brightness)),
+      colorFilter: ColorFilter.matrix(brightnessAdjustMatrix(brightness!)),
       child: c,
     );
     return c;
@@ -85,9 +85,9 @@ class SfColorFiltered extends StatelessWidget{
 }
 
 class SfColorWidget extends StatelessWidget{
-  SfColorWidget({Key key,this.color,this.child,this.blendMode=BlendMode.srcIn}):super(key:key);
+  SfColorWidget({Key? key,required this.color,this.child,this.blendMode=BlendMode.srcIn}):super(key:key);
   final Color color;
-  final Widget child;
+  final Widget? child;
   final BlendMode blendMode;
   Widget build(_) => ColorFiltered(
     colorFilter: ColorFilter.mode(color,blendMode),

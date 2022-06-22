@@ -49,7 +49,7 @@ class SfThemeState<TTheme extends SfTheme> extends SfViewState{
   Future initData() async {
     _themes.add(defaultTheme);
   }
-  TTheme get defaultTheme => null;
+  TTheme get defaultTheme => noSuchMethod(Invocation.getter(Symbol('defaultTheme')));
   ThemeData onThemeData(ThemeData themeData) => themeData;
 }
 
@@ -63,7 +63,7 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
     notifyListeners();
     processNotifyList();
   }
-  void addNotify(String notifyType) async {
+  void addNotify(String? notifyType) async {
     if(notifyType==null) return;
     notifyList.removeWhere((data) => data==notifyType);
     await Future.delayed(Duration(milliseconds:3000));//通知延迟,因为多元索引同步有延迟
@@ -71,7 +71,7 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
     notifyListeners();
     processNotifyList();
   }
-  void removeNotify(String notifyType) {
+  void removeNotify(String? notifyType) {
     if(notifyType==null || !notifyList.contains(notifyType)) return;
     notifyList.removeWhere((data) => data==notifyType);
     delayedNotifyListeners(500);
@@ -79,6 +79,6 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
   }
   void processNotifyList(){}
   //关键字
-  String filterKeyword(String content) => content;
-  Future sync({bool onlyWhenModified}) async {}
+  String? filterKeyword(String? content) => content;
+  Future sync({bool? onlyWhenModified}) async {}
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class SfBadge extends StatelessWidget {
   SfBadge({
-    Key key,
+    Key? key,
     this.child,
     this.visible = true,
     this.left,
@@ -18,18 +18,18 @@ class SfBadge extends StatelessWidget {
     this.textStyle = const TextStyle(fontSize: 8,color: Colors.white)
   }) : super(key:key);
 
-  final Widget child;
+  final Widget? child;
   final bool visible;
-  final double left;
-  final double top;
-  final double right;
-  final double bottom;
-  final double width;
-  final double height;
+  final double? left;
+  final double? top;
+  final double? right;
+  final double? bottom;
+  final double? width;
+  final double? height;
   final EdgeInsetsGeometry padding;
   final Color color;
   final BorderRadius borderRadius;
-  final String text;
+  final String? text;
   final TextStyle textStyle;
 
   Widget buildChild(){
@@ -52,7 +52,7 @@ class SfBadge extends StatelessWidget {
           borderRadius: borderRadius
         ),
         alignment: Alignment.center,
-        child: text!=null ? Text(text,style:textStyle) : null,
+        child: text!=null ? Text(text!,style:textStyle) : null,
       ),
     );
   }

@@ -12,8 +12,8 @@ abstract class SfConversation<TMessage extends SfMessage>{
   String creator;
   List members;
   int unreadMessagesCount;
-  TMessage lastMessage;
-  int lastMessageAt;
+  TMessage? lastMessage;
+  int? lastMessageAt;
   int top;
   SfConversation(Map data):ownerId=data['ownerId'],convId=data['convId'],name=data['name'],creator=data['creator'],members=data['members']??[],unreadMessagesCount=data['unreadMessagesCount']??0,lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt'],top=data['top']??0;
   Map<String,dynamic> toMap(){
@@ -24,12 +24,12 @@ abstract class SfConversation<TMessage extends SfMessage>{
     map['creator'] = creator;
     map['members'] = json.encode(members);
     map['unreadMessagesCount'] = unreadMessagesCount;
-    map['lastMessage'] = lastMessage!=null ? json.encode(lastMessage.toMap()) : null;
+    map['lastMessage'] = lastMessage!=null ? json.encode(lastMessage?.toMap()) : null;
     map['lastMessageAt'] = lastMessageAt;
     map['top'] = top;
     return map;
   }
-  void copyWith(SfConversation conversation){
+  void copyWith(SfConversation<TMessage> conversation){
     unreadMessagesCount = conversation.unreadMessagesCount;
     lastMessage = conversation.lastMessage;
     lastMessageAt = conversation.lastMessageAt;
@@ -49,6 +49,6 @@ abstract class SfConversation<TMessage extends SfMessage>{
     var result = await SfLocatorManager.requestManager.invokeFunction('app', 'queryConversationUnreadCount', {
       'userId':ownerId,'convId':convId
     });
-    unreadMessagesCount += result['count'];
+    unreadMessagesCount += result['count'] as int;
   }
 }

@@ -9,9 +9,9 @@ class _SfEventBase{
 }
 
 class SfEvent<T extends _SfEventBase> extends _SfEventBase{
-  StreamSubscription _subscription;
+  StreamSubscription? _subscription;
   
-  void listen(void onData(T event),{bool onWhere(T event)}){
+  void listen(void onData(T event),{bool Function(T event)? onWhere}){
     _subscription = GetIt.instance<EventBus>().on<T>().listen((event){
       if(onWhere==null || onWhere(event)) onData(event);
     });
@@ -29,7 +29,7 @@ class SfClientDisconnectedEvent extends SfEvent<SfClientDisconnectedEvent>{}
 class SfClientResumingEvent extends SfEvent<SfClientResumingEvent>{}
 
 class SfMessageEvent extends SfEvent<SfMessageEvent>{
-  SfMessage message;
+  SfMessage? message;
   bool isNew;
-  SfMessageEvent({this.message,this.isNew});
+  SfMessageEvent({this.message,this.isNew=false});
 }

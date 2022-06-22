@@ -5,7 +5,7 @@ class SfSkeletonList extends StatelessWidget{
   SfSkeletonList({
     this.length = 7,
     this.padding = const EdgeInsets.all(7),
-    @required this.builder
+    required this.builder
   });
   final int length;
   final EdgeInsetsGeometry padding;
@@ -17,8 +17,8 @@ class SfSkeletonList extends StatelessWidget{
     bool isDark = theme.brightness == Brightness.dark;
     return Shimmer.fromColors(
       period: Duration(milliseconds:1200),
-      baseColor: isDark ? Colors.grey[700] : Colors.grey[350],
-      highlightColor: isDark ? Colors.grey[500] : Colors.grey[200],
+      baseColor: isDark ? Colors.grey[700]! : Colors.grey[350]!,
+      highlightColor: isDark ? Colors.grey[500]! : Colors.grey[200]!,
       child: ListView.builder(
         padding: padding,
         physics: NeverScrollableScrollPhysics(),

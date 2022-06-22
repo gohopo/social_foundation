@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class SfStrokeText extends StatelessWidget{
   SfStrokeText({
-    @required this.child,
+    required this.child,
     this.strokeCap = StrokeCap.round,
     this.strokeJoin = StrokeJoin.round,
     this.strokeWidth = 6.0,
@@ -16,9 +16,9 @@ class SfStrokeText extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    TextStyle style;
+    TextStyle? style;
     if(child.style != null){
-      style = child.style.copyWith(
+      style = child.style?.copyWith(
         foreground: Paint()
           ..style = PaintingStyle.stroke
           ..strokeCap = strokeCap
@@ -43,7 +43,7 @@ class SfStrokeText extends StatelessWidget{
       textDirection: child.textDirection,
       children: [
         Text(
-          child.data,
+          child.data!,
           style: style,
           maxLines: child.maxLines,
           overflow: child.overflow,

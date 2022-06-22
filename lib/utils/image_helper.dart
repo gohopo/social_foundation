@@ -10,30 +10,30 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SfImageHelper{
-  static Future<ui.Image> captureToImage(GlobalKey key,{double pixelRatio}){
+  static Future<ui.Image> captureToImage(GlobalKey key,{double? pixelRatio}){
     pixelRatio ??= ui.window.devicePixelRatio;
-    RenderRepaintBoundary boundary = key.currentContext.findRenderObject();
+    var boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary;
     return boundary.toImage(pixelRatio:pixelRatio);
   }
-  static Future<Uint8List> captureToBytes(GlobalKey key,{double pixelRatio,ui.ImageByteFormat format}) async {
+  static Future<Uint8List?> captureToBytes(GlobalKey key,{double? pixelRatio,ui.ImageByteFormat? format}) async {
     var image = await captureToImage(key,pixelRatio:pixelRatio);
     var bytes = await image.toByteData(format:format ?? ui.ImageByteFormat.png);
-    return bytes.buffer.asUint8List();
+    return bytes?.buffer.asUint8List();
   }
-  static Future<ui.Image> convertProviderToImage(ImageProvider provider,{ImageConfiguration configuration}){
+  static Future<ui.Image> convertProviderToImage(ImageProvider provider,{ImageConfiguration? configuration}){
     var completer = Completer<ui.Image>();
     var stream = provider.resolve(configuration??ImageConfiguration.empty);
     ImageStreamListener listener = ImageStreamListener((image,synchronousCall) => completer.complete(image.image),onError: completer.completeError);
     stream.addListener(listener);
     return completer.future..whenComplete(() => stream.removeListener(listener));
   }
-  static Future<Uint8List> convertProviderToBytes(ImageProvider provider,{ImageConfiguration configuration,ui.ImageByteFormat format}) async {
+  static Future<Uint8List?> convertProviderToBytes(ImageProvider provider,{ImageConfiguration? configuration,ui.ImageByteFormat? format}) async {
     var image = await convertProviderToImage(provider,configuration:configuration);
     var bytes = await image.toByteData(format:format??ui.ImageByteFormat.png);
-    return bytes.buffer.asUint8List();
+    return bytes?.buffer.asUint8List();
   }
-  static Future<File> pickImage({@required ImageSource source,double maxWidth,double maxHeight,int imageQuality,int maxFileSize=6,CameraDevice preferredCameraDevice=CameraDevice.rear}) async {
-    File file;
+  static Future<File?> pickImage({required ImageSource source,double? maxWidth,double? maxHeight,int? imageQuality,int maxFileSize=6,CameraDevice preferredCameraDevice=CameraDevice.rear}) async {
+    File? file;
     try{
       var pickedFile = await ImagePicker().getImage(
         source:source,maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality,preferredCameraDevice:preferredCameraDevice
@@ -49,7 +49,7 @@ class SfImageHelper{
     }
     return file;
   }
-  static Future saveImage(Uint8List imageBytes,{int quality=80,String name,bool isReturnImagePathOfIOS=false}) async {
+  static Future saveImage(Uint8List imageBytes,{int quality=80,String? name,bool isReturnImagePathOfIOS=false}) async {
     var status = await Permission.storage.status;
     if(!status.isGranted) status = await Permission.storage.request();
     if(!status.isGranted) throw '没有存储权限!';
