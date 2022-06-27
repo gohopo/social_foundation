@@ -14,7 +14,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   late Client _client;
   TConversation convertConversation(Map data);
   TMessage convertMessage(Map data);
-  Future<TMessage> sendSystemMsg({required String convId,String? msg,required String systemType,Map? msgExtra}){
+  Future<TMessage> sendSystemMsg({required String convId,String? msg,String? systemType,Map? msgExtra}){
     if(msgExtra == null) msgExtra = {};
     msgExtra['systemType'] = systemType;
     return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra);

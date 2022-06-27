@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 export 'package:audioplayers/audioplayers.dart';
 export 'package:bot_toast/bot_toast.dart';
+export 'package:collection/collection.dart';
 export 'package:common_utils/common_utils.dart';
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:dio/dio.dart';

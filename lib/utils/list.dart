@@ -24,7 +24,7 @@ class SfQueue<T>{
 class SfMap<K,T>{
   Map<K,T> _map = {};
   void clear() => _map.clear();
-  T? find(K key) => _map[key];
+  T? find(K? key) => _map[key];
   List<K> get keys => _map.keys.toList();
   List<T> get values => _map.values.toList();
   void update(K key,T item){

@@ -12,7 +12,7 @@ class SfApp{
     0.2126, 0.7152, 0.0722, 0, 0,
     0,      0,      0,      1, 0,
   ]);
-  static Future<List<String>> queryNotifyList(String userId) async {
+  static Future<List<String>> queryNotifyList(String? userId) async {
     var result = await SfLocatorManager.requestManager.invokeFunction('app', 'queryNotifyList', {
       'userId':userId
     });
@@ -23,7 +23,7 @@ class SfApp{
       'userId':userId,'otherId':otherId,'notifyType':notifyType
     });
   }
-  static Future removeNotify(String userId,String notifyType){
+  static Future removeNotify(String? userId,String notifyType){
     return SfLocatorManager.requestManager.invokeFunction('app', 'removeNotify', {
       'userId':userId,'notifyType':notifyType
     });

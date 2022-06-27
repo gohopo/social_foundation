@@ -3,6 +3,7 @@ import 'package:social_foundation/models/user.dart';
 import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
 
+typedef SfAvatarBuilder<T extends SfAvatar> = Widget Function(BuildContext context,T avatar,ImageProvider image);
 class SfAvatar extends StatelessWidget{
   SfAvatar({
     Key? key,
@@ -25,7 +26,7 @@ class SfAvatar extends StatelessWidget{
   final BorderRadius? borderRadius;
   final ImageProvider? defaultImage;
   final BoxFit fit;
-  final Widget Function(BuildContext context,SfAvatar avatar,ImageProvider image)? builder;
+  final SfAvatarBuilder<SfAvatar>? builder;
   final int imageLongSide;
 
   ImageProvider get imageProvider{

@@ -18,9 +18,9 @@ class SfChatInput extends StatelessWidget {
     this.accessoryHeight = 260
   }) : super(key:key);
   final SfChatInputModel model;
-  final Color backgroundColor;
-  final Color editorBackgroundColor;
-  final Color editorColor;
+  final Color? backgroundColor;
+  final Color? editorBackgroundColor;
+  final Color? editorColor;
   final double accessoryHeight;
   
   Widget buildEditor(BuildContext context){

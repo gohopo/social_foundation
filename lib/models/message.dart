@@ -18,7 +18,7 @@ class SfMessage {
   int status;
   int receiptTimestamp;
   Map attribute;
-  String msg;
+  String? msg;
   String msgType;
   Map msgExtra;
   SfMessage(Map data)
@@ -89,7 +89,7 @@ class SfMessage {
       messages[i].id = results[i] as int;
     }
   }
-  static Future<int?> sumMessageCount(String convId,String userId,{int? startTime,int? endTime}) async {
+  static Future<int> sumMessageCount(String convId,String userId,{int? startTime,int? endTime}) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     var where = 'convId="$convId" and fromId="$userId"';
     if(startTime!=null) where += ' and timestamp>=$startTime';

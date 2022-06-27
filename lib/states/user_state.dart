@@ -8,8 +8,8 @@ class SfUserState<TUser extends SfUser> extends SfViewState{
   String? _curUserId;
 
   TUser? operator [](String userId) => _users[userId];
-  String get curUserId => _curUserId!;
-  TUser get curUser => _users[_curUserId]!;
+  String? get curUserId => _curUserId;
+  TUser? get curUser => _users[_curUserId];
   Future<TUser?> queryUser(String userId,bool fetch) async => this[userId];
   Future<TUser?> queryUserEx(bool Function(TUser user) test) async => _users.values.firstWhereOrNull(test);
   void updateStateUser(dynamic user) => setUser(user);
