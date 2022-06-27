@@ -7,7 +7,7 @@ class SfUserState<TUser extends SfUser> extends SfViewState{
   Map<String,TUser> _users = {};
   String? _curUserId;
 
-  TUser? operator [](String userId) => _users[userId];
+  TUser? operator [](String? userId) => _users[userId];
   String? get curUserId => _curUserId;
   TUser? get curUser => _users[_curUserId];
   Future<TUser?> queryUser(String userId,bool fetch) async => this[userId];
