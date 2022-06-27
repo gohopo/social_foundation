@@ -15,7 +15,7 @@ class SfPhotoGalleryViewer extends StatelessWidget{
   final List<ImageProvider> images;
   final int _index;
   final String heroPrefix;
-  final PageController? _controller;
+  final ExtendedPageController? _controller;
   final bool canSave;
   final SfLoadStateChanged? loadStateChanged;
   
@@ -103,10 +103,10 @@ class SfPhotoGalleryViewer extends StatelessWidget{
 }
 
 class _SfPhotoGalleryViewerModel extends SfViewState{
-  _SfPhotoGalleryViewerModel(this.widget):index=widget._index,controller=widget._controller??PageController(initialPage:widget._index);
+  _SfPhotoGalleryViewerModel(this.widget):index=widget._index,controller=widget._controller??ExtendedPageController(initialPage:widget._index);
   SfPhotoGalleryViewer widget;
   int index;
-  PageController controller;
+  ExtendedPageController controller;
 
   void onPageChanged(index){
     this.index = index;

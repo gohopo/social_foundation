@@ -50,7 +50,7 @@ class SfMessage {
   String get des{
     switch(msgType){
       case SfMessageType.text:
-        return msg;
+        return msg!;
       case SfMessageType.image:
         return '[图片]';
       case SfMessageType.voice:
@@ -94,7 +94,7 @@ class SfMessage {
     var where = 'convId="$convId" and fromId="$userId"';
     if(startTime!=null) where += ' and timestamp>=$startTime';
     if(endTime!=null) where += ' and timestamp<=$endTime';
-    return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where $where'));
+    return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where $where'))!;
   }
   static Future delete(int id) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
