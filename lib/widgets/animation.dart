@@ -185,3 +185,33 @@ class _SfRotationAnimationModel extends SfViewState{
     super.dispose();
   }
 }
+
+class SfAnimatedDouble extends ImplicitlyAnimatedWidget{
+  SfAnimatedDouble({
+    Key? key,
+    required this.builder,
+    required this.value,
+    this.child,
+    Curve curve = Curves.linear,
+    required Duration duration,
+    VoidCallback? onEnd
+  }) : super(key:key,curve:curve,duration:duration,onEnd:onEnd);
+  final ValueWidgetBuilder<double> builder;
+  final double value;
+  final Widget? child;
+
+  @override
+  AnimatedWidgetBaseState<SfAnimatedDouble> createState() => _SfAnimatedDoubleState();
+}
+class _SfAnimatedDoubleState extends AnimatedWidgetBaseState<SfAnimatedDouble>{
+  Tween<double>? _value;
+
+  @override
+  void forEachTween(TweenVisitor<dynamic> visitor) {
+    _value = visitor(_value, widget.value, (dynamic value) => Tween<double>(begin: value as double)) as Tween<double>?;
+  }
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context,_value!.evaluate(animation),widget.child);
+  }
+}
