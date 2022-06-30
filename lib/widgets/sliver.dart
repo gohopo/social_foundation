@@ -51,7 +51,8 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
     this.background,
     this.titleBuilder,
     this.title,
-    this.actionProvider,
+    this.goBackBuilder,
+    this.actionBuilder,
     this.actions = const [],
     this.iconSize = 20
   });
@@ -61,7 +62,8 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
   final Widget? background;
   final Widget Function(BuildContext context,SfSliverStickyAppBarDelegate delegate)? titleBuilder;
   final String? title;
-  final List<Widget> Function(BuildContext context,SfSliverStickyAppBarDelegate delegate)? actionProvider;
+  final Widget Function(BuildContext context,SfSliverStickyAppBarDelegate delegate)? goBackBuilder;
+  final List<Widget> Function(BuildContext context,SfSliverStickyAppBarDelegate delegate)? actionBuilder;
   final List<Widget> actions;
   final double iconSize;
   late double shrinkOffset;
@@ -126,10 +128,10 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
   );
   Widget buildGoBackButton(BuildContext context) => GestureDetector(
     onTap: () => Navigator.pop(context),
-    child: Icon(Icons.arrow_back_ios,size:iconSize),
+    child: goBackBuilder?.call(context,this) ?? Icon(Icons.arrow_back_ios,size:iconSize),
   );
   Widget buildTitle(BuildContext context) => titleBuilder!=null ? titleBuilder!(context,this) : Text(title!,style:TextStyle(fontSize:iconSize,fontWeight:FontWeight.w500,color:textColor));
-  List<Widget> buildActionList(BuildContext context) => actionProvider!=null ? actionProvider!(context,this) : actions;
+  List<Widget> buildActionList(BuildContext context) => actionBuilder!=null ? actionBuilder!(context,this) : actions;
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent){
     this.shrinkOffset = shrinkOffset;
