@@ -355,9 +355,11 @@ packages:
   leancloud_official_plugin:
     dependency: "direct main"
     description:
-      name: leancloud_official_plugin
-      url: "https://pub.flutter-io.cn"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "9e2cb19419f24da6d17a7ddd2bfb432a4cb43aac"
+      url: "https://github.com/gohopo/Realtime-SDK-Flutter.git"
+    source: git
     version: "1.0.1"
   logger:
     dependency: transitive
