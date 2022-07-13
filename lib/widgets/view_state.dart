@@ -30,6 +30,7 @@ abstract class SfViewState extends ChangeNotifier {
   bool get isEmpty => viewStatus == SfViewStatus.empty;
   bool get isError => viewStatus == SfViewStatus.error;
   bool get isUnAuthorized => viewStatus == SfViewStatus.unAuthorized;
+  bool get isDisposed => _disposed == true;
   void setIdle(){
     viewStatus = SfViewStatus.idle;
   }
