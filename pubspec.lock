@@ -233,11 +233,9 @@ packages:
   flutter_screenutil:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "6d0131b28b2871ed75ff5e773205b66961a44692"
-      url: "https://github.com/gohopo/flutter_screenutil.git"
-    source: git
+      name: flutter_screenutil
+      url: "https://pub.flutter-io.cn"
+    source: hosted
     version: "5.5.3+2"
   flutter_sound_lite:
     dependency: "direct main"
