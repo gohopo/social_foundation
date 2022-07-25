@@ -1,5 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:social_foundation/models/app.dart';
+import 'package:social_foundation/models/notify.dart';
 import 'package:social_foundation/models/theme.dart';
 import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/widgets/view_state.dart';
@@ -56,26 +57,36 @@ class SfThemeState<TTheme extends SfTheme> extends SfViewState{
 class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
   void showError(error){}
   //通知
-  List<String> notifyList = [];
-  bool isNotifyUnread(String notifyType) => notifyList.contains(notifyType);
+  List<SfNotify> notifyList = [];
+  int getNotifyCount(String notifyType){
+    var notify = notifyList.firstWhereOrNull((x) => x.notifyType==notifyType);
+    return notify?.count ?? 0;
+  }
+  bool isNotifyUnread(String notifyType) => getNotifyCount(notifyType)>0;
   Future queryNotifyList() async {
-    notifyList = await SfApp.queryNotifyList(SfLocatorManager.userState.curUserId);
+    notifyList = await SfNotify.queryNotifyList(SfLocatorManager.userState.curUserId);
     notifyListeners();
     processNotifyList();
   }
   void addNotify(String? notifyType) async {
     if(notifyType==null) return;
-    notifyList.removeWhere((data) => data==notifyType);
     await Future.delayed(Duration(milliseconds:3000));//通知延迟,因为多元索引同步有延迟
-    notifyList.add(notifyType);
+    var notify = notifyList.firstWhereOrNull((x) => x.notifyType==notifyType);
+    if(notify==null){
+      notify = SfNotify({'notifyType':notifyType});
+      notifyList.add(notify);
+    }
+    else{
+      notify.count++;
+    }
     notifyListeners();
     processNotifyList();
   }
   void removeNotify(String? notifyType) {
-    if(notifyType==null || !notifyList.contains(notifyType)) return;
-    notifyList.removeWhere((data) => data==notifyType);
+    if(notifyType==null || !notifyList.any((x) => x.notifyType==notifyType)) return;
+    notifyList.removeWhere((x) => x.notifyType==notifyType);
     delayedNotifyListeners(500);
-    SfApp.removeNotify(SfLocatorManager.userState.curUserId, notifyType);
+    SfNotify.removeNotify(SfLocatorManager.userState.curUserId, notifyType);
   }
   void processNotifyList(){}
   //关键字

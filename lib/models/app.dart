@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 
 class SfApp{
@@ -12,22 +11,6 @@ class SfApp{
     0.2126, 0.7152, 0.0722, 0, 0,
     0,      0,      0,      1, 0,
   ]);
-  static Future<List<String>> queryNotifyList(String? userId) async {
-    var result = await SfLocatorManager.requestManager.invokeFunction('app', 'queryNotifyList', {
-      'userId':userId
-    });
-    return result['rows'].map((data) => data['notifyType']).cast<String>().toList();
-  }
-  static Future sendNotify(String userId,String otherId,String notifyType){
-    return SfLocatorManager.requestManager.invokeFunction('app', 'sendNotify', {
-      'userId':userId,'otherId':otherId,'notifyType':notifyType
-    });
-  }
-  static Future removeNotify(String? userId,String notifyType){
-    return SfLocatorManager.requestManager.invokeFunction('app', 'removeNotify', {
-      'userId':userId,'notifyType':notifyType
-    });
-  }
   static Future<String> prepareSound(String url) async {
     if(!SfFileHelper.isUrl(url)){
       var dir = SfFileHelper.getDirname(url);
