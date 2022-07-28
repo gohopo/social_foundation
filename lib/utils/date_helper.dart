@@ -77,6 +77,9 @@ class SfDateHelper{
   static bool isThisYear(DateTime date) => isSameYear(date,DateTime.now());
   static bool isThisMonth(DateTime date) => isSameMonth(date,DateTime.now());
   static bool isThisWeek(DateTime date) => isSameWeek(date,DateTime.now());
+  static bool isLastYear(DateTime date) => isSameYear(date,startOfThisYear().subtract(Duration(days:1)));
+  static bool isLastMonth(DateTime date) => isSameMonth(date,startOfThisMonth().subtract(Duration(days:1)));
+  static bool isLastWeek(DateTime date) => isSameWeek(date,startOfThisWeek().subtract(Duration(days:1)));
   static bool isToday(DateTime date) => isSameDay(date,DateTime.now());
   static bool isThisHour(DateTime date) => isSameHour(date,DateTime.now());
   static DateTime startOfYear(DateTime date) => DateTime(date.year);
@@ -86,6 +89,8 @@ class SfDateHelper{
   static DateTime startOfThisYear() => startOfYear(DateTime.now());
   static DateTime startOfThisMonth() => startOfMonth(DateTime.now());
   static DateTime startOfThisWeek() => startOfWeek(DateTime.now());
+  static DateTime startOfLastYear() => startOfYear(startOfThisYear().subtract(Duration(days:1)));
+  static DateTime startOfLastMonth() => startOfMonth(startOfThisMonth().subtract(Duration(days:1)));
   static DateTime startOfLastWeek() => startOfWeek(DateTime.now().subtract(Duration(days:7)));
   static DateTime startOfToday() => startOfDay(DateTime.now());
   static DateTime startOfTomorrow() => startOfToday().add(Duration(days:1));
@@ -97,6 +102,8 @@ class SfDateHelper{
   static DateTime endOfThisYear() => endOfYear(DateTime.now());
   static DateTime endOfThisMonth() => endOfMonth(DateTime.now());
   static DateTime endOfThisWeek() => endOfWeek(DateTime.now());
+  static DateTime endOfLastYear() => endOfYear(startOfThisYear().subtract(Duration(days:1)));
+  static DateTime endOfLastMonth() => endOfMonth(startOfThisMonth().subtract(Duration(days:1)));
   static DateTime endOfLastWeek() => endOfWeek(DateTime.now().subtract(Duration(days:7)));
   static DateTime endOfToday() => endOfDay(DateTime.now());
   static DateTime endOfTomorrow() => endOfToday().add(Duration(days:1));
