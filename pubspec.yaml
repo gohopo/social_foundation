@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.0.22-beta2
+version: 0.0.23
 homepage: https://github.com/gohopo/social_foundation
 publish_to: none
 
@@ -36,7 +36,7 @@ dependencies:
   flutter_screenutil: 5.5.3+2
   shimmer: 2.0.0
   flutter_spinkit: 5.0.0
-  fluwx: 3.3.2
+  fluwx: 3.9.1
   common_utils: 2.1.0
   device_info_plus: 3.2.4
   image_gallery_saver: 1.7.1
