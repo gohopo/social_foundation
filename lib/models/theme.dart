@@ -29,4 +29,5 @@ class SfColorSwatch{
     _swatch[800] = Color.alphaBlend(Color.fromRGBO(0,0,0,0.40),color);
     _swatch[900] = Color.alphaBlend(Color.fromRGBO(0,0,0,0.51),color);
   }
+  void clear() => _swatch.clear();
 }
