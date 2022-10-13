@@ -9,22 +9,19 @@ import 'package:social_foundation/widgets/view_state.dart';
 typedef SfLoadStateChanged = Widget? Function(int index,ExtendedImageState state);
 
 class SfPhotoGalleryViewer extends StatelessWidget{
-  SfPhotoGalleryViewer(Map args)
-  :images=args['images']??[],_index=args['index']??0,heroPrefix=args['heroPrefix']??'SfPhotoGallery',_controller=args['controller']
-  ,canSave=args['canSave']??true,loadStateChanged=args['loadStateChanged'];
+  SfPhotoGalleryViewer({required this.dialog,required this.images,int? index,String? heroPrefix,this.controller,bool? canSave,this.loadStateChanged})
+  :_index=index??0,heroPrefix=heroPrefix??'SfPhotoGallery',canSave=canSave??true;
+  final SfDialog dialog;
   final List<ImageProvider> images;
   final int _index;
   final String heroPrefix;
-  final ExtendedPageController? _controller;
+  final ExtendedPageController? controller;
   final bool canSave;
   final SfLoadStateChanged? loadStateChanged;
   
   Widget buildPhotoGallery(BuildContext context,_SfPhotoGalleryViewerModel model){
     return Positioned(
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0,
+      left:0,top:0,right:0,bottom:0,
       child: Container(
         constraints: BoxConstraints.expand(
           height: MediaQuery.of(context).size.height
@@ -40,7 +37,7 @@ class SfPhotoGalleryViewer extends StatelessWidget{
   }
   Widget buildPhoto(BuildContext context,_SfPhotoGalleryViewerModel model,int index){
     Widget image = GestureDetector(
-      onTap: () => Navigator.of(context).pop(),
+      onTap: dialog.close,
       onLongPress: () => onLongPress(context,model,index),
       onLongPressUp: () => onLongPressUp(context,model,index),
       child: ExtendedImage(
@@ -103,11 +100,10 @@ class SfPhotoGalleryViewer extends StatelessWidget{
 }
 
 class _SfPhotoGalleryViewerModel extends SfViewState{
-  _SfPhotoGalleryViewerModel(this.widget):index=widget._index,controller=widget._controller??ExtendedPageController(initialPage:widget._index);
+  _SfPhotoGalleryViewerModel(this.widget):index=widget._index,controller=widget.controller??ExtendedPageController(initialPage:widget._index);
   SfPhotoGalleryViewer widget;
   int index;
   ExtendedPageController controller;
-
   void onPageChanged(index){
     this.index = index;
     notifyListeners();

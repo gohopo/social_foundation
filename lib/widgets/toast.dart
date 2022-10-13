@@ -2,11 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:social_foundation/pages/photo_viewer.dart';
+import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/utils/image_helper.dart';
 import 'package:social_foundation/widgets/animation.dart';
+import 'package:social_foundation/widgets/cached_image_provider.dart';
 
 typedef SfDialogBuilder = Widget Function(SfDialog dialog);
 
@@ -47,6 +51,26 @@ class SfDialog{
 }
 
 class SfEasyDialog extends SfDialog{
+  void showPhotoViewer({required List<ImageProvider> images,int? index,String? heroPrefix,ExtendedPageController? controller,bool? canSave,SfLoadStateChanged? loadStateChanged}) => onShowCustom(
+    groupKey: 'SfPhotoGalleryViewer',
+    wrapToastAnimation: (controller,__,widget) => SfFadeAnimation(controller:controller,child:widget),
+    animationDuration:Duration(milliseconds:100),animationReverseDuration:Duration(milliseconds:100),
+    builder: (dialog) => SfPhotoGalleryViewer(
+      dialog:dialog,images:images,index:index,heroPrefix:heroPrefix,controller:controller,
+      canSave:canSave,loadStateChanged:loadStateChanged
+    )
+  );
+  void showPhotoViewer2({required List<String> imageKeys,int? index,String? heroPrefix,ExtendedPageController? controller,bool? canSave,SfLoadStateChanged? loadStateChanged}) => showPhotoViewer(
+    images:imageKeys.map((fileKey) => SfCacheManager.provider(SfAliyunOss.getImageUrl(fileKey))).toList(),
+    index:index,heroPrefix:heroPrefix,controller:controller,canSave:canSave,
+    loadStateChanged:(index,state) => state.extendedImageLoadState==LoadState.completed ? null : Center(
+      child: SfCachedImage(
+        imagePath: SfAliyunOss.getImageUrl(imageKeys[index],width:500,height:500),
+        fit: BoxFit.cover,
+      )
+    )
+  );
+
   Widget buildDialog({Widget? child,BoxConstraints? constraints}){
     return Container(
       constraints: constraints ?? BoxConstraints.tightFor(width:250),
