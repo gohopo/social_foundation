@@ -9,9 +9,13 @@ import 'package:social_foundation/widgets/view_state.dart';
 typedef SfLoadStateChanged = Widget? Function(int index,ExtendedImageState state);
 
 class SfPhotoGalleryViewer extends StatelessWidget{
-  SfPhotoGalleryViewer({required this.dialog,required this.images,int? index,String? heroPrefix,this.controller,bool? canSave,this.loadStateChanged})
+  SfPhotoGalleryViewer({this.dialog,required this.images,int? index,String? heroPrefix,this.controller,bool? canSave,this.loadStateChanged})
   :_index=index??0,heroPrefix=heroPrefix??'SfPhotoGallery',canSave=canSave??true;
-  final SfDialog dialog;
+  SfPhotoGalleryViewer.page(Map args):this(
+    images:args['images'],index:args['index'],heroPrefix:args['heroPrefix'],controller:args['controller'],
+    canSave:args['canSave'],loadStateChanged:args['loadStateChanged']
+  );
+  final SfDialog? dialog;
   final List<ImageProvider> images;
   final int _index;
   final String heroPrefix;
@@ -37,7 +41,7 @@ class SfPhotoGalleryViewer extends StatelessWidget{
   }
   Widget buildPhoto(BuildContext context,_SfPhotoGalleryViewerModel model,int index){
     Widget image = GestureDetector(
-      onTap: dialog.close,
+      onTap: dialog!=null ? dialog?.close : Navigator.of(context).pop,
       onLongPress: () => onLongPress(context,model,index),
       onLongPressUp: () => onLongPressUp(context,model,index),
       child: ExtendedImage(

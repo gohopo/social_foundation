@@ -63,7 +63,7 @@ class SfEasyDialog extends SfDialog{
   void showPhotoViewer2({required List<String> imageKeys,int? index,String? heroPrefix,ExtendedPageController? controller,bool? canSave,SfLoadStateChanged? loadStateChanged}) => showPhotoViewer(
     images:imageKeys.map((fileKey) => SfCacheManager.provider(SfAliyunOss.getImageUrl(fileKey))).toList(),
     index:index,heroPrefix:heroPrefix,controller:controller,canSave:canSave,
-    loadStateChanged:(index,state) => state.extendedImageLoadState==LoadState.completed ? null : Center(
+    loadStateChanged: loadStateChanged ?? (index,state)=>state.extendedImageLoadState==LoadState.completed ? null : Center(
       child: SfCachedImage(
         imagePath: SfAliyunOss.getImageUrl(imageKeys[index],width:500,height:500),
         fit: BoxFit.cover,
