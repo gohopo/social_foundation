@@ -14,6 +14,7 @@ class SfAvatar extends StatelessWidget{
     this.border,
     this.borderRadius,
     this.defaultImage,
+    this.defaultFemaleImage,
     this.fit = BoxFit.cover,
     this.builder,
     this.imageLongSide = 200
@@ -25,12 +26,13 @@ class SfAvatar extends StatelessWidget{
   final BoxBorder? border;
   final BorderRadius? borderRadius;
   final ImageProvider? defaultImage;
+  final ImageProvider? defaultFemaleImage;
   final BoxFit fit;
   final SfAvatarBuilder<SfAvatar>? builder;
   final int imageLongSide;
 
   ImageProvider get imageProvider{
-    return user?.icon!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(user!.icon!,long:imageLongSide)) : defaultImage!;
+    return user?.icon!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(user!.icon!,long:imageLongSide)) : (user?.gender==2?defaultFemaleImage:defaultImage)!;
   }
   onTapOverride(){
     onTap?.call();
