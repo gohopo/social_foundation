@@ -13,6 +13,7 @@ import 'package:social_foundation/utils/utils.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
 
 class SfAliyunOss {
+  static Map<String,String> _uploadCache = {};
   static late String accessKeyId;
   static late String endPoint;
   static late String policy;
@@ -25,7 +26,7 @@ class SfAliyunOss {
     signature = base64.encode(Hmac(sha1,utf8.encode(accessKeySecret)).convert(utf8.encode(policy)).bytes);
   }
   static String generateFileKey(String filePath,{String prefix='',int encrypt=0}){
-    return generateFileKeyWithExt(SfFileHelper.getFileExt(filePath),prefix:prefix,encrypt:encrypt);
+    return _uploadCache[filePath] ?? generateFileKeyWithExt(SfFileHelper.getFileExt(filePath),prefix:prefix,encrypt:encrypt);
   }
   static String generateFileKeyWithExt(String fileExt,{String prefix='',int encrypt=0}){
     var fileKey = '${SfUtils.uuid()}_$encrypt';
@@ -50,10 +51,10 @@ class SfAliyunOss {
     return 0;
   }
   static String getFilePath(String dir,String fileKey) => p.join(GetIt.instance<SfStorageManager>().getFileDirectory(dir),fileKey);
-  static Future<Response> uploadImage(String filePath,{String? fileName,ProgressCallback? onSendProgress}){
+  static Future<Response?> uploadImage(String filePath,{String? fileName,ProgressCallback? onSendProgress}){
     return uploadFile(SfMessageType.image,filePath,fileName:fileName,onSendProgress: onSendProgress);
   }
-  static Future<Response> uploadVoice(String filePath,{String? fileName,ProgressCallback? onSendProgress}){
+  static Future<Response?> uploadVoice(String filePath,{String? fileName,ProgressCallback? onSendProgress}){
     return uploadFile(SfMessageType.voice,filePath,fileName:fileName,onSendProgress: onSendProgress);
   }
   static String getImageUrl(String fileKey,{String? mode,int? width,int? height,int? short,int? long,int? limit,int? percent}){
@@ -73,12 +74,15 @@ class SfAliyunOss {
     if(getEncryptFromFileName(fileKey) > 0) dir = 'encrypt_$dir';
     return '$endPoint/$dir/$fileKey';
   }
-  static Future<Response> uploadFile(String dir,String filePath,{String? fileName,ProgressCallback? onSendProgress}) async {
+  static Future<Response?> uploadFile(String dir,String filePath,{String? fileName,ProgressCallback? onSendProgress}) async {
+    if(_uploadCache.containsKey(filePath)) return null;
     fileName = fileName ?? SfFileHelper.getFileName(filePath);
     var bytes = await File(filePath).readAsBytes();
-    return uploadBytes(dir,fileName,bytes,onSendProgress:onSendProgress);
+    var response = await uploadBytes(dir,fileName,bytes,onSendProgress:onSendProgress);
+    _uploadCache[filePath] = fileName;
+    return response;
   }
-  static Future<Response> uploadBytes(String dir,String fileName,Uint8List bytes,{ProgressCallback? onSendProgress}) async {
+  static Future<Response?> uploadBytes(String dir,String fileName,Uint8List bytes,{ProgressCallback? onSendProgress}) async {
     var encrypt = getEncryptFromFileName(fileName);
     //加入缓存
     await SfCacheManager().putFile(
@@ -97,7 +101,7 @@ class SfAliyunOss {
     }
     return _uploadMultipartFile(dir,MultipartFile.fromBytes(bytes,filename:fileName),fileName:fileName,onSendProgress:onSendProgress);
   }
-  static Future<Response> _uploadMultipartFile(String dir,MultipartFile file,{String? fileName,ProgressCallback? onSendProgress}){
+  static Future<Response?> _uploadMultipartFile(String dir,MultipartFile file,{String? fileName,ProgressCallback? onSendProgress}){
     fileName = fileName ?? file.filename;
     FormData data = FormData.fromMap({
       'Filename': fileName,
