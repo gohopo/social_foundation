@@ -19,7 +19,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     msgExtra['systemType'] = systemType;
     return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra);
   }
-  Future<TMessage> sendNotifyMsg({required String convId,required String notifyType}) => _sendMessage(convId,null,SfMessageType.notify,{'notifyType':notifyType,'transient':true});
+  Future<TMessage> sendNotifyMsg({required String convId,required String notifyType,Map? msgExtra}) => _sendMessage(convId,null,SfMessageType.notify,{...msgExtra??{},'notifyType':notifyType,'transient':true});
   Future<TMessage> sendMsg({required String convId,String? msg,required String msgType,Map? msgExtra,Map? attribute,bool? transient,bool? saveConv}) async {
     var message = convertMessage({
       'ownerId': SfLocatorManager.userState.curUserId,

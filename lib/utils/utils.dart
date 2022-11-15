@@ -9,7 +9,7 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 class SfUtils{
-  static uuid() => Uuid().v4().replaceAll(new RegExp(r'[-]'),'');
+  static String uuid() => Uuid().v4().replaceAll(new RegExp(r'[-]'),'');
   static Uint8List encrypt(Uint8List bytes){
     for(var i=0;i<bytes.length;++i){
       bytes[i] = 255 - bytes[i];
