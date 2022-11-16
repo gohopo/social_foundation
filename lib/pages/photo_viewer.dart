@@ -41,6 +41,7 @@ class SfPhotoGalleryViewer extends StatelessWidget{
   }
   Widget buildPhoto(BuildContext context,_SfPhotoGalleryViewerModel model,int index){
     Widget image = GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: dialog!=null ? dialog?.close : Navigator.of(context).pop,
       onLongPress: () => onLongPress(context,model,index),
       onLongPressUp: () => onLongPressUp(context,model,index),

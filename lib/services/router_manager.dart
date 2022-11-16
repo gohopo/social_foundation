@@ -14,12 +14,12 @@ class SfRouterManager extends NavigatorObserver{
     'images':images,'index':index,'heroPrefix':heroPrefix,'controller':controller,
     'canSave':canSave,'loadStateChanged':loadStateChanged
   });
-  void showPhotoViewer2({required List<String> imageKeys,int? index,String? heroPrefix,PageController? controller,bool? canSave,SfLoadStateChanged? loadStateChanged}) => showPhotoViewer(
+  void showPhotoViewer2({required List<String> imageKeys,int? index,String? heroPrefix,PageController? controller,bool? canSave,SfLoadStateChanged? loadStateChanged,String Function(String)? thumbnailGetter}) => showPhotoViewer(
     images:imageKeys.map((fileKey) => SfCacheManager.provider(SfAliyunOss.getImageUrl(fileKey))).toList(),
     index:index,heroPrefix:heroPrefix,controller:controller,canSave:canSave,
     loadStateChanged:(index,state) => state.extendedImageLoadState==LoadState.completed ? null : Center(
       child: SfCachedImage(
-        imagePath: SfAliyunOss.getImageUrl(imageKeys[index],width:500,height:500),
+        imagePath: (thumbnailGetter??(v)=>SfAliyunOss.getImageUrl(v,width:500,height:500)).call(imageKeys[index]),
         fit: BoxFit.cover,
       )
     )
