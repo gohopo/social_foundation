@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:social_foundation/social_foundation.dart';
+import 'package:provider/provider.dart';
+import 'package:social_foundation/models/message.dart';
+import 'package:social_foundation/services/locator_manager.dart';
+import 'package:social_foundation/widgets/audio_widget.dart';
+import 'package:social_foundation/widgets/badge.dart';
 import 'package:social_foundation_example/models/message.dart';
 import 'package:social_foundation_example/models/user.dart';
-import 'package:social_foundation_example/services/chat_manager.dart';
 import 'package:social_foundation_example/services/router_manager.dart';
 import 'package:social_foundation_example/view_models/chat_model.dart';
 import 'package:social_foundation_example/widgets/user_widget.dart';
@@ -101,7 +104,7 @@ class MessageItemWidget extends StatelessWidget{
         onTap: (){
           if(!read){
             message.attribute['read'] = true;
-            ChatManager.instance.saveMessage(message);
+            SfLocatorManager.chatManager.saveMessage(message);
           }
         },
       ),

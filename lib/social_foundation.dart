@@ -17,6 +17,7 @@ export 'package:fluwx/fluwx.dart';
 export 'package:get_it/get_it.dart';
 export 'package:image_gallery_saver/image_gallery_saver.dart';
 export 'package:image_picker/image_picker.dart';
+export 'package:leancloud_official_plugin/leancloud_plugin.dart' hide Client;
 export 'package:permission_handler/permission_handler.dart';
 export 'package:provider/provider.dart';
 export 'package:pull_to_refresh/pull_to_refresh.dart';

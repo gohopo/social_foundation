@@ -1,5 +1,4 @@
 import 'package:social_foundation/social_foundation.dart';
-import 'package:social_foundation_example/services/chat_manager.dart';
 import 'package:social_foundation_example/services/storage_manager.dart';
 
 class User extends SfUser{
@@ -18,7 +17,7 @@ class User extends SfUser{
   }
   static Future<User> login(String userId) async {
     var user = User({'userId':userId});
-    await ChatManager.instance.login(userId);
+    await SfLocatorManager.chatManager.login(userId);
     await user.save();
     return user;
   }

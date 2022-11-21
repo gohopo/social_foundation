@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation_example/models/message.dart';
 import 'package:social_foundation_example/services/storage_manager.dart';
 

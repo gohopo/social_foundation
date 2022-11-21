@@ -1,10 +1,8 @@
-import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation/states/chat_state.dart';
 import 'package:social_foundation_example/models/conversation.dart';
 import 'package:social_foundation_example/states/user_state.dart';
 
 class ChatState extends SfChatState<Conversation>{
-  static ChatState get instance => GetIt.instance<SfChatState>();
-
   @override
   Future<Conversation> queryConversation(String convId) async {
     var conversation = super.queryConversation(convId);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:social_foundation/social_foundation.dart';
+import 'package:social_foundation/utils/date_helper.dart';
+import 'package:social_foundation/widgets/badge.dart';
 import 'package:social_foundation_example/services/router_manager.dart';
 import 'package:social_foundation_example/models/conversation.dart';
 import 'package:social_foundation_example/widgets/user_widget.dart';
