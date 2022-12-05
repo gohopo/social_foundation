@@ -185,7 +185,8 @@ class SfAudioPlayerWidget extends StatelessWidget {
     this.borderColor,
     this.textColor = Colors.white,
     this.onTap,
-    this.earpieceMode
+    this.earpieceMode,
+    this.onReady
   }) : super(key:key);
   final String? uri;
   final int duration;
@@ -196,6 +197,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
   final Color? textColor;
   final VoidCallback? onTap;
   final bool? earpieceMode;
+  final ValueChanged<SfAudioPlayerModel>? onReady;
 
   int getSecond(SfAudioPlayerModel model) => ((model.position>0?duration-model.position:duration)/1000).ceil();
   Widget buildContainer(BuildContext context,SfAudioPlayerModel model){
@@ -245,7 +247,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context){
     return SfProvider<SfAudioPlayerModel>(
-      model: SfAudioPlayerModel(uri:uri,earpieceMode:earpieceMode),
+      model: SfAudioPlayerModel(uri:uri,earpieceMode:earpieceMode,onReady:onReady),
       builder: (context,model,child) => GestureDetector(
         onTap: () => onTapContainer(model),
         child: buildContainer(context, model),
@@ -259,13 +261,15 @@ class SfAudioPlayerModel extends SfViewState{
     this.earpieceMode = false,
     this.compatible = false,
     this.volume = 1.0,
-    this.loop = false
+    this.loop = false,
+    this.onReady
   });
   String? uri;
   bool? earpieceMode;
   bool compatible;
   double volume;
   bool loop;
+  ValueChanged<SfAudioPlayerModel>? onReady;
   AudioPlayer player = new AudioPlayer();
   late StreamSubscription _stateSubscription;
   late StreamSubscription _positionSubscription;
@@ -311,6 +315,7 @@ class SfAudioPlayerModel extends SfViewState{
     setLoop(loop);
     if(earpieceMode==true) await player.earpieceOrSpeakersToggle();
     if(uri!=null) uri = await SfApp.prepareSound(uri!);
+    onReady?.call(this);
   }
   void dispose(){
     setGlobal(false);
