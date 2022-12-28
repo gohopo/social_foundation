@@ -63,6 +63,12 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   void onInitInputModel(){
     inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage:onPickImage,onRecordVoice:onRecordVoice,onAccessoryChanged:onAccessoryChanged);
   }
+  void onSendError(dynamic error){
+    SfLocatorManager.appState.showError(error);
+  }
+  void onSendTextError(dynamic error) => onSendError(error);
+  void onSendImageError(dynamic error) => onSendError(error);
+  void onSendVoiceError(dynamic error) => onSendError(error);
   void onTapSend() async {
     try{
       if(inputModel.textEditingController.text.isEmpty) return;
@@ -70,7 +76,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       inputModel.textEditingController.clear();
     }
     catch(error){
-      SfLocatorManager.appState.showError(error);
+      onSendTextError(error);
     }
   }
   void onPickImage(File image) async {
@@ -83,7 +89,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       return sendMessage(msgType:SfMessageType.image,attribute:attribute);
     }
     catch(error){
-      SfLocatorManager.appState.showError(error);
+      onSendImageError(error);
     }
   }
   void onRecordVoice(String path,int duration) async {
@@ -99,7 +105,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       return sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
     }
     catch(error){
-      SfLocatorManager.appState.showError(error);
+      onSendVoiceError(error);
     }
   }
   Future deleteMessage(TMessage message) async {
