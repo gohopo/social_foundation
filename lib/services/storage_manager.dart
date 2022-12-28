@@ -54,7 +54,11 @@ abstract class SfStorageManager{
   }
   
   @protected Future onInit() async {
-    await deleteDirectory('recorder');
+    try{
+      await deleteDirectory('recorder');
+    }
+    catch(error){}
+    
     await Directory(imageDirectory).create(recursive:true);
     await Directory(voiceDirectory).create(recursive:true);
     await Directory(recorderDirectory).create(recursive:true);
