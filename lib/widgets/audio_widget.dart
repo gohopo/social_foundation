@@ -10,6 +10,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:social_foundation/models/app.dart';
 import 'package:social_foundation/services/locator_manager.dart';
+import 'package:social_foundation/utils/utils.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
@@ -40,7 +41,7 @@ class SfAudioRecorder extends SfViewState{
   Future stop({bool? isCancelled}) => onStop(isCancelled:isCancelled);
   Future onStart() async {
     if(Platform.isIOS) await _soundRecorder?.setAudioFocus();
-    await _soundRecorder?.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.voiceDirectory}/record.aac');
+    await _soundRecorder?.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.recorderDirectory}/${SfUtils.uuid()}.aac');
     onStartRecord?.call();
   }
   Future onStop({bool? isCancelled}) async {

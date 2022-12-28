@@ -37,6 +37,7 @@ abstract class SfStorageManager{
   String getFileDirectory(String dir) => p.join(cacheDirectory.path,dir);
   String get imageDirectory => getFileDirectory('image');
   String get voiceDirectory => getFileDirectory('voice');
+  String get recorderDirectory => getFileDirectory('recorder');
   Future<Database> getDatabase() async {
     if(_database == null){
       _database = await openDatabase(dbPath,version:dbVersion,onCreate: onCreateDatabase,onUpgrade: onUpgradeDatabase);
@@ -48,12 +49,15 @@ abstract class SfStorageManager{
     await SfCacheManager().emptyCache();
     await deleteDirectory('image');
     await deleteDirectory('voice');
+    await deleteDirectory('recorder');
     await onInit();
   }
   
   @protected Future onInit() async {
-    await Directory(p.join(cacheDirectory.path,'image')).create(recursive:true);
-    await Directory(p.join(cacheDirectory.path,'voice')).create(recursive:true);
+    await deleteDirectory('recorder');
+    await Directory(imageDirectory).create(recursive:true);
+    await Directory(voiceDirectory).create(recursive:true);
+    await Directory(recorderDirectory).create(recursive:true);
   }
   @protected void onCreateDatabase(Database database,int version);
   @protected void onUpgradeDatabase(Database database,int oldVersion, int newVersion);
