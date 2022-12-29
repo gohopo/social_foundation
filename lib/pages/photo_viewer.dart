@@ -9,11 +9,11 @@ import 'package:social_foundation/widgets/view_state.dart';
 typedef SfLoadStateChanged = Widget? Function(int index,ExtendedImageState state);
 
 class SfPhotoGalleryViewer extends StatelessWidget{
-  SfPhotoGalleryViewer({this.dialog,required this.images,int? index,String? heroPrefix,this.controller,bool? canSave,this.loadStateChanged})
+  SfPhotoGalleryViewer({this.dialog,required this.images,int? index,String? heroPrefix,this.controller,bool? canSave,this.loadStateChanged,this.childrenBuilder})
   :_index=index??0,heroPrefix=heroPrefix??'SfPhotoGallery',canSave=canSave??true;
   SfPhotoGalleryViewer.page(Map args):this(
     images:args['images'],index:args['index'],heroPrefix:args['heroPrefix'],controller:args['controller'],
-    canSave:args['canSave'],loadStateChanged:args['loadStateChanged']
+    canSave:args['canSave'],loadStateChanged:args['loadStateChanged'],childrenBuilder:args['childrenBuilder']
   );
   final SfDialog? dialog;
   final List<ImageProvider> images;
@@ -22,6 +22,7 @@ class SfPhotoGalleryViewer extends StatelessWidget{
   final ExtendedPageController? controller;
   final bool canSave;
   final SfLoadStateChanged? loadStateChanged;
+  final List<Widget> Function(int index)? childrenBuilder;
   
   Widget buildPhotoGallery(BuildContext context,_SfPhotoGalleryViewerModel model){
     return Positioned(
@@ -98,6 +99,7 @@ class SfPhotoGalleryViewer extends StatelessWidget{
         children: <Widget>[
           buildPhotoGallery(context,model),
           if(images.length > 1) buildIndex(context,model),
+          ...(childrenBuilder?.call(model.index)??[])
         ],
       )
     )
