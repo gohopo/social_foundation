@@ -96,6 +96,7 @@ class SfPhotoGalleryViewer extends StatelessWidget{
     body: SfProvider<_SfPhotoGalleryViewerModel>(
       model: _SfPhotoGalleryViewerModel(this),
       builder: (context,model,_) => Stack(
+        alignment: Alignment.center,
         children: <Widget>[
           buildPhotoGallery(context,model),
           if(images.length > 1) buildIndex(context,model),
