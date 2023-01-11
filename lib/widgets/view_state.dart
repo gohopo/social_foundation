@@ -101,20 +101,17 @@ abstract class SfRefreshListViewState<T> extends SfListViewState<T> {
   Future<List<T>?> loadMore() async {
     try{
       var data = await loadData(false);
-      if(data.isEmpty){
+      if(loadNoData(data.length)){
         refreshController.loadNoData();
       }
       else{
+        refreshController.loadComplete();
+      }
+      if(data.isNotEmpty){
         onCompleted(data);
         list.addAll(data);
-        if(loadNoData(data.length)){
-          refreshController.loadNoData();
-        }
-        else{
-          refreshController.loadComplete();
-        }
-        notifyListeners();
       }
+      notifyListeners();
       return data;
     }
     catch(e){
@@ -128,8 +125,14 @@ abstract class SfRefreshListViewState<T> extends SfListViewState<T> {
   Future refresh() async {
     try{
       var data = await loadData(true);
+      refreshController.refreshCompleted();
+      if(loadNoData(data.length)){
+        refreshController.loadNoData();
+      }
+      else{
+        refreshController.loadComplete();
+      }
       if(data.isEmpty){
-        refreshController.refreshCompleted(resetFooterState: true);
         list.clear();
         setEmpty();
       }
@@ -137,13 +140,6 @@ abstract class SfRefreshListViewState<T> extends SfListViewState<T> {
         onCompleted(data);
         list.clear();
         list.addAll(data);
-        refreshController.refreshCompleted();
-        if(loadNoData(data.length)){
-          refreshController.loadNoData();
-        }
-        else{
-         refreshController.loadComplete();
-        }
         setIdle();
       }
     }
