@@ -22,9 +22,9 @@ class SfPhotoGalleryViewer extends StatelessWidget{
   final ExtendedPageController? controller;
   final bool canSave;
   final SfLoadStateChanged? loadStateChanged;
-  final List<Widget> Function(int index)? childrenBuilder;
+  final List<Widget> Function(SfPhotoGalleryViewerVM model)? childrenBuilder;
   
-  Widget buildPhotoGallery(BuildContext context,_SfPhotoGalleryViewerModel model){
+  Widget buildPhotoGallery(BuildContext context,SfPhotoGalleryViewerVM model){
     return Positioned(
       left:0,top:0,right:0,bottom:0,
       child: Container(
@@ -40,7 +40,7 @@ class SfPhotoGalleryViewer extends StatelessWidget{
       )
     );
   }
-  Widget buildPhoto(BuildContext context,_SfPhotoGalleryViewerModel model,int index){
+  Widget buildPhoto(BuildContext context,SfPhotoGalleryViewerVM model,int index){
     Widget image = GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: dialog!=null ? dialog?.close : Navigator.of(context).pop,
@@ -62,7 +62,7 @@ class SfPhotoGalleryViewer extends StatelessWidget{
       child: image,
     ) : image;
   }
-  void onLongPress(BuildContext context,_SfPhotoGalleryViewerModel model,int index) async {
+  void onLongPress(BuildContext context,SfPhotoGalleryViewerVM model,int index) async {
     if(!canSave) return;
     var result = await GetIt.instance<SfEasyDialog>().onShowSheet(['保存到相册','取消'],clickClose:true);
     if(result != 0) return;
@@ -78,10 +78,10 @@ class SfPhotoGalleryViewer extends StatelessWidget{
       GetIt.instance<SfToast>().onShowText('保存失败');
     }
   }
-  void onLongPressUp(BuildContext context,_SfPhotoGalleryViewerModel model,int index){
+  void onLongPressUp(BuildContext context,SfPhotoGalleryViewerVM model,int index){
     
   }
-  Widget buildIndex(BuildContext context,_SfPhotoGalleryViewerModel model){
+  Widget buildIndex(BuildContext context,SfPhotoGalleryViewerVM model){
     return Positioned(
       top: MediaQuery.of(context).padding.top+15,
       width: MediaQuery.of(context).size.width,
@@ -93,22 +93,22 @@ class SfPhotoGalleryViewer extends StatelessWidget{
 
   Widget build(_) => Scaffold(
     backgroundColor: Colors.black,
-    body: SfProvider<_SfPhotoGalleryViewerModel>(
-      model: _SfPhotoGalleryViewerModel(this),
+    body: SfProvider<SfPhotoGalleryViewerVM>(
+      model: SfPhotoGalleryViewerVM(this),
       builder: (context,model,_) => Stack(
         alignment: Alignment.center,
         children: <Widget>[
           buildPhotoGallery(context,model),
           if(images.length > 1) buildIndex(context,model),
-          ...(childrenBuilder?.call(model.index)??[])
+          ...(childrenBuilder?.call(model)??[])
         ],
       )
     )
   );
 }
 
-class _SfPhotoGalleryViewerModel extends SfViewState{
-  _SfPhotoGalleryViewerModel(this.widget):index=widget._index,controller=widget.controller??ExtendedPageController(initialPage:widget._index);
+class SfPhotoGalleryViewerVM extends SfViewState{
+  SfPhotoGalleryViewerVM(this.widget):index=widget._index,controller=widget.controller??ExtendedPageController(initialPage:widget._index);
   SfPhotoGalleryViewer widget;
   int index;
   ExtendedPageController controller;
