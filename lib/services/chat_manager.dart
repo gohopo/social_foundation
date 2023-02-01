@@ -210,10 +210,10 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       'msgType': msgType,
       'msgExtra': msgExtra
     });
-    var result = await conversation.send(
-      message: TextMessage.from(text:message),
-      transient: msgExtra['transient']??false
-    );
+    var result = await hookSendMessage(conversation,TextMessage.from(text:message),msgExtra['transient']??false);
     return _convertMessage(result)!;
+  }
+  Future<Message> hookSendMessage(Conversation conversation,Message message,bool transient){
+    return conversation.send(message:message,transient:transient);
   }
 }
