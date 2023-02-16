@@ -15,7 +15,7 @@ class SfUserState<TUser extends SfUser> extends SfViewState{
   void updateStateUser(dynamic user) => setUser(user);
   void updateStateUsers(dynamic users){
     if(users==null) return;
-    users.map((user) => updateStateUser(user));
+    users.forEach((user) => updateStateUser(user));
   }
   @protected
   void setCurUser(TUser? user){
