@@ -44,7 +44,10 @@ abstract class SfStorageManager{
     }
     return _database!;
   }
-  Future deleteDirectory(String dir) => Directory(p.join(cacheDirectory.path,dir)).delete(recursive:true);
+  Future deleteDirectory(String? dir){
+    if(dir?.isNotEmpty!=true) throw 'dir参数不能为空';
+    return Directory(p.join(cacheDirectory.path,dir)).delete(recursive:true);
+  }
   Future clear() async {
     await SfCacheManager().emptyCache();
     await deleteDirectory('image');
