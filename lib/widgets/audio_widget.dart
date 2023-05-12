@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:audio_session/audio_session.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_sound_lite/flutter_sound.dart' hide PlayerState;
+import 'package:flutter_sound/flutter_sound.dart' hide PlayerState;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:social_foundation/models/app.dart';
@@ -40,7 +41,23 @@ class SfAudioRecorder extends SfViewState{
   }
   Future stop({bool? isCancelled}) => onStop(isCancelled:isCancelled);
   Future onStart() async {
-    if(Platform.isIOS) await _soundRecorder?.setAudioFocus();
+    if(Platform.isIOS){
+      final session = await AudioSession.instance;
+      await session.configure(AudioSessionConfiguration(
+        avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
+        avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.allowBluetooth,
+        avAudioSessionMode: AVAudioSessionMode.spokenAudio,
+        avAudioSessionRouteSharingPolicy: AVAudioSessionRouteSharingPolicy.defaultPolicy,
+        avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
+        androidAudioAttributes: const AndroidAudioAttributes(
+          contentType: AndroidAudioContentType.speech,
+          flags: AndroidAudioFlags.none,
+          usage: AndroidAudioUsage.voiceCommunication,
+        ),
+        androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
+        androidWillPauseWhenDucked: true,
+      ));
+    }
     await _soundRecorder?.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.recorderDirectory}/${SfUtils.uuid()}.aac');
     onStartRecord?.call();
   }
@@ -55,14 +72,14 @@ class SfAudioRecorder extends SfViewState{
   }
 
   Future initData() async {
-    _soundRecorder = await FlutterSoundRecorder().openAudioSession();
+    _soundRecorder = await FlutterSoundRecorder().openRecorder();
     await _soundRecorder?.setSubscriptionDuration(Duration(milliseconds:100));
     _soundRecorder?.onProgress?.listen(onProgress);
     return super.initData();
   }
   void dispose() async {
     await stop(isCancelled:true);
-    await _soundRecorder?.closeAudioSession();
+    await _soundRecorder?.closeRecorder();
     super.dispose();
   }
 }
