@@ -5,11 +5,13 @@ class SfSkeletonList extends StatelessWidget{
   SfSkeletonList({
     this.length = 7,
     this.padding = const EdgeInsets.all(7),
-    required this.builder
+    required this.builder,
+    this.shrinkWrap = false
   });
   final int length;
   final EdgeInsetsGeometry padding;
   final IndexedWidgetBuilder builder;
+  final bool shrinkWrap;
 
   @override
   Widget build(BuildContext context){
@@ -20,8 +22,9 @@ class SfSkeletonList extends StatelessWidget{
       baseColor: isDark ? Colors.grey[700]! : Colors.grey[350]!,
       highlightColor: isDark ? Colors.grey[500]! : Colors.grey[200]!,
       child: ListView.builder(
-        padding: padding,
+        shrinkWrap: shrinkWrap,
         physics: NeverScrollableScrollPhysics(),
+        padding: padding,
         itemCount: length,
         itemBuilder: builder,
       )
@@ -145,15 +148,18 @@ class SfEasySkeletonList extends StatelessWidget{
   SfEasySkeletonList({
     this.length = 7,
     this.padding = const EdgeInsets.all(7),
+    this.shrinkWrap = false
   });
   final int length;
   final EdgeInsetsGeometry padding;
+  final bool shrinkWrap;
 
   @override
   Widget build(BuildContext context) {
     return SfSkeletonList(
       length: length,
       padding: padding,
+      shrinkWrap: shrinkWrap,
       builder: (context,index) => SfSkeletonItem(),
     );
   }
