@@ -50,7 +50,7 @@ class _SfRollingNumberState extends State<SfRollingNumber> with SingleTickerProv
     ).animate(controller);
     return Stack(
       children: <Widget>[
-        Text('7',style:widget.style.copyWith(color:Colors.transparent)),
+        Text('7',style:widget.style.copyWith(color:Colors.transparent,shadows:[])),
         Positioned(
           top: 0,
           child: Align(
