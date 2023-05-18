@@ -8,7 +8,7 @@ class SfDateHelper{
   static String formatDateMs(int timestamp,{String? format}) => DateUtil.formatDateMs(timestamp,format:format);
   ///格式化持续时间
   ///使用请看[formatDurationMs]
-  static String formatDuration(Duration duration,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit}) => formatDurationMs(duration.inMilliseconds,full:full,minUnits:minUnits,maxUnits:maxUnits,defaultUnit:defaultUnit,yearUnit:yearUnit,dayUnit:dayUnit,hourUnit:hourUnit,minuteUnit:minuteUnit,secondUnit:secondUnit,minUnit:minUnit);
+  static String formatDuration(Duration duration,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit,int? maxUnit}) => formatDurationMs(duration.inMilliseconds,full:full,minUnits:minUnits,maxUnits:maxUnits,defaultUnit:defaultUnit,yearUnit:yearUnit,dayUnit:dayUnit,hourUnit:hourUnit,minuteUnit:minuteUnit,secondUnit:secondUnit,minUnit:minUnit,maxUnit:maxUnit);
   ///格式化持续时间
   ///[milliseconds] 持续时间,单位毫秒
   ///[full] 是否有前導零
@@ -21,43 +21,44 @@ class SfDateHelper{
   ///[minuteUnit] 分单位
   ///[secondUnit] 秒单位
   ///[minUnit] 最小单位,默认为0.(年:4 天:3 时:2 分:1 秒:0)
-  static String formatDurationMs(int milliseconds,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit}){
+  static String formatDurationMs(int milliseconds,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit,int? maxUnit}){
     full ??= true;
     minUnit = max(0,min(minUnit??0,4));
+    maxUnit = max(minUnit,min(maxUnit??4,4));
     minUnits = max(1,min(minUnits??1,5-minUnit));
     maxUnits = max(minUnits,min(maxUnits??2,5-minUnit));
     defaultUnit ??= ':';
     var format = ''; 
     int millisecondsUnit = Duration.millisecondsPerDay*365;
-    if(minUnits==5-minUnit || milliseconds>=millisecondsUnit){
+    if(maxUnit>=4 && (minUnits==5-minUnit || milliseconds>=millisecondsUnit)){
       format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, yearUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerDay;
-    if(minUnit<4 && (minUnits==4-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
+    if(minUnit<=3 && maxUnit>=3 && (minUnits==4-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
       format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, dayUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerHour;
-    if(minUnit<3 && (minUnits==3-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
+    if(minUnit<=2 && maxUnit>=2 && (minUnits==3-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
       format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, hourUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerMinute;
-    if(minUnit<2 && (minUnits==2-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
+    if(minUnit<=1 && maxUnit>=1 && (minUnits==2-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
       format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, minuteUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerSecond;
-    if(minUnit<1 && (minUnits==1-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
+    if(minUnit<=0 && (minUnits==1-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
       format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, secondUnit??defaultUnit);
     }
     var index = format.lastIndexOf(defaultUnit);

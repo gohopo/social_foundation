@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
-class SfRollingNumber extends StatefulWidget{
+class SfRollingNumber extends StatelessWidget{
   SfRollingNumber({
     Key? key,
     required this.number,
@@ -16,75 +16,72 @@ class SfRollingNumber extends StatefulWidget{
   final TextStyle style;
   final Duration duration;
 
-  @override
-  _SfRollingNumberState createState() => _SfRollingNumberState();
-}
-class _SfRollingNumberState extends State<SfRollingNumber> with SingleTickerProviderStateMixin{
-  late AnimationController controller;
-  late List<String> oldNumbers;
-  List<String>? numbers;
-
-  void rolling() async {
-    setState((){
-      oldNumbers = numbers ?? [];
-      numbers = widget.number?.split('') ?? [];
-      if(oldNumbers.length < numbers!.length){
-        oldNumbers.insertAll(0, List.filled(numbers!.length-oldNumbers.length, '0'));
-      }
-      else if(oldNumbers.length > numbers!.length){
-        numbers?.insertAll(0, List.filled(oldNumbers.length-numbers!.length, '0'));
-      }
-    });
-    controller.reset();
-    await controller.forward();
-    setState((){
-      numbers = widget.number?.split('') ?? [];
-    });
-  }
-  Widget buildNumber(int index){
-    var number = int.tryParse(numbers![index]);
-    if(number == null) return Text(numbers![index],style:widget.style);
+  Widget build(_) => SfProvider<SfRollingNumberVM>(
+    model: SfRollingNumberVM(this),
+    builder: (_,model,__) => AnimatedBuilder(
+      animation: model.controller,
+      builder: (_,__) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: model.numbers!.asMap().keys.map((index) => buildNumber(model,index)).toList(),
+      ),
+    )
+  );
+  Widget buildNumber(SfRollingNumberVM model,int index){
+    var number = int.tryParse(model.numbers![index]);
+    if(number == null) return Text(model.numbers![index],style:style);
     var animation = Tween<double>(
-      begin: (int.tryParse(oldNumbers[index]) ?? 0) * 0.4,
+      begin: (int.tryParse(model.oldNumbers[index]) ?? 0) * 0.4,
       end: number * 0.4
-    ).animate(controller);
+    ).animate(model.controller);
     return Stack(
       children: <Widget>[
-        Text('7',style:widget.style.copyWith(color:Colors.transparent,shadows:[])),
+        Text('7',style:style.copyWith(color:Colors.transparent,shadows:[])),
         Positioned(
           top: 0,
           child: Align(
             alignment: Alignment(0,-1 + animation.value),
             heightFactor: 0.5,
             child: Column(
-              children: ['0','1','2','3','4','5','6','7','8','9'].map((num) => Text(num,style:widget.style)).toList(),
+              children: ['0','1','2','3','4','5','6','7','8','9'].map((num) => Text(num,style:style)).toList(),
             )
           )
         )
       ],
     );
   }
+}
+class SfRollingNumberVM extends SfViewState{
+  SfRollingNumberVM(this.widget):numbers=widget.number?.split('');
+  SfRollingNumber widget;
+  late AnimationController controller;
+  late List<String> oldNumbers;
+  List<String>? numbers;
 
-  @override
-  void initState(){
-    controller = AnimationController(duration:widget.duration,vsync:this);
+  Future initDataVsync(vsync){
+    controller = AnimationController(duration:widget.duration,vsync:vsync);
     rolling();
-    super.initState();
+    return super.initDataVsync(vsync);
   }
-  @override
-  void didUpdateWidget(SfRollingNumber oldWidget){
-    super.didUpdateWidget(oldWidget);
-    if(widget.number != oldWidget.number) rolling();
+  void onRefactor(covariant SfRollingNumberVM model){
+    if(model.widget.number!=widget.number){
+      widget = model.widget;
+      rolling();
+    }
   }
-  @override
-  Widget build(BuildContext context){
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context,child) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: numbers!.asMap().keys.map(buildNumber).toList(),
-      ),
-    );
+  void rolling() async {
+    oldNumbers = numbers ?? [];
+    numbers = widget.number?.split('') ?? [];
+    if(oldNumbers.length < numbers!.length){
+      oldNumbers.insertAll(0, List.filled(numbers!.length-oldNumbers.length, '0'));
+    }
+    else if(oldNumbers.length > numbers!.length){
+      numbers?.insertAll(0, List.filled(oldNumbers.length-numbers!.length, '0'));
+    }
+    notifyListeners();
+    controller.reset();
+    await controller.forward();
+    numbers = widget.number?.split('') ?? [];
+    notifyListeners();
   }
 }
 
@@ -153,6 +150,21 @@ class SfRollingNumberEnhancedModel extends SfViewState{
   late List<String> oldNumbers;
   List<String>? numbers;
 
+  Future initDataVsync(vsync) async {
+    controller = AnimationController(duration:widget.duration,vsync:vsync);
+    rolling();
+  }
+  void dispose(){
+    controller.dispose();
+    super.dispose();
+  }
+  void onRefactor(SfViewState newState){
+    var state = newState as SfRollingNumberEnhancedModel;
+    if(state.widget.number!=widget.number){
+      widget = state.widget;
+      rolling();
+    }
+  }
   int? getNumber(int index) => int.tryParse(numbers![index]);
   int getOldNumber(int index) => int.tryParse(oldNumbers[index])??0;
   void rolling() async {
@@ -170,22 +182,6 @@ class SfRollingNumberEnhancedModel extends SfViewState{
     numbers = widget.number?.split('') ?? [];
     notifyListeners();
   }
-
-  Future initDataVsync(vsync) async {
-    controller = AnimationController(duration:widget.duration,vsync:vsync);
-    rolling();
-  }
-  void dispose(){
-    controller.dispose();
-    super.dispose();
-  }
-  void onRefactor(SfViewState newState){
-    var state = newState as SfRollingNumberEnhancedModel;
-    if(state.widget.number!=widget.number){
-      widget = state.widget;
-      rolling();
-    }
-  }
 }
 
 class SfAnimatedNumber extends StatelessWidget{
@@ -194,15 +190,13 @@ class SfAnimatedNumber extends StatelessWidget{
     this.style,
     this.duration = const Duration(milliseconds:400),
     this.framesPerSecond = 100,
-    this.numberBuilder,
-    this.initialValue = 0
+    this.numberBuilder
   });
   final double? number;
   final TextStyle? style;
   final Duration duration;
   final int framesPerSecond;
   final String Function(double number)? numberBuilder;
-  final double initialValue;
 
   @override
   Widget build(BuildContext context){
@@ -213,12 +207,24 @@ class SfAnimatedNumber extends StatelessWidget{
   }
 }
 class SfAnimatedNumberModel extends SfViewState{
-  SfAnimatedNumberModel(this.widget):number=widget.initialValue;
+  SfAnimatedNumberModel(this.widget):number=widget.number;
   SfAnimatedNumber widget;
   double? number;
   Timer? _timer;
   List<double> _frameList = [];
 
+  Future initData() async => animate();
+  void dispose(){
+    stop();
+    super.dispose();
+  }
+  void onRefactor(SfViewState newState){
+    var state = newState as SfAnimatedNumberModel;
+    if(state.widget.number!=widget.number){
+      widget = state.widget;
+      animate();
+    }
+  }
   void animate() async {
     stop();
     if(widget.number==null || widget.number==number) return;
@@ -246,22 +252,6 @@ class SfAnimatedNumberModel extends SfViewState{
     number = _frameList.removeAt(0);
     notifyListeners();
     if(_frameList.length==0) stop();
-  }
-
-  @override
-  Future initData() async => animate();
-  @override
-  void dispose(){
-    stop();
-    super.dispose();
-  }
-  @override
-  void onRefactor(SfViewState newState){
-    var state = newState as SfAnimatedNumberModel;
-    if(state.widget.number!=widget.number){
-      widget = state.widget;
-      animate();
-    }
   }
 }
 
@@ -359,25 +349,6 @@ class SfFlipNumberEnhancedVM extends SfViewState{
   List<String>? numbers;
   late Animation<double> rotateX;
   bool isReversePhase = false;
-  int? getNumber(int index) => int.tryParse(numbers![index]);
-  int getOldNumber(int index) => int.tryParse(oldNumbers[index])??0;
-  void flip() async {
-    isReversePhase = false;
-    oldNumbers = numbers ?? [];
-    numbers = widget.number?.split('') ?? [];
-    if(oldNumbers.length < numbers!.length){
-      oldNumbers.insertAll(0, List.filled(numbers!.length-oldNumbers.length, '0'));
-    }
-    else if(oldNumbers.length > numbers!.length){
-      numbers?.insertAll(0, List.filled(oldNumbers.length-numbers!.length, '0'));
-    }
-    notifyListeners();
-    controller.reset();
-    await controller.forward();
-    numbers = widget.number?.split('') ?? [];
-    notifyListeners();
-  }
-
   Future initDataVsync(vsync) async {
     controller = AnimationController(duration:widget.duration,vsync:vsync);
     controller.addStatusListener((status){
@@ -400,5 +371,23 @@ class SfFlipNumberEnhancedVM extends SfViewState{
       widget = state.widget;
       flip();
     }
+  }
+  int? getNumber(int index) => int.tryParse(numbers![index]);
+  int getOldNumber(int index) => int.tryParse(oldNumbers[index])??0;
+  void flip() async {
+    isReversePhase = false;
+    oldNumbers = numbers ?? [];
+    numbers = widget.number?.split('') ?? [];
+    if(oldNumbers.length < numbers!.length){
+      oldNumbers.insertAll(0, List.filled(numbers!.length-oldNumbers.length, '0'));
+    }
+    else if(oldNumbers.length > numbers!.length){
+      numbers?.insertAll(0, List.filled(oldNumbers.length-numbers!.length, '0'));
+    }
+    notifyListeners();
+    controller.reset();
+    await controller.forward();
+    numbers = widget.number?.split('') ?? [];
+    notifyListeners();
   }
 }
