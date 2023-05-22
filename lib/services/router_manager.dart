@@ -10,11 +10,11 @@ class SfRouteName {
 }
 
 class SfRouterManager extends NavigatorObserver{
-  void showPhotoViewer({required List<ImageProvider> images,int? index,String? heroPrefix,PageController? controller,bool? canSave,SfLoadStateChanged? loadStateChanged,List<Widget> Function(int index)? childrenBuilder}) => navigator?.pushNamed(SfRouteName.photo_viewer,arguments:{
+  Future<T?> showPhotoViewer<T extends Object?>({required List<ImageProvider> images,int? index,String? heroPrefix,PageController? controller,bool? canSave,SfLoadStateChanged? loadStateChanged,List<Widget> Function(int index)? childrenBuilder}) async => navigator?.pushNamed<T>(SfRouteName.photo_viewer,arguments:{
     'images':images,'index':index,'heroPrefix':heroPrefix,'controller':controller,
     'canSave':canSave,'loadStateChanged':loadStateChanged,'childrenBuilder':childrenBuilder
   });
-  void showPhotoViewer2({required List<String> imageKeys,int? index,String? heroPrefix,PageController? controller,bool? canSave,String Function(String)? thumbnailGetter,List<Widget> Function(int index)? childrenBuilder}) => showPhotoViewer(
+  Future<T?>  showPhotoViewer2<T extends Object?>({required List<String> imageKeys,int? index,String? heroPrefix,PageController? controller,bool? canSave,String Function(String)? thumbnailGetter,List<Widget> Function(int index)? childrenBuilder}) => showPhotoViewer<T>(
     images:imageKeys.map((fileKey) => SfCacheManager.provider(SfAliyunOss.getImageUrl(fileKey))).toList(),
     index:index,heroPrefix:heroPrefix,controller:controller,canSave:canSave,childrenBuilder:childrenBuilder,
     loadStateChanged:(index,state) => state.extendedImageLoadState==LoadState.completed ? null : SfCachedImage(
