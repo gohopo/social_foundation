@@ -13,7 +13,7 @@ import 'package:social_foundation/widgets/chat_input.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatModel<TConversation extends SfConversation,TMessage extends SfMessage> extends SfRefreshListViewState<TMessage>{
-  TConversation? conversation;
+  TConversation conversation;
   String name;
   bool anonymous;
   SfClientResumingEvent _clientResumingEvent = SfClientResumingEvent();
@@ -25,11 +25,11 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     onInitInputModel();
   }
   Future sendMessage({String? msg,required String msgType,Map? msgExtra,Map? attribute}) async {
-    await GetIt.instance<SfChatManager>().sendMsg(convId:conversation!.convId,msg:await filterKeyword(msg,msgType),msgType:msgType,msgExtra:msgExtra,attribute:attribute);
+    await GetIt.instance<SfChatManager>().sendMsg(convId:conversation.convId,msg:await filterKeyword(msg,msgType),msgType:msgType,msgExtra:msgExtra,attribute:attribute);
     scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
   Future<String?> filterKeyword(String? msg,String msgType) async => SfLocatorManager.appState.filterKeyword(msg);
-  bool onMessageEventWhere(SfMessageEvent event) => event.message?.convId==conversation?.convId;
+  bool onMessageEventWhere(SfMessageEvent event) => event.message?.convId==conversation.convId;
   void onMessageEvent(SfMessageEvent event){
     var message = event.message as TMessage;
     if(event.isNew){
@@ -44,9 +44,8 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   }
   Future queryUnreadMessages() async {
     _messageEvent.dispose();
-    if(conversation==null) return;
-    if(conversation!.unreadMessagesCount > 0){
-      List<TMessage> messages = await GetIt.instance<SfChatManager>().queryMessages(conversation!.convId, conversation!.unreadMessagesCount) as List<TMessage>;
+    if(conversation.unreadMessagesCount > 0){
+      List<TMessage> messages = await GetIt.instance<SfChatManager>().queryMessages(conversation.convId, conversation.unreadMessagesCount) as List<TMessage>;
       onUnreadMessages(messages);
       messages = messages.where((message) => list.every((data) => data.msgId!=message.msgId)).toList();
       list.insertAll(0,messages);
@@ -58,7 +57,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     }
     _messageEvent.listen(onMessageEvent,onWhere:onMessageEventWhere);
   }
-  void convRead() => SfLocatorManager.chatState.read(conversation!.convId);
+  void convRead() => SfLocatorManager.chatState.read(conversation.convId);
   void onUnreadMessages(List<TMessage> messages){}
   void onInitInputModel(){
     inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage:onPickImage,onRecordVoice:onRecordVoice,onAccessoryChanged:onAccessoryChanged);
@@ -115,7 +114,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   }
   void onAccessoryChanged(SfChatInputModel model){}
   void onClientResuming() async {
-    await conversation?.queryUnreadMessagesCount();
+    await conversation.queryUnreadMessagesCount();
     queryUnreadMessages();
   }
 

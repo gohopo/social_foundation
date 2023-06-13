@@ -20,5 +20,5 @@ extension StringExtension on String {
 }
 
 extension SfSizeExtension on num {
-  num get wh => this * min(ScreenUtil().scaleWidth, ScreenUtil().scaleHeight);
+  double get wh => this * min(ScreenUtil().scaleWidth, ScreenUtil().scaleHeight);
 }

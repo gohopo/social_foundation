@@ -24,7 +24,7 @@ class SfAvatar extends StatelessWidget{
   final double? height;
   final VoidCallback? onTap;
   final BoxBorder? border;
-  final BorderRadius? borderRadius;
+  final BorderRadiusGeometry? borderRadius;
   final ImageProvider? defaultImage;
   final ImageProvider? defaultFemaleImage;
   final BoxFit fit;
