@@ -15,7 +15,6 @@ class SfThemeState<TTheme extends SfTheme> extends SfViewState{
     ),
     scaffoldBackgroundColor: theme.pageBackground,
     dividerColor: theme.divider,
-    toggleableActiveColor: theme.primary,
     appBarTheme: themeData.appBarTheme.copyWith(
       backgroundColor:theme.navbarBackground,
       titleTextStyle: TextStyle(fontSize:16,color:Colors.black,fontWeight:FontWeight.w500,height:1),
@@ -36,8 +35,8 @@ class SfThemeState<TTheme extends SfTheme> extends SfViewState{
       contentPadding: EdgeInsets.zero
     ),
     primaryTextTheme: themeData.textTheme.copyWith(
-      headline6: TextStyle(fontSize:16,color:Color.fromRGBO(0,0,0,1)),
-      bodyText1: TextStyle(fontSize:12,color:Color.fromRGBO(0,0,0,1)),
+      titleLarge: TextStyle(fontSize:16,color:Color.fromRGBO(0,0,0,1)),
+      bodyLarge: TextStyle(fontSize:12,color:Color.fromRGBO(0,0,0,1)),
     ),
     primaryIconTheme: themeData.primaryIconTheme.copyWith(
       color: Color.fromRGBO(51,51,51,1)
