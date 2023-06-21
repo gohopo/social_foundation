@@ -33,7 +33,7 @@ class SfUserConsumer<TUser extends SfUser> extends StatelessWidget {
           model.queryUser(this.userId!,this.fetch);
         }
       },
-      builder: (context,model,child) => consumer(context,this.user??model[this.userId] as TUser,child),
+      builder: (context,model,child) => consumer(context,this.user??model[this.userId] as TUser?,child),
       child: this.child,
     );
   }
