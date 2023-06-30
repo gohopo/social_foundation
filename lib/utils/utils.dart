@@ -102,4 +102,6 @@ class SfUtils{
     }
     return null;
   }
+  //填充字符串
+  static String padValue(int value,{bool pad=true,int width=2,String padding='0'}) => pad ? value.toString().padLeft(width,padding) : value.toString();
 }

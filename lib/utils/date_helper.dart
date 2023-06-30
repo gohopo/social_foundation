@@ -1,14 +1,16 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:social_foundation/utils/utils.dart';
 
 class SfDateHelper{
   static String formatTimeline(int timestamp) => TimelineUtil.format(timestamp,locale:'zh');
   static String formatDate(DateTime date,{String? format}) => DateUtil.formatDate(date,format:format);
   static String formatDateMs(int timestamp,{String? format}) => DateUtil.formatDateMs(timestamp,format:format);
-  ///格式化持续时间
-  ///使用请看[formatDurationMs]
   static String formatDuration(Duration duration,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit,int? maxUnit}) => formatDurationMs(duration.inMilliseconds,full:full,minUnits:minUnits,maxUnits:maxUnits,defaultUnit:defaultUnit,yearUnit:yearUnit,dayUnit:dayUnit,hourUnit:hourUnit,minuteUnit:minuteUnit,secondUnit:secondUnit,minUnit:minUnit,maxUnit:maxUnit);
+  static String formatDurationMs(int milliseconds,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit,int? maxUnit}) => splitDurationMs(milliseconds,full:full,minUnits:minUnits,maxUnits:maxUnits,defaultUnit:defaultUnit,yearUnit:yearUnit,dayUnit:dayUnit,hourUnit:hourUnit,minuteUnit:minuteUnit,secondUnit:secondUnit,minUnit:minUnit,maxUnit:maxUnit).join();
+  static List<String> splitDuration(Duration duration,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit,int? maxUnit}) => splitDurationMs(duration.inMilliseconds,full:full,minUnits:minUnits,maxUnits:maxUnits,defaultUnit:defaultUnit,yearUnit:yearUnit,dayUnit:dayUnit,hourUnit:hourUnit,minuteUnit:minuteUnit,secondUnit:secondUnit,minUnit:minUnit,maxUnit:maxUnit);
   ///格式化持续时间
   ///[milliseconds] 持续时间,单位毫秒
   ///[full] 是否有前導零
@@ -21,53 +23,54 @@ class SfDateHelper{
   ///[minuteUnit] 分单位
   ///[secondUnit] 秒单位
   ///[minUnit] 最小单位,默认为0.(年:4 天:3 时:2 分:1 秒:0)
-  static String formatDurationMs(int milliseconds,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit,int? maxUnit}){
+  static List<String> splitDurationMs(int milliseconds,{bool? full,int? minUnits,int? maxUnits,String? defaultUnit,String? yearUnit,String? dayUnit,String? hourUnit,String? minuteUnit,String? secondUnit,int? minUnit,int? maxUnit}){
     full ??= true;
     minUnit = max(0,min(minUnit??0,4));
     maxUnit = max(minUnit,min(maxUnit??4,4));
     minUnits = max(1,min(minUnits??1,5-minUnit));
     maxUnits = max(minUnits,min(maxUnits??2,5-minUnit));
     defaultUnit ??= ':';
-    var format = ''; 
+    List<String> format = []; 
     int millisecondsUnit = Duration.millisecondsPerDay*365;
     if(maxUnit>=4 && (minUnits==5-minUnit || milliseconds>=millisecondsUnit)){
-      format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, yearUnit??defaultUnit);
+      format.add(SfUtils.padValue((milliseconds/millisecondsUnit).floor(),pad:false));
+      format.add(yearUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerDay;
     if(minUnit<=3 && maxUnit>=3 && (minUnits==4-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
-      format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, dayUnit??defaultUnit);
+      format.add(SfUtils.padValue((milliseconds/millisecondsUnit).floor(),pad:full));
+      format.add(dayUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerHour;
     if(minUnit<=2 && maxUnit>=2 && (minUnits==3-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
-      format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, hourUnit??defaultUnit);
+      format.add(SfUtils.padValue((milliseconds/millisecondsUnit).floor(),pad:full));
+      format.add(hourUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerMinute;
     if(minUnit<=1 && maxUnit>=1 && (minUnits==2-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
-      format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, minuteUnit??defaultUnit);
+      format.add(SfUtils.padValue((milliseconds/millisecondsUnit).floor(),pad:full));
+      format.add(minuteUnit??defaultUnit);
       milliseconds %= millisecondsUnit;
       --minUnits;
       --maxUnits;
     }
     millisecondsUnit = Duration.millisecondsPerSecond;
     if(minUnit<=0 && (minUnits==1-minUnit || maxUnits>0&&milliseconds>=millisecondsUnit)){
-      format += formatDurationUnit((milliseconds/millisecondsUnit).floor(), full, secondUnit??defaultUnit);
+      format.add(SfUtils.padValue((milliseconds/millisecondsUnit).floor(),pad:full));
+      format.add(secondUnit??defaultUnit);
     }
-    var index = format.lastIndexOf(defaultUnit);
-    if(index+defaultUnit.length == format.length){
-      format = format.replaceRange(index,format.length,'');
-    }
+    if(format.lastOrNull==defaultUnit) format.removeLast();
     return format;
   }
-  static String formatDurationUnit(int value,bool full,String unit) => '${full&&value<10 ? 0 : ''}$value$unit';
 
   static bool isSameYear(DateTime dateLeft, DateTime dateRight) => dateLeft.year==dateRight.year;
   static bool isSameMonth(DateTime dateLeft, DateTime dateRight) => dateLeft.month==dateRight.month && isSameYear(dateLeft,dateRight);
