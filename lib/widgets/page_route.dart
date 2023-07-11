@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class SfMaterialRoute extends MaterialPageRoute{
+class SfMaterialRoute<T> extends MaterialPageRoute<T>{
   SfMaterialRoute(Widget page) : super(
     builder: (context) => page
   );
 }
 
-class SfDirectRoute extends PageRouteBuilder{
+class SfDirectRoute<T> extends PageRouteBuilder<T>{
   SfDirectRoute(Widget page) : super(
     opaque: false,
     transitionDuration: Duration(milliseconds: 0),
@@ -15,7 +15,7 @@ class SfDirectRoute extends PageRouteBuilder{
   );
 }
 
-class SfFadeRoute extends PageRouteBuilder{
+class SfFadeRoute<T> extends PageRouteBuilder<T>{
   SfFadeRoute(Widget page): super(
     transitionsBuilder: (context,animation,secondaryAnimation,child) => FadeTransition(
       opacity: animation,
@@ -25,7 +25,7 @@ class SfFadeRoute extends PageRouteBuilder{
   );
 }
 
-class SfScaleRoute extends PageRouteBuilder {
+class SfScaleRoute<T> extends PageRouteBuilder<T>{
   SfScaleRoute(Widget page) : super(
     transitionDuration: Duration(milliseconds: 300),
     transitionsBuilder: (context, animation, secondaryAnimation, child) => ScaleTransition(
@@ -44,7 +44,7 @@ class SfScaleRoute extends PageRouteBuilder {
   );
 }
 
-class SfSlideRoute extends PageRouteBuilder {
+class SfSlideRoute<T> extends PageRouteBuilder<T>{
   SfSlideRoute(Widget page,{
     Offset begin = const Offset(0.0, 1.0)
   }) : super(
