@@ -5,6 +5,11 @@ import 'package:sqflite/sqflite.dart';
 
 abstract class SfEntity{
   bool equals(covariant SfEntity other) => this==other;
+  static Future delete(String table,{String? where, List<Object?>? whereArgs}) async {
+    var database = await SfLocatorManager.storageManager.getDatabase();
+    return database.delete(table,where:where,whereArgs:whereArgs);
+  }
+  static Future deleteAll(String table) => delete(table);
 }
 
 abstract class SfSyncEntity extends SfEntity{
