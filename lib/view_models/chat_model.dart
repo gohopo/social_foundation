@@ -13,16 +13,33 @@ import 'package:social_foundation/widgets/chat_input.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatModel<TConversation extends SfConversation,TMessage extends SfMessage> extends SfRefreshListViewState<TMessage>{
+  SfChatModel(Map args):conversation=args['conversation'],name=args['name']??'',anonymous=args['anonymous']??false{
+    onInitInputModel();
+  }
   TConversation? conversation;
   String name;
   bool anonymous;
   SfClientResumingEvent _clientResumingEvent = SfClientResumingEvent();
   SfMessageEvent _messageEvent = SfMessageEvent();
+  SfMessageClearEvent _clearEvent = SfMessageClearEvent();
   late SfChatInputModel inputModel;
   ScrollController scrollController = ScrollController();
-
-  SfChatModel(Map args):conversation=args['conversation'],name=args['name']??'',anonymous=args['anonymous']??false{
-    onInitInputModel();
+  @override
+  Future initData() async {
+    _clientResumingEvent.listen((event) => onClientResuming());
+    _clearEvent.listen((event){
+      list.clear();
+      notifyListeners();
+    },onWhere:(event) => event.convId==conversation?.convId);
+    await super.initData();
+    await queryUnreadMessages();
+  }
+  @override
+  void dispose(){
+    _clientResumingEvent.dispose();
+    _messageEvent.dispose();
+    _clearEvent.dispose();
+    super.dispose();
   }
   Future sendMessage({String? msg,required String msgType,Map? msgExtra,Map? attribute}) async {
     await GetIt.instance<SfChatManager>().sendMsg(convId:conversation!.convId,msg:await filterKeyword(msg,msgType),msgType:msgType,msgExtra:msgExtra,attribute:attribute);
@@ -117,18 +134,5 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   void onClientResuming() async {
     await conversation?.queryUnreadMessagesCount();
     queryUnreadMessages();
-  }
-
-  @override
-  Future initData() async {
-    _clientResumingEvent.listen((event) => onClientResuming());
-    await super.initData();
-    await queryUnreadMessages();
-  }
-  @override
-  void dispose(){
-    _clientResumingEvent.dispose();
-    _messageEvent.dispose();
-    super.dispose();
   }
 }

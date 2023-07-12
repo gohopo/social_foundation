@@ -33,3 +33,7 @@ class SfMessageEvent extends SfEvent<SfMessageEvent>{
   bool isNew;
   SfMessageEvent({this.message,this.isNew=false});
 }
+class SfMessageClearEvent extends SfEvent<SfMessageClearEvent>{
+  String? convId;
+  SfMessageClearEvent({this.convId});
+}

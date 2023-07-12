@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/entity.dart';
+import 'package:social_foundation/services/event_manager.dart';
 import 'package:social_foundation/services/storage_manager.dart';
 import 'package:social_foundation/utils/aliyun_oss.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
@@ -98,7 +99,11 @@ class SfMessage {
     return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where $where'))!;
   }
   static Future delete(int id) => SfEntity.delete('message',where:'id=?',whereArgs:[id]);
-  static Future deleteAll() => SfEntity.deleteAll('message');
+  static Future deleteAll(String convId) async {
+    var result = await SfEntity.delete('message',where:'convId=?',whereArgs:[convId]);
+    SfMessageClearEvent(convId:convId).emit();
+    return result;
+  }
 }
 
 class SfMessageStatus{
