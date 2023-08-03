@@ -44,7 +44,7 @@ abstract class SfSyncEntity extends SfEntity{
       syncingMap[schema.syncTable] = {
         'at':syncedAtMap[schema.syncTable],'list':list
       };
-      syncedAtMap[schema.syncTable] = DateTime.now().millisecondsSinceEpoch;
+      if(list.isNotEmpty) syncedAtMap[schema.syncTable] = DateTime.now().millisecondsSinceEpoch;
     }
     if(onlyWhenModified==true && syncingMap.values.every((x) => x['list'].isEmpty)) return {};
     var result = await SfLocatorManager.requestManager.invokeFunction('app','sync',{'syncingMap':syncingMap});
@@ -55,6 +55,7 @@ abstract class SfSyncEntity extends SfEntity{
       List<SfSyncEntity> list = x.value['list'].map<SfSyncEntity>((y) => schema.fromJson(y)).toList();
       await Future.wait(list.map((y) => y.saveToDB()));
       tableMap[schema.syncTable] = list;
+      if(list.isNotEmpty) syncedAtMap[schema.syncTable] = DateTime.now().millisecondsSinceEpoch;
     }
     SfLocatorManager.storageManager.sharedPreferences.setJson(SfStorageManagerKey.syncedAtMap,syncedAtMap);
     return tableMap;
