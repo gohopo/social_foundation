@@ -27,7 +27,7 @@ dependencies:
   http: 0.13.3
   flutter_sound: 9.2.13
   audioplayers: 0.19.1
-  image_picker: 0.7.3
+  image_picker: 1.0.3
   bot_toast: 4.0.2
   leancloud_official_plugin:
     git:

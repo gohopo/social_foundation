@@ -35,7 +35,7 @@ class SfImageHelper{
   static Future<File?> pickImage({required ImageSource source,double? maxWidth,double? maxHeight,int? imageQuality,int maxFileSize=6,CameraDevice preferredCameraDevice=CameraDevice.rear}) async {
     File? file;
     try{
-      var pickedFile = await ImagePicker().getImage(
+      var pickedFile = await ImagePicker().pickImage(
         source:source,maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality,preferredCameraDevice:preferredCameraDevice
       );
       file = pickedFile!=null ? File(pickedFile.path) : null;
