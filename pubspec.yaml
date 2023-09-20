@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.0.31
+version: 0.0.32
 homepage: https://github.com/gohopo/social_foundation
 publish_to: none
 
@@ -42,6 +42,7 @@ dependencies:
   svgaplayer_flutter: 2.0.0-nullsafety.0
   permission_handler: 8.1.6
   audio_session: 0.1.13
+  wechat_assets_picker: 8.4.3
 
 dev_dependencies:
   flutter_test:
