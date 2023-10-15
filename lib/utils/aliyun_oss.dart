@@ -51,10 +51,10 @@ class SfAliyunOss {
     return 0;
   }
   static String getFilePath(String dir,String fileKey) => p.join(GetIt.instance<SfStorageManager>().getFileDirectory(dir),fileKey);
-  static Future<Response?> uploadImage(String filePath,{String? fileName,ProgressCallback? onSendProgress,bool cache=true}){
+  static Future<Response?> uploadImage(String filePath,{String? fileName,ProgressCallback? onSendProgress,bool? cache}){
     return uploadFile(SfMessageType.image,filePath,fileName:fileName,onSendProgress: onSendProgress,cache:cache);
   }
-  static Future<Response?> uploadVoice(String filePath,{String? fileName,ProgressCallback? onSendProgress,bool cache=true}){
+  static Future<Response?> uploadVoice(String filePath,{String? fileName,ProgressCallback? onSendProgress,bool? cache}){
     return uploadFile(SfMessageType.voice,filePath,fileName:fileName,onSendProgress: onSendProgress,cache:cache);
   }
   static String getImageUrl(String fileKey,{String? mode,int? width,int? height,int? short,int? long,int? limit,int? percent}){
@@ -74,7 +74,8 @@ class SfAliyunOss {
     if(getEncryptFromFileName(fileKey) > 0) dir = 'encrypt_$dir';
     return '$endPoint/$dir/$fileKey';
   }
-  static Future<Response?> uploadFile(String dir,String filePath,{String? fileName,ProgressCallback? onSendProgress,bool cache=true}) async {
+  static Future<Response?> uploadFile(String dir,String filePath,{String? fileName,ProgressCallback? onSendProgress,bool? cache}) async {
+    cache ??= true;
     if(cache && _uploadCache.containsKey(filePath)) return null;
     fileName = fileName ?? SfFileHelper.getFileName(filePath);
     var bytes = await File(filePath).readAsBytes();
