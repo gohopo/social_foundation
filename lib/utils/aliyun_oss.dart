@@ -14,13 +14,13 @@ import 'package:social_foundation/widgets/cached_image_provider.dart';
 
 class SfAliyunOss {
   static Map<String,String> _uploadCache = {};
-  static late String accessKeyId;
   static late String endPoint;
+  static late String accessKeyId;
   static late String policy;
   static late String signature;
-  static void initialize(int accountId,String _accessKeyId,String accessKeySecret,String region,String bucket){
-    accessKeyId = _accessKeyId;
-    endPoint = 'https://$bucket.oss-$region.aliyuncs.com';
+  static void initialize(String endPoint,String accessKeyId,String accessKeySecret){
+    SfAliyunOss.endPoint = endPoint;
+    SfAliyunOss.accessKeyId = accessKeyId;
     String policyText = '{"expiration": "2222-01-01T12:00:00.000Z","conditions": [["content-length-range", 0, 1048576000]]}';
     policy = base64.encode(utf8.encode(policyText));
     signature = base64.encode(Hmac(sha1,utf8.encode(accessKeySecret)).convert(utf8.encode(policy)).bytes);

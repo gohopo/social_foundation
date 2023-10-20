@@ -46,13 +46,15 @@ void configureServices(){
   GetIt.instance.registerSingleton(EventBus());
   GetIt.instance.registerSingleton<SfStorageManager>(StorageManager());
   GetIt.instance.registerSingleton<SfRouterManager>(RouterManager());
-  GetIt.instance.registerSingleton<SfAppState>(AppState());
-  GetIt.instance.registerSingleton<SfUserState>(UserState());
-  GetIt.instance.registerSingleton<SfChatState>(ChatState());
   GetIt.instance.registerSingleton<SfChatManager>(ChatManager());
+  GetIt.instance.registerSingleton<SfAppState>(AppState());
+  GetIt.instance.registerSingleton<SfChatState>(ChatState());
+  GetIt.instance.registerSingleton<SfUserState>(UserState());
 }
 
 Future configure() async {
-  await StorageManager.instance.init();
-  SfAliyunOss.initialize(AliyunSecret.accountId,AliyunSecret.accessKeyId,AliyunSecret.accessKeySecret,AliyunSecret.region,AliyunSecret.bucket);
+  SfAliyunOss.initialize('https://${AliyunSecret.bucket}.oss-${AliyunSecret.region}.aliyuncs.com',AliyunSecret.accessKeyId,AliyunSecret.accessKeySecret);
+  
+  await SfLocatorManager.storageManager.init();
+  await SfLocatorManager.appState.initData();
 }
