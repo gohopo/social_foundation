@@ -22,7 +22,7 @@ class SfCacheManager extends CacheManager with ImageCacheManager {
     }
     return _instance!;
   }
-  SfCacheManager._() : super(Config(key,fileService:FileServiceCompat(_fileFetcher)));
+  SfCacheManager._() : super(Config(key,fileService:SfFileServiceCompat(_fileFetcher)));
 
   static CachedNetworkImageProvider provider(String url) => CachedNetworkImageProvider(url,cacheManager:SfCacheManager());
   static const key = "libCachedImageData";
@@ -44,6 +44,23 @@ class SfCacheManager extends CacheManager with ImageCacheManager {
       }
     }
     return new HttpFileFetcherResponse(httpResponse);
+  }
+}
+class SfFileServiceCompat extends FileService{
+  SfFileServiceCompat(this.fileFetcher);
+  final FileFetcher fileFetcher;
+  Future<FileServiceResponse> get(String url,{Map<String, String>? headers}) async {
+    var legacyResponse = await fileFetcher(url,headers:headers);
+    return SfCompatFileServiceGetResponse(url,legacyResponse);
+  }
+}
+class SfCompatFileServiceGetResponse extends CompatFileServiceGetResponse{
+  SfCompatFileServiceGetResponse(this.url,super.legacyResponse);
+  final String url;
+  @override
+  String get fileExtension{
+    var ext = SfFileHelper.getFileExt(url);
+    return ext.isNotEmpty ? ext : super.fileExtension;
   }
 }
 
