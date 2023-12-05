@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:social_foundation/models/notify.dart';
 import 'package:social_foundation/models/theme.dart';
 import 'package:social_foundation/services/locator_manager.dart';
@@ -91,4 +92,13 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
   //关键字
   String? filterKeyword(String? content) => content;
   Future sync({bool? onlyWhenModified}) async {}
+  //权限
+  Future<PermissionStatus> getPermission(Permission permission) async {
+    var status = await permission.status;
+    if(!status.isGranted && await confirmPermission(permission,status)){
+      status = await permission.request();
+    }
+    return status;
+  }
+  Future<bool> confirmPermission(Permission permission,PermissionStatus status) async => true;
 }

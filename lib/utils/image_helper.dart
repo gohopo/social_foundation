@@ -37,6 +37,8 @@ class SfImageHelper{
   static Future<File?> pickImage({required ImageSource source,double? maxWidth,double? maxHeight,int? imageQuality,int maxFileSize=6,CameraDevice preferredCameraDevice=CameraDevice.rear}) async {
     File? file;
     try{
+      var status = await SfLocatorManager.appState.getPermission(source==ImageSource.gallery?Permission.photos:Permission.camera);
+      if(!status.isGranted) throw '!';
       var pickedFile = await ImagePicker().pickImage(
         source:source,maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality,preferredCameraDevice:preferredCameraDevice
       );
@@ -53,6 +55,8 @@ class SfImageHelper{
   }
   static Future<List<File>> pickImages({int maxFileSize=6,int? maxLength=9}) async {
     try{
+      var status = await SfLocatorManager.appState.getPermission(Permission.photos);
+      if(!status.isGranted) throw '!';
       var assets = await AssetPicker.pickAssets(
         SfLocatorManager.routerManager.navigator!.context,
         pickerConfig: AssetPickerConfig(
@@ -82,8 +86,7 @@ class SfImageHelper{
     }
   }
   static Future saveImage(Uint8List imageBytes,{int quality=80,String? name,bool isReturnImagePathOfIOS=false}) async {
-    var status = await Permission.storage.status;
-    if(!status.isGranted) status = await Permission.storage.request();
+    var status = await SfLocatorManager.appState.getPermission(Permission.storage);
     if(!status.isGranted) throw '没有存储权限!';
     return ImageGallerySaver.saveImage(imageBytes,quality:quality,name:name,isReturnImagePathOfIOS:isReturnImagePathOfIOS);
   }

@@ -26,8 +26,7 @@ class SfAudioRecorder extends SfViewState{
   double decibels = 0;
   bool get isRecording => _soundRecorder?.isRecording??false;
   Future checkPermission() async {
-    var status = await Permission.microphone.status;
-    if(!status.isGranted) status = await Permission.microphone.request();
+    var status = await SfLocatorManager.appState.getPermission(Permission.microphone);
     if(!status.isGranted) throw '没有录音权限!';
   }
   Future start() async {
