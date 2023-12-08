@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-extension RegExpExtension on RegExp {
+extension SfRegExpExtension on RegExp {
   List<String> splitWithDelim(String input, [int start = 0]) {
     var result = <String>[];
     for (var match in allMatches(input, start)) {
@@ -15,10 +15,16 @@ extension RegExpExtension on RegExp {
   }
 }
 
-extension StringExtension on String {
+extension SfStringExtension on String {
   List<String> splitWithDelim(RegExp pattern) => pattern.splitWithDelim(this);
 }
 
 extension SfSizeExtension on num {
   double get wh => this * min(ScreenUtil().scaleWidth, ScreenUtil().scaleHeight);
+}
+
+extension SfNumExtension on num {
+  String toStringWithFraction(int fractionDigits){
+    return this.toStringAsFixed(fractionDigits).replaceAll(RegExp(r'([.]*0+)(?!.*\d)'),'');
+  }
 }
