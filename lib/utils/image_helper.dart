@@ -33,7 +33,8 @@ class SfImageHelper{
     var bytes = await image.toByteData(format:format??ui.ImageByteFormat.png);
     return bytes?.buffer.asUint8List();
   }
-  static Future<File?> pickImage({required ImageSource source,double? maxWidth,double? maxHeight,int? imageQuality,int maxFileSize=6,CameraDevice preferredCameraDevice=CameraDevice.rear}) async {
+  static Future<File?> pickImage({required ImageSource source,double? maxWidth,double? maxHeight,int? imageQuality,int? maxFileSize,CameraDevice? preferredCameraDevice}) async {
+    maxFileSize??=6;preferredCameraDevice??=CameraDevice.rear;
     File? file;
     try{
       var status = await SfLocatorManager.appState.getPermission(source==ImageSource.gallery?Permission.photos:Permission.camera);
@@ -52,7 +53,8 @@ class SfImageHelper{
     }
     return file;
   }
-  static Future<List<File>> pickImages({double? maxWidth,double? maxHeight,int? imageQuality,int maxFileSize=6,int maxLength=9}) async {
+  static Future<List<File>> pickImages({double? maxWidth,double? maxHeight,int? imageQuality,int? maxFileSize,int? maxLength}) async {
+    maxFileSize??=6;maxLength??=9;
     List<File> files = [];
     try{
       var status = await SfLocatorManager.appState.getPermission(Permission.photos);
@@ -66,7 +68,7 @@ class SfImageHelper{
     if(files.length>maxLength) throw '最多选择$maxLength张';
     if(files.isNotEmpty && maxFileSize>0) await Future.wait(files.map<Future>((file) async {
       var bytes = await file.readAsBytes();
-      if(bytes.lengthInBytes > (maxFileSize*1024*1024)) throw '文件大小超出最大限制';
+      if(bytes.lengthInBytes > (maxFileSize!*1024*1024)) throw '文件大小超出最大限制';
     }));
     return files;
   }
