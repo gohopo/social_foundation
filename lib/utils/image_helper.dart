@@ -9,7 +9,6 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:social_foundation/services/locator_manager.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class SfImageHelper{
   static Future<ui.Image> captureToImage(GlobalKey key,{double? pixelRatio}){
@@ -53,37 +52,23 @@ class SfImageHelper{
     }
     return file;
   }
-  static Future<List<File>> pickImages({int maxFileSize=6,int? maxLength=9}) async {
+  static Future<List<File>> pickImages({double? maxWidth,double? maxHeight,int? imageQuality,int maxFileSize=6,int maxLength=9}) async {
+    List<File> files = [];
     try{
       var status = await SfLocatorManager.appState.getPermission(Permission.photos);
       if(!status.isGranted) throw '!';
-      var assets = await AssetPicker.pickAssets(
-        SfLocatorManager.routerManager.navigator!.context,
-        pickerConfig: AssetPickerConfig(
-          maxAssets: maxLength ?? 9,
-          requestType: RequestType.image,
-          selectPredicate: (context,asset,isSelected) async {
-            if(isSelected || maxFileSize<=0) return true;
-            if(!isSelected && maxFileSize>0){
-              var file = await asset.file;
-              if(file!=null){
-                var bytes = await file.readAsBytes();
-                if(bytes.lengthInBytes > maxFileSize*1024*1024){
-                  SfLocatorManager.appState.showError('文件大小超出${maxFileSize}M限制');
-                  return false;
-                }
-              }
-            }
-            return true;
-          },
-        ),
-      );
-      var files = await Future.wait<File?>(assets?.map((x) => x.file)??[]);
-      return files.where((x)=>x!=null).cast<File>().toList();
+      var pickedFiles = await ImagePicker().pickMultiImage(maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality);
+      files = pickedFiles.map<File>((x) => File(x.path)).toList();
     }
     catch(error){
       throw '没有相册权限';
     }
+    if(files.length>maxLength) throw '最多选择$maxLength张';
+    if(files.isNotEmpty && maxFileSize>0) await Future.wait(files.map<Future>((file) async {
+      var bytes = await file.readAsBytes();
+      if(bytes.lengthInBytes > (maxFileSize*1024*1024)) throw '文件大小超出最大限制';
+    }));
+    return files;
   }
   static Future saveImage(Uint8List imageBytes,{int quality=80,String? name,bool isReturnImagePathOfIOS=false}) async {
     var status = await SfLocatorManager.appState.getPermission(Permission.storage);
