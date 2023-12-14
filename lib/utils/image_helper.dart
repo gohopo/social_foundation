@@ -65,7 +65,10 @@ class SfImageHelper{
     catch(error){
       throw '没有相册权限';
     }
-    if(files.length>maxLength) throw '最多选择$maxLength张';
+    if(files.length>maxLength){
+      files = files.take(maxLength).toList();
+      SfLocatorManager.appState.showError('最多上传$maxLength张照片');
+    }
     if(files.isNotEmpty && maxFileSize>0) await Future.wait(files.map<Future>((file) async {
       var bytes = await file.readAsBytes();
       if(bytes.lengthInBytes > (maxFileSize!*1024*1024)) throw '文件大小超出最大限制';
