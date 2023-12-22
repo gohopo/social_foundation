@@ -37,11 +37,12 @@ export './utils/contracts.dart';
 export './utils/extensions.dart';
 //models
 export './models/app.dart';
-export './models/message.dart';
 export './models/conversation.dart';
-export './models/user.dart';
-export './models/theme.dart';
 export './models/entity.dart';
+export './models/message.dart';
+export './models/notify.dart';
+export './models/theme.dart';
+export './models/user.dart';
 //widgets
 export './widgets/view_state.dart';
 export './widgets/provider_widget.dart';
