@@ -188,7 +188,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   void onMessageRecalled(TMessage message){
     saveMessage(message,false);
   }
-  void onNotifyReceived(TMessage message) => SfLocatorManager.appState.addNotify(message.msgExtra['notifyType']);
+  void onNotifyReceived(TMessage message) => SfLocatorManager.appState.addNotify(notifyType:message.msgExtra['notifyType'],fromId:message.fromId);
   Future<Conversation> _getConversation(String conversationId) async {
     var conversation = _client.conversationMap[conversationId];
     if(conversation == null){

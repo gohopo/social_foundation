@@ -68,7 +68,7 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
     notifyListeners();
     processNotifyList();
   }
-  void addNotify(String? notifyType) async {
+  void addNotify({String? notifyType,String? fromId}) async {
     if(notifyType==null) return;
     await Future.delayed(Duration(milliseconds:3000));//通知延迟,因为多元索引同步有延迟
     var notify = notifyList.firstWhereOrNull((x) => x.notifyType==notifyType);
@@ -79,6 +79,7 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
     else{
       notify.count++;
     }
+    if(fromId!=null) notify.fromId = fromId;
     notifyListeners();
     processNotifyList();
   }
