@@ -58,10 +58,8 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
   void showError(error){}
   //通知
   List<SfNotify> notifyList = [];
-  int getNotifyCount(String notifyType){
-    var notify = notifyList.firstWhereOrNull((x) => x.notifyType==notifyType);
-    return notify?.count ?? 0;
-  }
+  SfNotify? getNotify(String notifyType) => notifyList.firstWhereOrNull((x) => x.notifyType==notifyType);
+  int getNotifyCount(String notifyType) => getNotify(notifyType)?.count ?? 0;
   bool isNotifyUnread(String notifyType) => getNotifyCount(notifyType)>0;
   Future queryNotifyList() async {
     notifyList = await SfNotify.queryNotifyList(SfLocatorManager.userState.curUserId);
