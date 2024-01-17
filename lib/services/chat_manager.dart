@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:leancloud_official_plugin/leancloud_plugin.dart';
 import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
@@ -135,7 +136,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       var count = min(limit,100);
       var result = await conversation.queryMessage(startMessageID:startMessage?.msgId,startTimestamp:startMessage?.timestamp,startClosed:startMessage!=null?false:null,limit:count);
       messages.addAll(result.map((data) => _convertMessage(data)!));
-      startMessage = messages.last;
+      startMessage = messages.lastOrNull;
       limit -= count;
     }
     return messages;
