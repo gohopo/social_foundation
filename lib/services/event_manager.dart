@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:event_bus/event_bus.dart';
 import 'package:get_it/get_it.dart';
+import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
 
 class _SfEventBase{
@@ -27,6 +28,11 @@ class SfEvent<T extends _SfEventBase> extends _SfEventBase{
 
 class SfClientDisconnectedEvent extends SfEvent<SfClientDisconnectedEvent>{}
 class SfClientResumingEvent extends SfEvent<SfClientResumingEvent>{}
+
+class SfUnreadMessagesCountUpdatedEvent<TConversation extends SfConversation> extends SfEvent<SfUnreadMessagesCountUpdatedEvent>{
+  TConversation? conversation;
+  SfUnreadMessagesCountUpdatedEvent({this.conversation});
+}
 
 class SfMessageEvent extends SfEvent<SfMessageEvent>{
   SfMessage? message;

@@ -185,6 +185,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     if(conversation.unreadMessagesCount<=0)  return;
     saveConversation(conversation,unreadMessageCountUpdated:true);
     convRead(conversation.convId);
+    SfUnreadMessagesCountUpdatedEvent<TConversation>(conversation:conversation).emit();
   }
   void onMessageRecalled(TMessage message){
     saveMessage(message,false);
