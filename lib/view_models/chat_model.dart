@@ -103,7 +103,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
         'filePath': filePath,
         'fileDir': SfMessageType.image
       };
-      return sendMessage(msgType:SfMessageType.image,attribute:attribute);
+      await sendMessage(msgType:SfMessageType.image,attribute:attribute);
     }
     catch(error){
       onSendImageError(error);
@@ -119,7 +119,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
         'filePath': filePath,
         'fileDir': SfMessageType.voice
       };
-      return sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
+      await sendMessage(msgType:SfMessageType.voice,msgExtra:msgExtra,attribute:attribute);
     }
     catch(error){
       onSendVoiceError(error);
