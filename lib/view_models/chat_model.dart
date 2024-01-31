@@ -65,7 +65,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     if(conversation!.unreadMessagesCount > 0){
       List<TMessage> messages = await GetIt.instance<SfChatManager>().queryMessages(conversation!.convId, conversation!.unreadMessagesCount) as List<TMessage>;
       onUnreadMessages(messages);
-      messages = messages.where((message) => list.every((data) => data.msgId!=message.msgId)).toList();
+      messages = messages.where((message) => list.every((data) => !message.equalTo(data))).toList();
       list.insertAll(0,messages);
       list.sort((a,b) => b.timestamp-a.timestamp);
       notifyListeners();
