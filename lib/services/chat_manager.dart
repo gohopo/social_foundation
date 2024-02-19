@@ -51,10 +51,15 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
         await saveMessage(message);
       }
       //发送
-      var data = await _sendMessage(message.convId,message.msg,message.msgType,message.msgExtra);
-      message.msgId = data.msgId;
-      message.timestamp = data.timestamp;
-      message.status = data.status;
+      if(message.attribute['fakeSend']==true){
+        message.status = SfMessageStatus.sent;
+      }
+      else{
+        var data = await _sendMessage(message.convId,message.msg,message.msgType,message.msgExtra);
+        message.msgId = data.msgId;
+        message.timestamp = data.timestamp;
+        message.status = data.status;
+      }
     }
     catch(e){
       message.status = SfMessageStatus.failed;
