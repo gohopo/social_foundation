@@ -116,12 +116,15 @@ class SfEasyDialog extends SfDialog{
     child: Text(action,style:TextStyle(fontSize:15,color:Color.fromARGB(255,51,51,51))),
   );
 
-  Future<List<File>> onPickImages({double? maxWidth=1000,double? maxHeight=1000,int? imageQuality=75,int maxFileSize=6,int maxLength=9}) async {
-    var index = await onShowSheet(['从相册选择照片','拍照','取消'],splitLast:true);
-    if(index == 2) return [];
-    if(index==1 || maxLength==1){
+  Future<List<File>> onPickImages({double? maxWidth=1000,double? maxHeight=1000,int? imageQuality=75,int maxFileSize=6,int maxLength=9,ImageSource? imageSource}) async {
+    if(imageSource == null){
+      var index = await onShowSheet(['从相册选择照片','拍照','取消'],splitLast:true);
+      if(index == 2) return [];
+      imageSource = [ImageSource.gallery,ImageSource.camera][index];
+    }
+    if(imageSource==ImageSource.camera || maxLength==1){
       var file = await SfImageHelper.pickImage(
-        source: [ImageSource.gallery,ImageSource.camera][index],
+        source: imageSource,
         maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality,maxFileSize:maxFileSize
       );
       return file!=null ? [file] : [];
