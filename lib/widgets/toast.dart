@@ -82,7 +82,7 @@ class SfEasyDialog extends SfDialog{
       child: child
     );
   }
-  Widget buildTitle(String title) => Text(title,style:TextStyle(fontSize:18,color:Colors.black.withOpacity(0.85)),textAlign:TextAlign.center);
+  Widget buildTitle(String title,{double? fontSize,Color? color}) => Text(title,style:TextStyle(fontSize:fontSize??18,color:color??Colors.black.withOpacity(0.85)),textAlign:TextAlign.center);
   Widget buildContent(String content) => Container(
     margin: EdgeInsets.only(left:7,bottom:10),
     child: Text(content,style:TextStyle(fontSize:14,color:Color.fromARGB(255,51,51,51))),
@@ -116,9 +116,9 @@ class SfEasyDialog extends SfDialog{
     child: Text(action,style:TextStyle(fontSize:15,color:Color.fromARGB(255,51,51,51))),
   );
 
-  Future<List<File>> onPickImages({double? maxWidth=1000,double? maxHeight=1000,int? imageQuality=75,int maxFileSize=6,int maxLength=9,ImageSource? imageSource}) async {
+  Future<List<File>> onPickImages({double? maxWidth=1000,double? maxHeight=1000,int? imageQuality=75,int maxFileSize=6,int maxLength=9,ImageSource? imageSource,String? title}) async {
     if(imageSource == null){
-      var index = await onShowSheet(['从相册选择照片','拍照','取消'],splitLast:true);
+      var index = await onShowSheet(['从相册选择照片','拍照','取消'],title:title,splitLast:true);
       if(index == 2) return [];
       imageSource = [ImageSource.gallery,ImageSource.camera][index];
     }
@@ -162,7 +162,7 @@ class SfEasyDialog extends SfDialog{
     return completer.future;
   }
   Future<int> onShowSheet(List<String> actions,{String? title,bool? split,bool? splitLast,Duration? animationDuration,Duration? animationReverseDuration,WrapAnimation? wrapToastAnimation,bool? clickClose,Color? backgroundColor,Duration? duration}) => onShowSheetEnhanced(
-    title: title!=null ? buildTitle(title) : null,
+    title: title!=null ? buildTitle(title,fontSize:16,color:Colors.black) : null,
     actions: actions.asMap().keys.map((index) => buildSheetAction(index,actions[index])).toList(),
     split:split,splitLast:splitLast,animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,backgroundColor:backgroundColor,duration:duration
   );
@@ -185,7 +185,10 @@ class SfEasyDialog extends SfDialog{
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(title != null) title,
+            if(title != null) Padding(
+              padding: EdgeInsets.only(left:10,right:10,bottom:16),
+              child: title,
+            ),
             Column(
               children: actions.asMap().keys.map((index) => GestureDetector(
                 onTap: (){
