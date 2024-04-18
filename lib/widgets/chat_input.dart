@@ -74,10 +74,10 @@ class SfChatInput extends StatelessWidget {
       )
     );
   }
-  Widget buildSend(BuildContext context){
+  Widget buildSend(BuildContext context,{EdgeInsets? padding}){
     return InkWell(
       child: Container(
-        padding: EdgeInsets.only(left:15),
+        padding: padding??EdgeInsets.only(left:15),
         child: Icon(Icons.send,color:Color.fromARGB(255,159,162,178)),
       ),
       onTap: model.onTapSend,
