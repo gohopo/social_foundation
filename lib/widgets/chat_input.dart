@@ -22,7 +22,31 @@ class SfChatInput extends StatelessWidget {
   final Color? editorBackgroundColor;
   final Color? editorColor;
   final double accessoryHeight;
-  
+  @override
+  Widget build(BuildContext context) {
+    return SfProvider<SfChatInputModel>(
+      model: model,
+      builder: (context,model,child) => Container(
+        color: backgroundColor,
+        child: Column(children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(15),
+            child: Row(
+              children: buildInputBar(context)
+            )
+          ),
+          buildToolbar(context),
+          buildAccessoryContainer(context)
+        ]),
+      ),
+    );
+  }
+  List<Widget> buildInputBar(BuildContext context) => [
+    Expanded(
+      child: buildEditor(context)
+    ),
+    buildSend(context)
+  ];
   Widget buildEditor(BuildContext context){
     return Container(
       padding: EdgeInsets.symmetric(horizontal:11),
@@ -106,31 +130,6 @@ class SfChatInput extends StatelessWidget {
       );
     }
     return null;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SfProvider<SfChatInputModel>(
-      model: model,
-      builder: (context,model,child) => Container(
-        color: backgroundColor,
-        child: Column(children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(15),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: buildEditor(context)
-                ),
-                buildSend(context)
-              ]
-            )
-          ),
-          buildToolbar(context),
-          buildAccessoryContainer(context)
-        ]),
-      ),
-    );
   }
 }
 
