@@ -15,13 +15,15 @@ class SfChatInput extends StatelessWidget {
     this.backgroundColor = const Color.fromARGB(255,37,38,51),
     this.editorBackgroundColor = const Color.fromARGB(255,48,50,66),
     this.editorColor = Colors.white,
-    this.accessoryHeight = 260
+    this.accessoryHeight = 260,
+    this.hintText
   }) : super(key:key);
   final SfChatInputModel model;
   final Color? backgroundColor;
   final Color? editorBackgroundColor;
   final Color? editorColor;
   final double accessoryHeight;
+  final String? hintText;
   @override
   Widget build(BuildContext context) {
     return SfProvider<SfChatInputModel>(
@@ -61,7 +63,7 @@ class SfChatInput extends StatelessWidget {
         onEditingComplete: model.onTapSend,
         style: TextStyle(fontSize:16,color:editorColor),
         decoration: InputDecoration(
-          hintText: '说点什么吧~',
+          hintText: hintText??'友善是交流的起点~',
           hintStyle: TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8)),
           contentPadding: EdgeInsets.symmetric(vertical:14),
           border: InputBorder.none,
