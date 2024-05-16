@@ -4,37 +4,42 @@ import 'package:social_foundation/services/storage_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class SfEntity{
-  bool equals(covariant SfEntity other) => this==other;
-  static Future delete(String table,{String? where, List<Object?>? whereArgs}) async {
-    var database = await SfLocatorManager.storageManager.getDatabase();
-    return database.delete(table,where:where,whereArgs:whereArgs);
+  SfEntity(Map data){
+    populate(data);
   }
-  static Future deleteAll(String table) => delete(table);
+  void populate(Map data){}
+  void populateWith(SfEntity other) => populate(other.toJson());
+  SfEntity fromJson(Map data) => noSuchMethod(Invocation.method(Symbol('fromJson'),null));
+  Map<String,dynamic> toJson() => {};
+  SfEntity fromDB(Map data) => fromJson(data);
+  Map<String,dynamic> toDB() => toJson();
+  bool equals(SfEntity other) => this==other;
 }
 
 abstract class SfSyncEntity extends SfEntity{
   late String userId;
   late int modifiedAt;
   late int isDeleted;
-  SfSyncEntity(Map data){
-    populate(data);
-  }
+  SfSyncEntity(super.data);
   void populate(Map data){
+    super.populate(data);
     userId = data['userId']??SfLocatorManager.userState.curUserId;
     modifiedAt = data['modifiedAt']??0;
     isDeleted = data['isDeleted']??0;
   }
-  void populateWith(covariant SfSyncEntity other) => populate(other.toJson());
-  SfSyncEntity fromJson(Map data) => noSuchMethod(Invocation.method(Symbol('fromJson'),null));
   Map<String,dynamic> toJson() => {
+    ...super.toJson(),
     'userId': userId,
     'modifiedAt': modifiedAt,
     'isDeleted': isDeleted,
   };
-  SfSyncEntity fromDB(Map data) => fromJson(data);
-  Map<String,dynamic> toDB() => toJson();
   bool get isSynced => modifiedAt<=(SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap)[syncTable] ?? 0);
   String get syncTable => noSuchMethod(Invocation.getter(Symbol('syncTable')));
+  static Future delete(String table,{String? where, List<Object?>? whereArgs}) async {
+    var database = await SfLocatorManager.storageManager.getDatabase();
+    return database.delete(table,where:where,whereArgs:whereArgs);
+  }
+  static Future deleteAll(String table) => delete(table);
   static Future<Map<String,List<SfSyncEntity>>> sync({required List<SfSyncEntity> schemas,bool? onlyWhenModified}) async {
     if(schemas.isNotEmpty!=true) return {};
     var syncedAtMap = SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap);
@@ -63,7 +68,7 @@ abstract class SfSyncEntity extends SfEntity{
   Future<List<SfSyncEntity>> queryUnsyncedList(int? lastSyncedAt) async {
     var database = await SfLocatorManager.storageManager.getDatabase();
     var result = await database.query(syncTable,where:'userId=? and modifiedAt>?',whereArgs:[SfLocatorManager.userState.curUserId,lastSyncedAt??0]);
-    return result.map(fromDB).toList();
+    return result.map(fromDB).cast<SfSyncEntity>().toList();
   }
   Future saveToDB() async {
     var count = await updateToDB();

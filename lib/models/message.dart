@@ -99,9 +99,9 @@ class SfMessage {
     if(real==true) where += ' and msgId is not null';
     return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where $where'))!;
   }
-  static Future delete(int id) => SfEntity.delete('message',where:'id=?',whereArgs:[id]);
+  static Future delete(int id) => SfSyncEntity.delete('message',where:'id=?',whereArgs:[id]);
   static Future deleteAll(String convId) async {
-    var result = await SfEntity.delete('message',where:'convId=?',whereArgs:[convId]);
+    var result = await SfSyncEntity.delete('message',where:'convId=?',whereArgs:[convId]);
     SfMessageClearEvent(convId:convId).emit();
     return result;
   }
