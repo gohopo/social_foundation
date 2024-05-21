@@ -88,6 +88,16 @@ class SfPath{
   }
 }
 
+class SfPathClipper extends CustomClipper<Path>{
+  SfPathClipper({required this.pathBuilder,this.whenReclip});
+  final Path Function(Size size) pathBuilder;
+  final bool Function(SfPathClipper clipper)? whenReclip;
+  @override
+  Path getClip(Size size) => pathBuilder.call(size);
+  @override
+  bool shouldReclip(covariant SfPathClipper clipper) => whenReclip?.call(clipper)??false;
+}
+
 class SfTrapezoidClipper extends CustomClipper<Path>{
   SfTrapezoidClipper(this.cutLength, this.edge);
   final double cutLength;
