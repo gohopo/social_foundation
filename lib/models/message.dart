@@ -18,7 +18,7 @@ class SfMessage {
   String fromId;
   int timestamp;
   int status;
-  int receiptTimestamp;
+  int? receiptTimestamp;
   Map attribute;
   String? msg;
   String msgType;
