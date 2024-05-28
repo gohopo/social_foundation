@@ -9,7 +9,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
   String ownerId;
   String convId;
   String name;
-  String creator;
+  String? creator;
   List members;
   int unreadMessagesCount;
   TMessage? lastMessage;
