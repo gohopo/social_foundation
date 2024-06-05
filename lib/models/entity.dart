@@ -27,12 +27,14 @@ abstract class SfSyncEntity extends SfEntity{
     modifiedAt = data['modifiedAt']??0;
     isDeleted = data['isDeleted']??0;
   }
+  SfSyncEntity fromJson(Map data) => noSuchMethod(Invocation.method(Symbol('fromJson'),null));
   Map<String,dynamic> toJson() => {
     ...super.toJson(),
     'userId': userId,
     'modifiedAt': modifiedAt,
     'isDeleted': isDeleted,
   };
+  SfSyncEntity fromDB(Map data) => fromJson(data);
   bool get isSynced => modifiedAt<=(SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap)[syncTable] ?? 0);
   String get syncTable => noSuchMethod(Invocation.getter(Symbol('syncTable')));
   static Future delete(String table,{String? where, List<Object?>? whereArgs}) async {
