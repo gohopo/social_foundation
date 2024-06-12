@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/locator_manager.dart';
@@ -34,7 +35,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
     lastMessage = conversation.lastMessage;
     lastMessageAt = conversation.lastMessageAt;
   }
-  String get otherId => members.firstWhere((userId) => userId!=ownerId,orElse: ()=>null);
+  String? get otherId => members.firstWhereOrNull((userId) => userId!=ownerId);
   Future save();
   Future delete() async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
