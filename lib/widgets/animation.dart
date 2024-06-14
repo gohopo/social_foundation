@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:social_foundation/utils/utils.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
@@ -213,5 +214,110 @@ class _SfAnimatedDoubleState extends AnimatedWidgetBaseState<SfAnimatedDouble>{
   @override
   Widget build(BuildContext context) {
     return widget.builder(context,_value!.evaluate(animation),widget.child);
+  }
+}
+
+class SfHeartFadeAnimation extends StatelessWidget{
+  SfHeartFadeAnimation({required Widget heart,required this.position,required this.translateY,this.onCompleted})
+  :heart=Transform.rotate(angle:SfUtils.randRangeDouble(-0.5,0.5),child:heart);
+  final Widget heart;
+  final Offset position;
+  final double translateY;
+  final Function? onCompleted;
+  @override
+  Widget build(context) => SfProvider<SfHeartFadeAnimationVM>(
+    model: SfHeartFadeAnimationVM(this),
+    builder: (_,model,__)=>buildWidget(model)
+  );
+  Widget buildWidget(SfHeartFadeAnimationVM model) => AnimatedBuilder(
+    animation: model.controller,
+    builder: (_,child) => Stack(
+      children: [
+        buildHeart(model,child!),
+      ],
+    ),
+    child: heart,
+  );
+  Widget buildHeart(SfHeartFadeAnimationVM model,Widget heart) => Positioned(
+    left:position.dx,top:model.top,
+    child: Transform.scale(
+      scale: model.scale,
+      child: Opacity(
+        opacity: model.opacity,
+        child: heart
+      )
+    )
+  );
+}
+class SfHeartFadeAnimationVM extends SfViewState{
+  SfHeartFadeAnimationVM(this.widget);
+  SfHeartFadeAnimation widget;
+  late AnimationController controller;
+  double get step1 => 1.5;
+  double get step2 => 0.5;
+  double get step3 => 4;
+  double get step4 => 6;
+  double get top => TweenSequence<double>([
+    TweenSequenceItem(
+      tween: ConstantTween<double>(widget.position.dy),
+      weight: step1+step2+step3
+    ),
+    TweenSequenceItem(
+      tween: Tween<double>(
+        begin:widget.position.dy,end:widget.position.dy+widget.translateY,
+      ),
+      weight: step4
+    ),
+  ]).animate(CurvedAnimation(
+    parent:controller,curve:Curves.linear
+  )).value;
+  double get scale => TweenSequence<double>([
+    TweenSequenceItem(
+      tween: Tween<double>(
+        begin:1.2,end:0.9,
+      ),
+      weight: step1
+    ),
+    TweenSequenceItem(
+      tween: Tween<double>(
+        begin:0.9,end:1,
+      ),
+      weight: step2
+    ),
+    TweenSequenceItem(
+      tween: ConstantTween<double>(1),
+      weight: step3
+    ),
+    TweenSequenceItem(
+      tween: Tween<double>(
+        begin:1,end:1.5,
+      ),
+      weight: step4
+    ),
+  ]).animate(CurvedAnimation(
+    parent:controller,curve:Curves.linear
+  )).value;
+  double get opacity => TweenSequence<double>([
+    TweenSequenceItem(
+      tween: ConstantTween<double>(1),
+      weight: step1+step2+step3
+    ),
+    TweenSequenceItem(
+      tween: Tween<double>(
+        begin:1,end:0.1,
+      ),
+      weight: step4
+    ),
+  ]).animate(CurvedAnimation(
+    parent:controller,curve:Curves.linear
+  )).value;
+  @override
+  Future initDataVsync(vsync) async {
+    controller = AnimationController(duration:const Duration(milliseconds:900),vsync:vsync);
+    startAnimation();
+  }
+  void startAnimation() async {
+    await controller.forward();
+    widget.onCompleted?.call();
   }
 }
