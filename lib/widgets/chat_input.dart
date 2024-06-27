@@ -10,27 +10,25 @@ import 'package:social_foundation/widgets/view_state.dart';
 
 class SfChatInput extends StatelessWidget {
   SfChatInput({
-    Key? key,
-    required this.model,
-    this.backgroundColor = const Color.fromARGB(255,37,38,51),
-    this.editorBackgroundColor = const Color.fromARGB(255,48,50,66),
-    this.editorColor = Colors.white,
-    this.accessoryHeight = 260,
-    this.hintText
-  }) : super(key:key);
+    super.key,required this.model,double? accessoryHeight,this.backgroundColor,
+    this.editorBackgroundColor,this.editorColor,this.hintText,
+    this.recorderBackgroundColor,this.recorderColor
+  }):accessoryHeight=accessoryHeight??262;
   final SfChatInputModel model;
+  final double accessoryHeight;
   final Color? backgroundColor;
   final Color? editorBackgroundColor;
   final Color? editorColor;
-  final double accessoryHeight;
   final String? hintText;
+  final Color? recorderBackgroundColor;
+  final Color? recorderColor;
   @override
-  Widget build(BuildContext context) {
-    return SfProvider<SfChatInputModel>(
-      model: model,
-      builder: (context,model,child) => Container(
-        color: backgroundColor,
-        child: Column(children: <Widget>[
+  Widget build(context) => SfProvider<SfChatInputModel>(
+    model: model,
+    builder: (_,model,__) => Container(
+      color: backgroundColor,
+      child: Column(
+        children: [
           Padding(
             padding: EdgeInsets.all(15),
             child: Row(
@@ -39,48 +37,46 @@ class SfChatInput extends StatelessWidget {
           ),
           buildToolbar(context),
           buildAccessoryContainer(context)
-        ]),
+        ]
       ),
-    );
-  }
+    ),
+  );
   List<Widget> buildInputBar(BuildContext context) => [
     Expanded(
       child: buildEditor(context)
     ),
     buildSend(context)
   ];
-  Widget buildEditor(BuildContext context){
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal:11),
-      decoration: BoxDecoration(
-        color: editorBackgroundColor,
-        borderRadius: BorderRadius.circular(16.5)
+  Widget buildEditor(BuildContext context) => Container(
+    padding: EdgeInsets.symmetric(horizontal:11),
+    decoration: BoxDecoration(
+      color: editorBackgroundColor,
+      borderRadius: BorderRadius.circular(16.5)
+    ),
+    child: TextField(
+      controller: model.textEditingController,
+      focusNode: model.focusNode,
+      textInputAction: model.textInputAction,
+      onEditingComplete: model.onTapSend,
+      style: TextStyle(fontSize:16,color:editorColor),
+      decoration: InputDecoration(
+        hintText: hintText??'友善是交流的起点~',
+        hintStyle: TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8)),
+        contentPadding: EdgeInsets.symmetric(vertical:14),
+        border: InputBorder.none,
+        errorBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        focusedErrorBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
+        enabledBorder: InputBorder.none,
       ),
-      child: TextField(
-        controller: model.textEditingController,
-        focusNode: model.focusNode,
-        textInputAction: model.textInputAction,
-        onEditingComplete: model.onTapSend,
-        style: TextStyle(fontSize:16,color:editorColor),
-        decoration: InputDecoration(
-          hintText: hintText??'友善是交流的起点~',
-          hintStyle: TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8)),
-          contentPadding: EdgeInsets.symmetric(vertical:14),
-          border: InputBorder.none,
-          errorBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
-          disabledBorder: InputBorder.none,
-          enabledBorder: InputBorder.none,
-        ),
-      )
-    );
-  }
+    )
+  );
   Widget buildSend(BuildContext context,{EdgeInsets? padding}){
     return InkWell(
       child: Container(
         padding: padding??EdgeInsets.only(left:15),
-        child: Icon(Icons.send,color:Color.fromARGB(255,159,162,178)),
+        child: Icon(Icons.send,color:Color.fromRGBO(159,162,178,1)),
       ),
       onTap: model.onTapSend,
     );
@@ -114,25 +110,25 @@ class SfChatInput extends StatelessWidget {
     );
   }
   Widget? buildAccessory(BuildContext context){
-    if(model.curAccessory == 0){
-      return Center(
-        child: SfAudioRecorderConsumer(
-          onStartRecord: model.onStartRecord,
-          onStopRecord: model.onStopRecord,
-          child: ClipOval(
-            child: Container(
-              color: Colors.blue,
-              width: 120,
-              height: 120,
-              alignment: AlignmentDirectional.center,
-              child: Text(model.recorderTips,style: TextStyle(fontSize: 17.0, color: Colors.white)),
-            ),
-          ),
-        ),
-      );
+    if(model.curAccessory==0){
+      return buildAudioRecorder(context);
     }
     return null;
   }
+  Widget buildAudioRecorder(BuildContext context) => Center(
+    child: SfAudioRecorderConsumer(
+      onStartRecord: model.onStartRecord,
+      onStopRecord: model.onStopRecord,
+      child: ClipOval(
+        child: Container(
+          width:120,height:120,
+          alignment: AlignmentDirectional.center,
+          color: recorderBackgroundColor??Colors.blue,
+          child: Text(model.recorderTips,style:TextStyle(fontSize:17,color:recorderColor??Colors.white)),
+        ),
+      ),
+    ),
+  );
 }
 
 class SfChatInputModel extends SfViewState {
