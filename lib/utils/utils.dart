@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:convert' as convert;
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -16,8 +16,18 @@ class SfUtils{
     }
     return bytes;
   }
-  static String md5(String data){
-    return crypto.md5.convert(Utf8Encoder().convert(data)).toString();
+  static String base64(String data) => base64ByList(convert.utf8.encode(data));
+  static String base64ByList(List<int> data) => convert.base64.encode(data);
+  static String md5(String data) => crypto.md5.convert(convert.utf8.encode(data)).toString();
+  static String sha256(String data) => crypto.sha256.convert(convert.utf8.encode(data)).toString();
+  static String hmacSha1(String key,String data) => hmacSha1Digest(key,data).toString();
+  static crypto.Digest hmacSha1Digest(String key,String data){
+    var hmac = crypto.Hmac(crypto.sha1,convert.utf8.encode(key));
+    return hmac.convert(convert.utf8.encode(data));
+  }
+  static String hmacSha256(String key,String data){
+    var hmac = crypto.Hmac(crypto.sha256,convert.utf8.encode(key));
+    return hmac.convert(convert.utf8.encode(data)).toString();
   }
   static int getIndexInRange<T>(List<T> range,bool predicate(T element)){
     var index = range.indexWhere(predicate);

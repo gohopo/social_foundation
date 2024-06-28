@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:crypto/crypto.dart';
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' as p;
@@ -12,18 +12,20 @@ import 'package:social_foundation/utils/file_helper.dart';
 import 'package:social_foundation/utils/utils.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
 
-class SfAliyunOss {
+class SfAliyunOss{
   static Map<String,String> _uploadCache = {};
   static late String endPoint;
   static late String accessKeyId;
+  static late String accessKeySecret;
   static late String policy;
   static late String signature;
   static void initialize(String endPoint,String accessKeyId,String accessKeySecret){
     SfAliyunOss.endPoint = endPoint;
     SfAliyunOss.accessKeyId = accessKeyId;
+    SfAliyunOss.accessKeySecret = accessKeySecret;
     String policyText = '{"expiration": "2222-01-01T12:00:00.000Z","conditions": [["content-length-range", 0, 1048576000]]}';
-    policy = base64.encode(utf8.encode(policyText));
-    signature = base64.encode(Hmac(sha1,utf8.encode(accessKeySecret)).convert(utf8.encode(policy)).bytes);
+    policy = SfUtils.base64(policyText);
+    signature = SfUtils.base64ByList(SfUtils.hmacSha1Digest(accessKeySecret,policy).bytes);
   }
   static String generateFileKey(String filePath,{String prefix='',int encrypt=0,bool cache=true}){
     return (cache?_uploadCache[filePath]:null) ?? generateFileKeyWithExt(SfFileHelper.getFileExt(filePath),prefix:prefix,encrypt:encrypt);
@@ -123,4 +125,51 @@ class SfAliyunOssResizeMode {
   static const mfit = 'mfit';//等比缩放,延伸出指定w与h的矩形框外的最小图片
   static const fill = 'fill';//固定宽高,将延伸出指定w与h的矩形框外的最小图片进行居中裁剪
   static const fixed = 'fixed';//固定宽高,强制缩略
+}
+
+class SfAliyunFc{
+  static void getAuthorization(RequestOptions requestOptions){
+    const ALGORITHM = 'ACS3-HMAC-SHA256';
+    try{
+      //初始化
+      requestOptions.headers = {
+        ...requestOptions.headers,
+        'host': requestOptions.uri.host,
+        'x-acs-action': 'RunInstances',
+        'x-acs-version': '2014-05-26',
+        'x-acs-date': DateTime.now().toUtc().toIso8601String(),
+        'x-acs-signature-nonce': SfUtils.uuid()
+      };
+      //拼接规范请求串,暂时没有queryString,不需要
+      var canonicalQueryString = '';
+      //请求体hash
+      var requestPayload = requestOptions.data!=null ? jsonEncode(requestOptions.data) : '';
+      var hashedRequestPayload = SfUtils.sha256(requestPayload);
+      requestOptions.headers['x-acs-content-sha256'] = hashedRequestPayload;
+      //将所有key都转换为小写
+      requestOptions.headers = requestOptions.headers.map((key,value) => MapEntry(key.toLowerCase(),value));
+      //已签名消息头列表，多个请求头名称（小写）按首字母升序排列并以英文分号（;）分隔
+      var sortedKeys = requestOptions.headers.keys
+        .where((x) => x.startsWith('x-acs-') || x=='host' || x=='content-type')
+        .sorted();
+      var signedHeaders = sortedKeys.join(";");
+      //构造请求头，多个规范化消息头，按照消息头名称（小写）的字符代码顺序以升序排列后拼接在一起
+      var canonicalHeaders = sortedKeys.fold('',(t,x){
+        var value = requestOptions.headers[x];
+        return '$t$x:$value\n';
+      });
+      var canonicalRequest = '${requestOptions.method}\n${requestOptions.uri.path}\n$canonicalQueryString\n$canonicalHeaders\n$signedHeaders\n$hashedRequestPayload';
+      //拼接待签名字符串
+      var hashedCanonicalRequest = SfUtils.sha256(canonicalRequest);
+      var stringToSign = ALGORITHM + '\n' + hashedCanonicalRequest;
+      //计算签名
+      var signature = SfUtils.hmacSha256(SfAliyunOss.accessKeySecret,stringToSign);
+      //拼接 Authorization
+      var authorization = '$ALGORITHM Credential=${SfAliyunOss.accessKeyId},SignedHeaders=$signedHeaders,Signature=$signature';
+      requestOptions.headers['Authorization'] = authorization;
+    }
+    catch(error){
+      throw '获取fc签名出错';
+    }
+  }
 }

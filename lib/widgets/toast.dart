@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_foundation/pages/photo_viewer.dart';
-import 'package:social_foundation/utils/aliyun_oss.dart';
+import 'package:social_foundation/utils/aliyun_helper.dart';
 import 'package:social_foundation/utils/image_helper.dart';
 import 'package:social_foundation/widgets/animation.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';

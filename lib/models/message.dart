@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/entity.dart';
 import 'package:social_foundation/services/event_manager.dart';
 import 'package:social_foundation/services/storage_manager.dart';
-import 'package:social_foundation/utils/aliyun_oss.dart';
+import 'package:social_foundation/utils/aliyun_helper.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
 import 'package:sqflite/sqflite.dart';
 

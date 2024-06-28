@@ -8,7 +8,7 @@ import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/chat_manager.dart';
 import 'package:social_foundation/services/event_manager.dart';
 import 'package:social_foundation/services/locator_manager.dart';
-import 'package:social_foundation/utils/aliyun_oss.dart';
+import 'package:social_foundation/utils/aliyun_helper.dart';
 import 'package:social_foundation/widgets/chat_input.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 

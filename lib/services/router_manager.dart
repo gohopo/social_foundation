@@ -1,7 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:social_foundation/pages/photo_viewer.dart';
-import 'package:social_foundation/utils/aliyun_oss.dart';
+import 'package:social_foundation/utils/aliyun_helper.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
 import 'package:social_foundation/widgets/page_route.dart';
 
