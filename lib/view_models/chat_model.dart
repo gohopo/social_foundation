@@ -2,10 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
-import 'package:social_foundation/services/chat_manager.dart';
 import 'package:social_foundation/services/event_manager.dart';
 import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/utils/aliyun_helper.dart';
@@ -32,17 +30,19 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       notifyListeners();
     },onWhere:(event) => event.convId==conversation?.convId);
     await super.initData();
-    await queryUnreadMessages();
+    listenMessageEvent();
   }
   @override
   void dispose(){
     _clientResumingEvent.dispose();
-    _messageEvent.dispose();
+    disposeMessageEvent();
     _clearEvent.dispose();
     super.dispose();
   }
+  void listenMessageEvent() => _messageEvent.listen(onMessageEvent,onWhere:onMessageEventWhere);
+  void disposeMessageEvent() => _messageEvent.dispose();
   Future sendMessage({String? msg,required String msgType,Map? msgExtra,Map? attribute}) async {
-    await GetIt.instance<SfChatManager>().sendMsg(convId:conversation!.convId,msg:await filterKeyword(msg,msgType),msgType:msgType,msgExtra:msgExtra,attribute:attribute);
+    await SfLocatorManager.chatManager.sendMsg(convId:conversation!.convId,msg:await filterKeyword(msg,msgType),msgType:msgType,msgExtra:msgExtra,attribute:attribute);
     scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
   Future<String?> filterKeyword(String? msg,String msgType) async => SfLocatorManager.appState.filterKeyword(msg);
@@ -58,22 +58,6 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       if(index != -1) list[index] = message;
     }
     notifyListeners();
-  }
-  Future queryUnreadMessages() async {
-    _messageEvent.dispose();
-    if(conversation==null) return;
-    if(conversation!.unreadMessagesCount > 0){
-      List<TMessage> messages = await GetIt.instance<SfChatManager>().queryMessages(conversation!.convId, conversation!.unreadMessagesCount) as List<TMessage>;
-      onUnreadMessages(messages);
-      messages = messages.where((message) => list.every((data) => !message.equalTo(data))).toList();
-      list.insertAll(0,messages);
-      list.sort((a,b) => b.timestamp-a.timestamp);
-      notifyListeners();
-      
-      await SfMessage.insertAll(messages);
-      convRead();
-    }
-    _messageEvent.listen(onMessageEvent,onWhere:onMessageEventWhere);
   }
   void convRead() => SfLocatorManager.chatState.read(conversation!.convId);
   void onUnreadMessages(List<TMessage> messages){}
@@ -131,8 +115,5 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     notifyListeners();
   }
   void onAccessoryChanged(SfChatInputModel model){}
-  void onClientResuming() async {
-    await conversation?.queryUnreadMessagesCount();
-    queryUnreadMessages();
-  }
+  void onClientResuming(){}
 }

@@ -18,7 +18,6 @@ export 'package:fluwx/fluwx.dart';
 export 'package:get_it/get_it.dart';
 export 'package:image_gallery_saver/image_gallery_saver.dart';
 export 'package:image_picker/image_picker.dart';
-export 'package:leancloud_official_plugin/leancloud_plugin.dart' hide Client,Conversation,Message;
 export 'package:path_provider/path_provider.dart';
 export 'package:permission_handler/permission_handler.dart';
 export 'package:provider/provider.dart';

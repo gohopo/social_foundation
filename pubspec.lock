@@ -464,14 +464,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.2.1+1"
-  intl:
-    dependency: transitive
-    description:
-      name: intl
-      sha256: "3bc132a9dbce73a7e4a21a17d06e1878839ffbf975568bc875c60537824b0c4d"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.18.1"
   js:
     dependency: transitive
     description:
@@ -480,15 +472,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.6.5"
-  leancloud_official_plugin:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "9e2cb19419f24da6d17a7ddd2bfb432a4cb43aac"
-      url: "https://github.com/gohopo/Realtime-SDK-Flutter.git"
-    source: git
-    version: "1.0.1"
   logger:
     dependency: transitive
     description:

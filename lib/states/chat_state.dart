@@ -7,24 +7,9 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
   int getListUnreadMessagesCount(List<TConversation> list) => list.fold(0, (previousValue, conv) => previousValue+conv.unreadMessagesCount);
   TConversation? getConversation(String convId) => list.firstWhereOrNull((data) => data.convId==convId);
   int getUnreadMessagesCount(String convId) => getConversation(convId)?.unreadMessagesCount??0;
-  Future<TConversation?> queryConversation(String convId) async {
-    return getConversation(convId);
-  }
-  void saveConversation(TConversation conversation,{bool? fromReceived,bool? unreadMessageCountUpdated}){
-    var index = list.indexWhere((data) => data.convId==conversation.convId);
-    if(index != -1){
-      if(fromReceived == true){
-        conversation.unreadMessagesCount = list[index].unreadMessagesCount;
-      }
-      else if(unreadMessageCountUpdated == true){
-        conversation.unreadMessagesCount += list[index].unreadMessagesCount;
-      }
-      conversation = list[index]..copyWith(conversation);
-      list.removeWhere((e) => e.convId==conversation.convId);
-    }
-    conversation.save();
-    
-    index = 0;
+  void updateConversation(TConversation conversation){
+    list.removeWhere((x) => x.convId==conversation.convId);
+    var index = 0;
     if(conversation.top == 0){
       for(;index<list.length;++index){
         var conv = list[index];
@@ -37,6 +22,9 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
     list.insert(index,conversation);
     notifyListeners();
   }
+  Future<TConversation?> queryConversation(String convId) async {
+    return getConversation(convId);
+  }
   void deleteConversation(TConversation conversation) async {
     await conversation.delete();
     list.removeWhere((e) => e.convId==conversation.convId);
@@ -46,10 +34,10 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
     var conv = await this.queryConversation(convId);
     if(conv==null) return;
     conv.unreadMessagesCount = 0;
-    this.saveConversation(conv);
+    updateConversation(conv);
   }
   Future toggleTop(TConversation conversation) async {
     await conversation.toggleTop();
-    saveConversation(conversation);
+    updateConversation(conversation);
   }
 }
