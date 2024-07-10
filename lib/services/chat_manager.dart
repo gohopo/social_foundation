@@ -39,7 +39,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     message.msgType = SfMessageType.recall;
     return saveMessage(message);
   }
-  Future reconnect();
+  Future reconnect() async {}
   Future<TMessage> resendMessage(TMessage message) async {
     try{
       //保存
@@ -68,7 +68,10 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     }
     return saveMessage(message);
   }
-  void saveConversation(TConversation conversation,{bool? fromReceived,bool? unreadMessageCountUpdated});
+  void saveConversation(TConversation conversation,{bool? fromReceived,bool? unreadMessageCountUpdated}){
+    conversation.save();
+    SfLocatorManager.chatState.updateConversation(conversation);
+  }
   Future<TMessage> saveMessage(TMessage message,[bool isNew=false]) async {
     if(!message.transient) await message.save();
     SfMessageEvent(message:message,isNew:isNew).emit();
