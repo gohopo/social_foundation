@@ -15,6 +15,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   Future convRead(String conversationId);
   Future convRecall(String messageID,{String? conversationId,int? timestamp});
   Future<TConversation> getConversation(String conversationId);
+  Future<TMessage?> getMessage({int? id,String? msgId});
   Future init() async {}
   Future login(String userId,{String? token});
   TMessage messageFactory(Map data);

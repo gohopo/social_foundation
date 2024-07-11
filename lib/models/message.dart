@@ -82,6 +82,20 @@ class SfMessage {
       this.id = await database.insert('message',toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
     }
   }
+  static Future update({int? id,String? msgId,required Map<String,dynamic> data}) async {
+    List<String> where=[];List<Object?> whereArgs=[];
+    if(id!=null){
+      where.add('id=?');
+      whereArgs.add(id);
+    }
+    if(msgId?.isNotEmpty==true){
+      where.add('msgId=?');
+      whereArgs.add(msgId);
+    }
+    if(where.isEmpty) throw '参数不能为空';
+    var database = await GetIt.instance<SfStorageManager>().getDatabase();
+    return database.update('message',data,where:where.join(' and '),whereArgs:whereArgs);
+  }
   static Future insertAll<TMessage extends SfMessage>(List<TMessage> messages) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     var batch = database.batch();
