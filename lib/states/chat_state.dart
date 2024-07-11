@@ -22,22 +22,11 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
     list.insert(index,conversation);
     notifyListeners();
   }
-  Future<TConversation?> queryConversation(String convId) async {
-    return getConversation(convId);
-  }
-  void deleteConversation(TConversation conversation) async {
-    await conversation.delete();
-    list.removeWhere((e) => e.convId==conversation.convId);
+  void removeConversation(String convId){
+    list.removeWhere((x) => x.convId==convId);
     notifyListeners();
   }
-  void read(String convId) async {
-    var conv = await this.queryConversation(convId);
-    if(conv==null) return;
-    conv.unreadMessagesCount = 0;
-    updateConversation(conv);
-  }
-  Future toggleTop(TConversation conversation) async {
-    await conversation.toggleTop();
-    updateConversation(conversation);
+  Future<TConversation?> queryConversation(String convId) async {
+    return getConversation(convId);
   }
 }

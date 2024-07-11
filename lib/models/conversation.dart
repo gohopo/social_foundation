@@ -1,10 +1,8 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
-import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/locator_manager.dart';
-import 'package:social_foundation/services/storage_manager.dart';
 
 abstract class SfConversation<TMessage extends SfMessage>{
   String ownerId;
@@ -37,14 +35,25 @@ abstract class SfConversation<TMessage extends SfMessage>{
   }
   String? get otherId => members.firstWhereOrNull((userId) => userId!=ownerId);
   Future save();
+  static Future update(String ownerId,String convId,Map<String,dynamic> data) async {
+    var database = await SfLocatorManager.storageManager.getDatabase();
+    return database.update('conversation',data,where:'ownerId=? and convId=?',whereArgs:[ownerId,convId]);
+  }
   Future delete() async {
-    var database = await GetIt.instance<SfStorageManager>().getDatabase();
+    var database = await SfLocatorManager.storageManager.getDatabase();
     await database.delete('conversation',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
+    SfLocatorManager.chatState.removeConversation(convId);
+  }
+  Future read() async {
+    if(unreadMessagesCount==0) return;
+    unreadMessagesCount = 0;
+    await update(ownerId,convId,{'unreadMessagesCount':unreadMessagesCount});
+    SfLocatorManager.chatState.updateConversation(this);
   }
   Future toggleTop() async {
     this.top = this.top==0 ? 1 : 0;
-    var database = await GetIt.instance<SfStorageManager>().getDatabase();
-    await database.update('conversation', {'top':top}, where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
+    await update(ownerId,convId,{'top':top});
+    SfLocatorManager.chatState.updateConversation(this);
   }
   Future queryUnreadMessagesCount() async {
     var result = await SfLocatorManager.requestManager.invokeFunction('app', 'queryConversationUnreadCount', {

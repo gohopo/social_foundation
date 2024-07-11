@@ -39,7 +39,10 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     _clearEvent.dispose();
     super.dispose();
   }
-  void listenMessageEvent() => _messageEvent.listen(onMessageEvent,onWhere:onMessageEventWhere);
+  void listenMessageEvent(){
+    convRead();
+    _messageEvent.listen(onMessageEvent,onWhere:onMessageEventWhere);
+  }
   void disposeMessageEvent() => _messageEvent.dispose();
   Future sendMessage({String? msg,required String msgType,Map? msgExtra,Map? attribute}) async {
     await SfLocatorManager.chatManager.sendMsg(convId:conversation!.convId,msg:await filterKeyword(msg,msgType),msgType:msgType,msgExtra:msgExtra,attribute:attribute);
@@ -59,7 +62,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     }
     notifyListeners();
   }
-  void convRead() => SfLocatorManager.chatState.read(conversation!.convId);
+  void convRead() => conversation?.read();
   void onUnreadMessages(List<TMessage> messages){}
   void onInitInputModel(){
     inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage:onPickImage,onRecordVoice:onRecordVoice,onAccessoryChanged:onAccessoryChanged);
