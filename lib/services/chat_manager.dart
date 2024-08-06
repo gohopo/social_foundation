@@ -35,6 +35,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   }
   void onNotifyReceived(TMessage message) => SfLocatorManager.appState.addNotify(notifyType:message.msgExtra['notifyType'],fromId:message.fromId);
   Future<TMessage> protectedSendMessage(String conversationId,String? msg,String msgType,Map msgExtra);
+  Future<TConversation> queryChatWith(String userId,{bool? save=true,String? noAccessError});
   Future<TMessage> recallMessage(TMessage message) async {
     await convRecall(message.msgId!,conversationId:message.convId,timestamp:message.timestamp);
     message.msgType = SfMessageType.recall;
@@ -85,6 +86,25 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       }
     }
     return message;
+  }
+  Future<TMessage> saveMessage2(String? convId,{String? msg,String? msgType,Map? msgExtra,String? fromId,int? timestamp}){
+    var message = messageFactory({
+      'ownerId': SfLocatorManager.userState.curUserId,
+      'convId': convId,
+      'fromId': fromId??SfLocatorManager.userState.curUserId,
+      'timestamp': timestamp ?? DateTime.now().millisecondsSinceEpoch,
+      'status': SfMessageStatus.sent,
+      'msg': msg,
+      'msgType': msgType??SfMessageType.system,
+      'msgExtra': msgExtra
+    });
+    return saveMessage(message,true);
+  }
+  Future<TMessage> saveMessage3(String otherId,{String? msg,String? msgType,Map? msgExtra,String? fromId,int? timestamp}) async {
+    var conversation = await queryChatWith(otherId,save:false);
+    return saveMessage2(
+      conversation.convId,msg:msg,msgType:msgType,msgExtra:msgExtra,fromId:fromId??otherId,timestamp:timestamp
+    );
   }
   Future<TMessage> sendMsg({required String convId,String? msg,required String msgType,Map? msgExtra,Map? attribute,bool? transient,bool? saveConv}) async {
     var message = messageFactory({
