@@ -54,6 +54,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     var message = event.message as TMessage;
     if(event.isNew){
       list.insert(0,message);
+      if(list.length>1 && message.timestamp<list[1].timestamp) list.sort((a,b) => b.timestamp-a.timestamp);
       if(!message.fromOwner) convRead();
     }
     else{
