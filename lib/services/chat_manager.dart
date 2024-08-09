@@ -19,6 +19,17 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   Future init() async {}
   Future login(String userId,{String? token});
   TMessage messageFactory(Map data);
+  TMessage messageFactory2({required String convId,String? msg,String? msgType,Map? msgExtra,Map? attribute,String? fromId,int? timestamp,int? status}) => messageFactory({
+    'ownerId': SfLocatorManager.userState.curUserId,
+    'convId': convId,
+    'fromId': fromId??SfLocatorManager.userState.curUserId,
+    'timestamp': timestamp ?? DateTime.now().millisecondsSinceEpoch,
+    'status': status??SfMessageStatus.sending,
+    'msg': msg,
+    'msgType': msgType??SfMessageType.text,
+    'msgExtra': msgExtra,
+    'attribute': attribute,
+  });
   void onClientDisconnected(){
     SfClientDisconnectedEvent().emit();
   }
@@ -87,37 +98,24 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     }
     return message;
   }
-  Future<TMessage> saveMessage2(String? convId,{String? msg,String? msgType,Map? msgExtra,String? fromId,int? timestamp}){
-    var message = messageFactory({
-      'ownerId': SfLocatorManager.userState.curUserId,
-      'convId': convId,
-      'fromId': fromId??SfLocatorManager.userState.curUserId,
-      'timestamp': timestamp ?? DateTime.now().millisecondsSinceEpoch,
-      'status': SfMessageStatus.sent,
-      'msg': msg,
-      'msgType': msgType??SfMessageType.system,
-      'msgExtra': msgExtra
-    });
+  Future<TMessage> saveMessage2({required String convId,String? msg,String? msgType,Map? msgExtra,Map? attribute,String? fromId,int? timestamp,int? status}){
+    var message = messageFactory2(
+      convId:convId,msg:msg,msgType:msgType,msgExtra:msgExtra,
+      attribute:attribute,fromId:fromId,timestamp:timestamp,status:status??SfMessageStatus.sent
+    );
     return saveMessage(message,true);
   }
-  Future<TMessage> saveMessage3(String otherId,{String? msg,String? msgType,Map? msgExtra,String? fromId,int? timestamp}) async {
+  Future<TMessage> saveMessage3({required String otherId,String? msg,String? msgType,Map? msgExtra,Map? attribute,String? fromId,int? timestamp,int? status}) async {
     var conversation = await queryChatWith(otherId,save:false);
     return saveMessage2(
-      conversation.convId,msg:msg,msgType:msgType,msgExtra:msgExtra,fromId:fromId??otherId,timestamp:timestamp
+      convId:conversation.convId,msg:msg,msgType:msgType,msgExtra:msgExtra,
+      attribute:attribute,fromId:fromId,timestamp:timestamp,status:status
     );
   }
   Future<TMessage> sendMsg({required String convId,String? msg,required String msgType,Map? msgExtra,Map? attribute,bool? transient,bool? saveConv}) async {
-    var message = messageFactory({
-      'ownerId': SfLocatorManager.userState.curUserId,
-      'convId': convId,
-      'fromId': SfLocatorManager.userState.curUserId,
-      'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'status': SfMessageStatus.sending,
-      'attribute': attribute,
-      'msg': msg,
-      'msgType': msgType,
-      'msgExtra': msgExtra
-    });
+    var message = messageFactory2(
+      convId:convId,msg:msg,msgType:msgType,msgExtra:msgExtra,attribute:attribute
+    );
     if(transient!=null) message.msgExtra['transient'] = transient;
     if(saveConv!=null) message.attribute['saveConv'] = saveConv;
     resendMessage(message);
