@@ -6,8 +6,6 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 // ignore: implementation_imports
 import 'package:flutter_cache_manager/src/compat/file_service_compat.dart';
 import 'package:http/http.dart' as http;
-import 'package:get_it/get_it.dart';
-import 'package:social_foundation/services/storage_manager.dart';
 import 'package:social_foundation/utils/aliyun_helper.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 import 'package:social_foundation/utils/utils.dart';
@@ -16,42 +14,37 @@ import 'package:social_foundation/widgets/view_state.dart';
 import 'package:svgaplayer_flutter/svgaplayer_flutter.dart';
 
 class SfCacheManager extends CacheManager with ImageCacheManager {
-  factory SfCacheManager() {
-    if (_instance == null) {
-      _instance = new SfCacheManager._();
+  static SfCacheManager? _cached;
+  static SfCacheManager? _persisted;
+  factory SfCacheManager(){
+    if(_cached==null){
+      _cached = SfCacheManager.custom(cacheKey:'libCachedImageData');
     }
-    return _instance!;
+    return _cached!;
   }
-  SfCacheManager._() : super(Config(key,fileService:SfFileServiceCompat(_fileFetcher)));
-
+  factory SfCacheManager.persisted(){
+    if(_persisted==null){
+      _persisted = SfCacheManager.custom(cacheKey:'libPersistedImageData',stalePeriod:Duration(days:40000));
+    }
+    return _persisted!;
+  }
+  SfCacheManager.custom({required String cacheKey,Duration? stalePeriod}):super(Config(cacheKey,stalePeriod:stalePeriod??const Duration(days:30),fileService:SfFileServiceCompat()));
   static CachedNetworkImageProvider provider(String url) => CachedNetworkImageProvider(url,cacheManager:SfCacheManager());
-  static const key = "libCachedImageData";
-  static SfCacheManager? _instance;
-
-  Future<String> getFilePath() async {
-    return GetIt.instance<SfStorageManager>().imageDirectory;
-  }
-  static Future<FileFetcherResponse> _fileFetcher(String url,{Map<String, String>? headers}) async {
-    var httpResponse = await http.get(Uri.parse(url), headers: headers);
+}
+class SfFileServiceCompat extends FileService{
+  Future<FileServiceResponse> get(String url,{Map<String,String>? headers}) async {
+    var response = await http.get(Uri.parse(url),headers:headers);
     var encrypt = SfAliyunOss.getEncryptFromFileUrl(url);
-    if(encrypt > 0){
+    if(encrypt>0){
       switch(encrypt){
         case 1:
-          SfUtils.encrypt(httpResponse.bodyBytes);
+          SfUtils.encrypt(response.bodyBytes);
           break;
         default:
           throw '不支持的加密方式!';
       }
     }
-    return new HttpFileFetcherResponse(httpResponse);
-  }
-}
-class SfFileServiceCompat extends FileService{
-  SfFileServiceCompat(this.fileFetcher);
-  final FileFetcher fileFetcher;
-  Future<FileServiceResponse> get(String url,{Map<String, String>? headers}) async {
-    var legacyResponse = await fileFetcher(url,headers:headers);
-    return SfCompatFileServiceGetResponse(url,legacyResponse);
+    return SfCompatFileServiceGetResponse(url,HttpFileFetcherResponse(response));
   }
 }
 class SfCompatFileServiceGetResponse extends CompatFileServiceGetResponse{
@@ -82,6 +75,7 @@ class SfCachedNetworkImage extends StatelessWidget{
     this.repeat,
     this.matchTextDirection,
     this.httpHeaders,
+    this.cacheManager,
     this.useOldImageOnUrlChange,
     this.color,
     this.filterQuality,
@@ -103,6 +97,7 @@ class SfCachedNetworkImage extends StatelessWidget{
   final ImageRepeat? repeat;
   final bool? matchTextDirection;
   final Map<String, String>? httpHeaders;
+  final BaseCacheManager? cacheManager;
   final bool? useOldImageOnUrlChange;
   final Color? color;
   final FilterQuality? filterQuality;
@@ -141,7 +136,7 @@ class SfCachedNetworkImage extends StatelessWidget{
       repeat: repeat ?? ImageRepeat.noRepeat,
       matchTextDirection: matchTextDirection ?? false,
       httpHeaders: httpHeaders,
-      cacheManager: SfCacheManager(),
+      cacheManager: cacheManager ?? SfCacheManager(),
       useOldImageOnUrlChange: useOldImageOnUrlChange ?? false,
       color: color,
       filterQuality: filterQuality ?? FilterQuality.low,
