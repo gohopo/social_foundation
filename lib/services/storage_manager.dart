@@ -51,7 +51,6 @@ abstract class SfStorageManager{
   Future clear() async {
     await SfCacheManager().emptyCache();
     await deleteDirectory('image');
-    await deleteDirectory('voice');
     await deleteDirectory('recorder');
     await onInit();
   }
