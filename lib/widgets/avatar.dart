@@ -15,7 +15,8 @@ class SfAvatar extends StatelessWidget{
     this.borderRadius,
     this.defaultImage,
     this.defaultFemaleImage,
-    this.fit = BoxFit.cover,
+    this.fit,
+    this.alignment,
     this.builder,
     this.imageLongSide = 200
   }) : super(key:key);
@@ -27,16 +28,24 @@ class SfAvatar extends StatelessWidget{
   final BorderRadiusGeometry? borderRadius;
   final ImageProvider? defaultImage;
   final ImageProvider? defaultFemaleImage;
-  final BoxFit fit;
+  final BoxFit? fit;
+  final AlignmentGeometry? alignment;
   final SfAvatarBuilder<SfAvatar>? builder;
   final int imageLongSide;
-
   ImageProvider get imageProvider{
     return user?.icon?.isNotEmpty==true ? SfCacheManager.provider(SfAliyunOss.getImageUrl(user!.icon!,long:imageLongSide)) : (user?.gender==2?defaultFemaleImage:defaultImage)!;
   }
-  onTapOverride(){
-    onTap?.call();
-  }
+  @override
+  Widget build(context) => GestureDetector(
+    onTap: onTapOverride,
+    child: buildDecoration(
+      context,
+      buildClip(
+        context,
+        buildImage(context)
+      )
+    )
+  );
   Widget buildDecoration(BuildContext context,Widget child){
     return border!=null ? Container(
       decoration: BoxDecoration(
@@ -59,22 +68,11 @@ class SfAvatar extends StatelessWidget{
       width: width,
       height: height,
       image: imageProvider,
-      fit: this.fit
+      fit: fit??BoxFit.cover,
+      alignment: alignment??Alignment.center,
     );
   }
-  
-
-  @override
-  Widget build(BuildContext context){
-    return GestureDetector(
-      onTap: onTapOverride,
-      child: buildDecoration(
-        context,
-        buildClip(
-          context,
-          buildImage(context)
-        )
-      )
-    );
+  void onTapOverride(){
+    onTap?.call();
   }
 }
