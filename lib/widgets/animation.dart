@@ -218,36 +218,43 @@ class _SfAnimatedDoubleState extends AnimatedWidgetBaseState<SfAnimatedDouble>{
 }
 
 class SfHeartFadeAnimation extends StatelessWidget{
-  SfHeartFadeAnimation({required Widget heart,required this.position,required this.translateY,this.onCompleted})
-  :heart=Transform.rotate(angle:SfUtils.randRangeDouble(-0.5,0.5),child:heart);
+  SfHeartFadeAnimation({required this.heart,required this.position,required this.translateY,double? rotate,this.onCompleted})
+  :rotate=rotate??SfUtils.randRangeDouble(-0.5,0.5);
   final Widget heart;
   final Offset position;
   final double translateY;
+  final double rotate;
   final Function? onCompleted;
   @override
   Widget build(context) => SfProvider<SfHeartFadeAnimationVM>(
     model: SfHeartFadeAnimationVM(this),
-    builder: (_,model,__)=>buildWidget(model)
+    builder: (_,model,__)=>buildAnimation(model,buildHeart(model,heart))
   );
-  Widget buildWidget(SfHeartFadeAnimationVM model) => AnimatedBuilder(
+  Widget buildAnimation(SfHeartFadeAnimationVM model,Widget heart) => AnimatedBuilder(
     animation: model.controller,
     builder: (_,child) => Stack(
       children: [
-        buildHeart(model,child!),
+        buildPositioned(model,child!),
       ],
     ),
     child: heart,
   );
-  Widget buildHeart(SfHeartFadeAnimationVM model,Widget heart) => Positioned(
+  Widget buildPositioned(SfHeartFadeAnimationVM model,Widget heart) => Positioned(
     left:position.dx,top:model.top,
-    child: Transform.scale(
-      scale: model.scale,
-      child: Opacity(
-        opacity: model.opacity,
-        child: heart
-      )
-    )
+    child: buildScale(model,heart)
   );
+  Widget buildScale(SfHeartFadeAnimationVM model,Widget heart) => Transform.scale(
+    scale: model.scale,
+    child: buildOpacity(model,heart)
+  );
+  Widget buildOpacity(SfHeartFadeAnimationVM model,Widget heart) => Opacity(
+    opacity: model.opacity,
+    child: heart
+  );
+  Widget buildHeart(SfHeartFadeAnimationVM model,Widget heart) => rotate!=0 ? Transform.rotate(
+    angle:SfUtils.randRangeDouble(-0.5,0.5),
+    child: heart
+  ) : heart;
 }
 class SfHeartFadeAnimationVM extends SfViewState{
   SfHeartFadeAnimationVM(this.widget);
