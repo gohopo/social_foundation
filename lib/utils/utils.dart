@@ -18,7 +18,7 @@ class SfUtils{
   }
   static String base64(String data) => base64ByList(convert.utf8.encode(data));
   static String base64ByList(List<int> data) => convert.base64.encode(data);
-  static String base64Decode(String data) => convert.utf8.decode(base64DecodeToList(data));
+  static String base64Decode(String data,{bool allowMalformed=true}) => convert.utf8.decode(base64DecodeToList(data),allowMalformed:allowMalformed);
   static Uint8List base64DecodeToList(String data) => convert.base64.decode(data);
   static String md5(String data) => crypto.md5.convert(convert.utf8.encode(data)).toString();
   static String sha256(String data) => crypto.sha256.convert(convert.utf8.encode(data)).toString();
