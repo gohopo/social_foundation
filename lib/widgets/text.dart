@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:social_foundation/widgets/provider_widget.dart';
+import 'package:social_foundation/widgets/view_state.dart';
 
 class SfStrokeText extends StatelessWidget{
   SfStrokeText({
@@ -57,5 +62,53 @@ class SfStrokeText extends StatelessWidget{
         child,
       ],
     );
+  }
+}
+
+class SfLoadingText extends StatelessWidget{
+  SfLoadingText({this.text,TextStyle? style}):style=TextStyle(fontSize:24.sp,color:const Color.fromRGBO(100,100,100,1)).merge(style);
+  final String? text;
+  final TextStyle style;
+  @override
+  Widget build(context) => SfProvider<SfLoadingTextVM>(
+    model: SfLoadingTextVM(this),
+    builder: (_,model,__)=>buildText(model)
+  );
+  Widget buildText(SfLoadingTextVM model) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(text??'加载中',style:style),
+      ...buildDots(model),
+    ]
+  );
+  List<Widget> buildDots(SfLoadingTextVM model){
+    var dots = model._timer!=null ? model._timer!.tick%4 : 0;
+    return List.generate(3,(index) => AnimatedOpacity(
+      duration: const Duration(milliseconds:300),
+      opacity: index<dots ? 1 : 0,
+      child: Text('.',style:style)
+    ));
+  }
+}
+class SfLoadingTextVM extends SfViewState{
+  SfLoadingTextVM(this.widget);
+  SfLoadingText widget;
+  Timer? _timer;
+  @override
+  Future initData(){
+    startTimer();
+    return super.initData();
+  }
+  @override
+  void dispose(){
+    cancelTimer();
+    super.dispose();
+  }
+  void startTimer(){
+    _timer ??= Timer.periodic(const Duration(seconds:1),(_)=>notifyListeners());
+  }
+  void cancelTimer(){
+    _timer?.cancel();
+    _timer = null;
   }
 }
