@@ -10,17 +10,19 @@ class SfNinePatchImage extends StatelessWidget{
     Key? key,
     required this.image,
     required this.centerSlice,
+    this.color,
     this.child
   }):super(key:key);
   final ImageProvider image;
   final EdgeInsets centerSlice;
+  final Color? color;
   final Widget? child;
 
   @override
-  Widget build(BuildContext context) => SfProvider<SfNinePatchImageModel>(
+  Widget build(context) => SfProvider<SfNinePatchImageModel>(
     model: SfNinePatchImageModel(this),
-    builder: (context,model,_) => CustomPaint(
-      painter: SfNinePatchImagePainter(model.image?.image,centerSlice),
+    builder: (_,model,__) => CustomPaint(
+      painter: SfNinePatchImagePainter(model.image?.image,centerSlice,color),
       child: RepaintBoundary(
         child: child,
       ),
@@ -76,10 +78,32 @@ class SfNinePatchImageModel extends SfViewState{
 }
 
 class SfNinePatchImagePainter extends CustomPainter{
-  SfNinePatchImagePainter(this.image,EdgeInsets centerSlice):centerSlice=centerSlice/ScreenUtil().pixelRatio!;
+  SfNinePatchImagePainter(this.image,EdgeInsets centerSlice,this.color):centerSlice=centerSlice/ScreenUtil().pixelRatio!;
   ui.Image? image;
   EdgeInsets centerSlice;
-
+  Color? color;
+  @override
+  void paint(Canvas canvas, Size size) {
+    if(image == null) return;
+    Size imageSize = Size(image!.width.toDouble(),image!.height.toDouble())/ScreenUtil().pixelRatio!;
+    final Paint paint = Paint()..isAntiAlias=false;
+    if(color!=null) paint.colorFilter = ColorFilter.mode(color!,BlendMode.srcIn);
+    canvas.save();
+    //宽分三列
+    if(size.width>imageSize.width && size.height<=imageSize.height) drawImageHorizontal(canvas, size, imageSize, paint);
+    //高分三层
+    else if(size.width<=imageSize.width && size.height>imageSize.height) drawImageVertical(canvas, size, imageSize, paint);
+    //九宫格拉伸
+    else if(size.width>imageSize.width && size.height>imageSize.height) drawImageNinePatch(canvas, size, imageSize, paint);
+    //画图像缩放
+    else drawImageScale(canvas,0,0,size.width,size.height,0,0,imageSize.width,imageSize.height,paint);
+    canvas.restore();
+  }
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate){
+    var painter = oldDelegate as SfNinePatchImagePainter;
+    return painter.image != image;
+  }
   void drawImageScale(Canvas canvas,double x,double y,double width,double height,double xSrc,double ySrc,double cxSrc,double cySrc,Paint paint){
     canvas.drawImageRect(image!,Rect.fromLTWH(xSrc*ScreenUtil().pixelRatio!,ySrc*ScreenUtil().pixelRatio!,cxSrc*ScreenUtil().pixelRatio!,cySrc*ScreenUtil().pixelRatio!),Rect.fromLTWH(x,y,width,height),paint);
   }
@@ -133,28 +157,5 @@ class SfNinePatchImagePainter extends CustomPainter{
 		//右下
 		drawImageScale(canvas,size.width-centerSlice.right,size.height-centerSlice.bottom,centerSlice.right,centerSlice.bottom
 			,imageSize.width-centerSlice.right,imageSize.height-centerSlice.bottom,centerSlice.right,centerSlice.bottom,paint);
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if(image == null) return;
-    Size imageSize = Size(image!.width.toDouble(),image!.height.toDouble())/ScreenUtil().pixelRatio!;
-    final Paint paint = Paint()..isAntiAlias=false;
-    canvas.save();
-    //宽分三列
-    if(size.width>imageSize.width && size.height<=imageSize.height) drawImageHorizontal(canvas, size, imageSize, paint);
-    //高分三层
-    else if(size.width<=imageSize.width && size.height>imageSize.height) drawImageVertical(canvas, size, imageSize, paint);
-    //九宫格拉伸
-    else if(size.width>imageSize.width && size.height>imageSize.height) drawImageNinePatch(canvas, size, imageSize, paint);
-    //画图像缩放
-    else drawImageScale(canvas,0,0,size.width,size.height,0,0,imageSize.width,imageSize.height,paint);
-    canvas.restore();
-  }
-  
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate){
-    var painter = oldDelegate as SfNinePatchImagePainter;
-    return painter.image != image;
   }
 }
