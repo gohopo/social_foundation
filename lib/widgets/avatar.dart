@@ -18,7 +18,8 @@ class SfAvatar extends StatelessWidget{
     this.fit,
     this.alignment,
     this.builder,
-    this.imageLongSide = 200
+    this.imageLongSide = 200,
+    this.preventDefault
   }) : super(key:key);
   final SfUser? user;
   final double? width;
@@ -32,12 +33,14 @@ class SfAvatar extends StatelessWidget{
   final AlignmentGeometry? alignment;
   final SfAvatarBuilder<SfAvatar>? builder;
   final int imageLongSide;
+  final bool? preventDefault;
   ImageProvider get imageProvider{
     return user?.icon?.isNotEmpty==true ? SfCacheManager.provider(SfAliyunOss.getImageUrl(user!.icon!,long:imageLongSide)) : (user?.gender==2?defaultFemaleImage:defaultImage)!;
   }
+  bool get canTap => onTap!=null||preventDefault!=true;
   @override
   Widget build(context) => GestureDetector(
-    onTap: onTapOverride,
+    onTap: canTap ? onTapOverride : null,
     child: buildDecoration(
       context,
       buildClip(
