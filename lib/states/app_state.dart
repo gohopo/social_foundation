@@ -44,6 +44,9 @@ class SfThemeState<TTheme extends SfTheme> extends SfViewState{
     ),
     switchTheme: themeData.switchTheme.copyWith(
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    ),
+    tabBarTheme: themeData.tabBarTheme.copyWith(
+      dividerHeight: 0
     )
   ));
   
