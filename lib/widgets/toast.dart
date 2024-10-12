@@ -126,7 +126,7 @@ class SfEasyDialog extends SfDialog{
     child: Text(action,style:TextStyle(fontSize:15,color:sheetActionTextColor)),
   );
 
-  Future<List<File>> onPickImages({double? maxWidth=1000,double? maxHeight=1000,int? imageQuality=75,int maxFileSize=6,int maxLength=9,ImageSource? imageSource,String? title}) async {
+  Future<List<File>> onPickImages({double? maxWidth=1000,double? maxHeight=1000,int? imageQuality=75,int maxFileSize=6,int? maxLength=9,ImageSource? imageSource,String? title}) async {
     if(imageSource == null){
       var index = await onShowSheet(['从相册选择照片','拍照','取消'],title:title,splitLast:true);
       if(index == 2) return [];

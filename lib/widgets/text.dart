@@ -57,7 +57,7 @@ class SfStrokeText extends StatelessWidget{
           strutStyle: child.strutStyle,
           textAlign: child.textAlign,
           textDirection: child.textDirection,
-          textScaleFactor: child.textScaleFactor,
+          textScaler: child.textScaler,
         ),
         child,
       ],

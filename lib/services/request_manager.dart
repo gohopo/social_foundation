@@ -20,14 +20,14 @@ class SfRequestManager{
   Future<T?> request<T>(Options options,String path,{data,Map<String, dynamic>? queryParameters}) => fetch(options.compose(
     dio.options,path,data:data,queryParameters:queryParameters));
   Future<T?> requestMethod<T>(String method,String path,{data,Map<String, dynamic>? queryParameters}) => request<T>(
-    DioMixin.checkOptions(method,null),path,data:data,queryParameters:queryParameters
+    Options(method:method),path,data:data,queryParameters:queryParameters
   );
   Future<T?> requestFunction<T>(String method,String controller,String function,{data,Map<String, dynamic>? queryParameters}){
     var path = controller.isNotEmpty ? p.join(controller,function) : function;
     return requestMethod<T>(method,path,data:data,queryParameters:queryParameters);
   }
   void onError(Object error){
-    if(error is DioError){
+    if(error is DioException){
       if(error.response==null) throw '网络异常';
       throw error.response?.data['errorMessage'];
     }

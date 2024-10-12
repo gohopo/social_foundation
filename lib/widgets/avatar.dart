@@ -60,7 +60,7 @@ class SfAvatar extends StatelessWidget{
   }
   Widget buildClip(BuildContext context,Widget child){
     return borderRadius!=null ? ClipRRect(
-      borderRadius: borderRadius,
+      borderRadius: borderRadius!,
       child: child
     ) : ClipOval(
       child: child,

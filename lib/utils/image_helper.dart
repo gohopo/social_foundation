@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui show Image,ImageByteFormat,window;
+import 'dart:ui' as ui show Image,ImageByteFormat;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -12,7 +12,7 @@ import 'package:social_foundation/services/locator_manager.dart';
 
 class SfImageHelper{
   static Future<ui.Image> captureToImage(GlobalKey key,{double? pixelRatio}){
-    pixelRatio ??= ui.window.devicePixelRatio;
+    pixelRatio ??= PlatformDispatcher.instance.views.first.devicePixelRatio;
     var boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary;
     return boundary.toImage(pixelRatio:pixelRatio);
   }

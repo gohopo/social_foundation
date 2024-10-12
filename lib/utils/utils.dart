@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:android_id/android_id.dart';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
@@ -89,7 +90,7 @@ class SfUtils{
     else{
       var info = await deviceInfo.androidInfo;
       result['device'] = '${info.manufacturer}${info.model}';
-      result['deviceId'] = info.androidId;
+      result['deviceId'] = await AndroidId().getId();
     }
     return result;
   }
@@ -98,7 +99,7 @@ class SfUtils{
     return result['deviceId'];
   }
   static Future<String?> getClientIp() => getClientIpEnhanced();
-  static Future<String?> getClientIpEnhanced({List<String>? apiList,String Function(dynamic)? converter,int timeout=2000}) async {
+  static Future<String?> getClientIpEnhanced({List<String>? apiList,String Function(dynamic)? converter,Duration timeout=const Duration(milliseconds:2000)}) async {
     apiList = apiList ?? [
       'http://www.trackip.net/ip','http://icanhazip.com/','https://www.fbisb.com/ip.php'
     ];
