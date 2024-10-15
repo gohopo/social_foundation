@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SfTheme{
-  SfTheme({this.name,this.primary,this.primaryLight,this.pageBackground,this.navbarBackground,this.divider});
+  SfTheme({this.name,Color? primary,this.primaryLight,this.pageBackground,this.navbarBackground,this.divider}):primary=primary??Colors.green;
   String? name;
-  Color? primary;
+  Color primary;
   Color? primaryLight;
   Color? pageBackground;
   Color? navbarBackground;
