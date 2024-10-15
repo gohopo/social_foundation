@@ -13,7 +13,7 @@ class SfNinePatchImage extends StatelessWidget{
     this.color,
     this.child
   }):super(key:key);
-  final ImageProvider image;
+  final ImageProvider? image;
   final EdgeInsets centerSlice;
   final Color? color;
   final Widget? child;
@@ -36,8 +36,8 @@ class SfNinePatchImageModel extends SfViewState{
   ImageInfo? image;
 
   void _resolveImage(){
-    final ImageStream newImageStream = widget.image.resolve(ImageConfiguration.empty);
-    if(newImageStream.key != _imageStream?.key){
+    final ImageStream? newImageStream = widget.image?.resolve(ImageConfiguration.empty);
+    if(newImageStream?.key != _imageStream?.key){
       final ImageStreamListener listener = ImageStreamListener(
         _handleImage,
       );
