@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/entity.dart';
 import 'package:social_foundation/services/event_manager.dart';
+import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/services/storage_manager.dart';
 import 'package:social_foundation/utils/aliyun_helper.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
@@ -24,8 +25,8 @@ class SfMessage {
   String msgType;
   Map msgExtra;
   SfMessage(Map data)
-    :id = data['id'],ownerId = data['ownerId'],msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],timestamp = data['timestamp']
-    ,status = data['status'],receiptTimestamp = data['receiptTimestamp'],attribute = data['attribute']??{}
+    :id = data['id'],ownerId = data['ownerId']??SfLocatorManager.userState.curUserId,msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],timestamp = data['timestamp']
+    ,status = data['status']??SfMessageStatus.none,receiptTimestamp = data['receiptTimestamp'],attribute = data['attribute']??{}
     ,msg = data['msg'],msgType = data['msgType'],msgExtra = data['msgExtra']??{};
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();

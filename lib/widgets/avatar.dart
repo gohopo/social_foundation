@@ -22,8 +22,8 @@ class SfAvatar extends StatelessWidget{
     this.preventDefault
   }) : super(key:key);
   final SfUser? user;
-  final double? width;
-  final double? height;
+  final double width;
+  final double height;
   final VoidCallback? onTap;
   final BoxBorder? border;
   final BorderRadiusGeometry? borderRadius;
@@ -53,7 +53,7 @@ class SfAvatar extends StatelessWidget{
     return border!=null ? Container(
       decoration: BoxDecoration(
         border: border,
-        borderRadius: borderRadius??BorderRadius.circular((width??height??0)/2),
+        borderRadius: borderRadius??BorderRadius.circular(height/2),
       ),
       child: child
     ) : child;
