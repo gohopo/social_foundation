@@ -44,9 +44,9 @@ class SfThemeState<TTheme extends SfTheme> extends SfViewState{
     ),
     switchTheme: themeData.switchTheme.copyWith(
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      thumbColor: MaterialStatePropertyAll(Colors.white),
-      trackColor: MaterialStateColor.resolveWith((states)=>states.contains(MaterialState.selected)?theme.primary:Color.fromRGBO(234,234,234,1)),
-      trackOutlineColor:MaterialStatePropertyAll(Colors.transparent),trackOutlineWidth:MaterialStatePropertyAll(0),
+      thumbColor: WidgetStatePropertyAll(Colors.white),
+      trackColor: WidgetStateColor.resolveWith((states)=>states.contains(WidgetState.selected)?theme.primary:Color.fromRGBO(234,234,234,1)),
+      trackOutlineColor:WidgetStatePropertyAll(Colors.transparent),trackOutlineWidth:WidgetStatePropertyAll(0),
     ),
     tabBarTheme: themeData.tabBarTheme.copyWith(
       dividerHeight: 0

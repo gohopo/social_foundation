@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:audio_session/audio_session.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audioplayers.dart' hide AVAudioSessionCategory;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sound/flutter_sound.dart' hide PlayerState;
@@ -294,43 +294,14 @@ class SfAudioPlayerModel extends SfViewState{
   int duration = 0;
   static SfAudioPlayerModel? playingVM;
   
-  bool get isPlaying => player.state==PlayerState.PLAYING;
-  Future setLoop(bool loop) async {
-    await player.setReleaseMode(loop?ReleaseMode.LOOP:ReleaseMode.RELEASE);
-    this.loop = loop;
-  }
-  Future play() async {
-    if(!compatible) await playingVM?.stop();
-    return player.play(uri!,volume:volume);
-  }
-  Future pause(){
-    return player.pause();
-  }
-  Future stop(){
-    return player.stop();
-  }
-  void setGlobal(bool enable){
-    if(compatible) return;
-    playingVM = enable ? this : (playingVM!=this ? playingVM : null);
-  }
-  void onPlayerStateChanged(PlayerState s){
-    setGlobal(false);
-    if(s!=PlayerState.PAUSED) position = 0;
-    notifyListeners();
-  }
-  void onAudioPositionChanged(Duration p){
-    setGlobal(true);
-    position = p.inMilliseconds;
-    notifyListeners();
-    if(duration<=0) player.getDuration().then((d) => duration = d);
-  }
-
+  bool get wantKeepAlive => isPlaying;
+  bool get isPlaying => player.state==PlayerState.playing;
   Future initData() async {
     _stateSubscription = player.onPlayerStateChanged.listen(onPlayerStateChanged);
-    _positionSubscription = player.onAudioPositionChanged.listen(onAudioPositionChanged);
+    _positionSubscription = player.onPositionChanged.listen(onPositionChanged);
     
     setLoop(loop);
-    if(earpieceMode==true) await player.earpieceOrSpeakersToggle();
+    if(earpieceMode==true) await earpieceOrSpeakersToggle();
     if(uri!=null) uri = await SfApp.prepareSound(uri!);
     onReady?.call(this);
   }
@@ -347,11 +318,11 @@ class SfAudioPlayerModel extends SfViewState{
       duration = 0;
       uri = state.uri;
       uri = await SfApp.prepareSound(uri!);
-      await player.setUrl(uri!);
+      await player.setSourceUrl(uri!);
     }
     if(earpieceMode!=state.earpieceMode){
       earpieceMode = state.earpieceMode;
-      await player.earpieceOrSpeakersToggle();
+      await earpieceOrSpeakersToggle();
       if(!isPlaying) play();
     }
     if(volume!=state.volume){
@@ -363,7 +334,43 @@ class SfAudioPlayerModel extends SfViewState{
       await setLoop(loop);
     }
   }
-  bool get wantKeepAlive => isPlaying;
+  Future setLoop(bool loop) async {
+    await player.setReleaseMode(loop?ReleaseMode.loop:ReleaseMode.release);
+    this.loop = loop;
+  }
+  Future play() async {
+    if(!compatible) await playingVM?.stop();
+    return player.play(UrlSource(uri!),volume:volume);
+  }
+  Future pause(){
+    return player.pause();
+  }
+  Future stop(){
+    return player.stop();
+  }
+  void setGlobal(bool enable){
+    if(compatible) return;
+    playingVM = enable ? this : (playingVM!=this ? playingVM : null);
+  }
+  void onPlayerStateChanged(PlayerState s){
+    setGlobal(false);
+    if(s!=PlayerState.paused) position = 0;
+    notifyListeners();
+  }
+  void onPositionChanged(Duration p){
+    setGlobal(true);
+    position = p.inMilliseconds;
+    notifyListeners();
+    if(duration<=0) player.getDuration().then((d) => duration = d?.inMilliseconds??0);
+  }
+  Future earpieceOrSpeakersToggle() async {
+    if(earpieceMode==null) return;
+    return player.setAudioContext(AudioContext(
+      android: AudioContextAndroid(
+        isSpeakerphoneOn: !earpieceMode!,
+      )
+    ));
+  } 
 }
 
 class SfAudioPlayer extends StatelessWidget{

@@ -10,14 +10,14 @@ public class SfFunction {
         return android.os.Build.VERSION.RELEASE;
     }
     public static void openPackageActivity(String packageName){
-        openActivity(SocialFoundationPlugin.FlutterPluginBinding.getApplicationContext().getPackageManager().getLaunchIntentForPackage(packageName));
+        openActivity(SocialFoundationPlugin.context.getPackageManager().getLaunchIntentForPackage(packageName));
     }
     public static void openActivity(Intent intent){
         if(intent==null) return;
         intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-        SocialFoundationPlugin.FlutterPluginBinding.getApplicationContext().startActivity(intent);
+        SocialFoundationPlugin.context.startActivity(intent);
     }
     public static void openMainActivity(){
-        openPackageActivity(SocialFoundationPlugin.FlutterPluginBinding.getApplicationContext().getPackageName());
+        openPackageActivity(SocialFoundationPlugin.context.getPackageName());
     }
 }

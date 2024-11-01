@@ -25,14 +25,14 @@ class SfApp{
     late StreamSubscription stateSubscription;
     var player = new AudioPlayer();
     stateSubscription = player.onPlayerStateChanged.listen((x){
-      if(x==PlayerState.STOPPED||x==PlayerState.COMPLETED){
+      if(x==PlayerState.stopped||x==PlayerState.completed){
         stateSubscription.cancel();
         onStopped?.call(player);
         player.dispose();
       }
     });
-    if(loop) player.setReleaseMode(ReleaseMode.LOOP);
-    player.play(url);
+    if(loop) player.setReleaseMode(ReleaseMode.loop);
+    player.play(UrlSource(url));
     return player;
   }
 }
