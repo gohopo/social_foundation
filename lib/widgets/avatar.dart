@@ -32,7 +32,7 @@ class SfAvatar extends StatelessWidget{
   final BoxFit? fit;
   final AlignmentGeometry? alignment;
   final SfAvatarBuilder<SfAvatar>? builder;
-  final int imageLongSide;
+  final int? imageLongSide;
   final bool? preventDefault;
   ImageProvider get imageProvider{
     return user?.icon?.isNotEmpty==true ? SfCacheManager.provider(SfAliyunOss.getImageUrl(user!.icon!,long:imageLongSide)) : (user?.gender==2?defaultFemaleImage:defaultImage)!;
