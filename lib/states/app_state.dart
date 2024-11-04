@@ -9,7 +9,11 @@ import 'package:social_foundation/widgets/view_state.dart';
 class SfThemeState<TTheme extends SfTheme> extends SfViewState{
   List<TTheme> _themes = [];
   int _themeIndex = 0;
+  SfThemeState(){
+    _themes.add(defaultTheme);
+  }
   TTheme get theme => _themes[_themeIndex];
+  TTheme get defaultTheme => noSuchMethod(Invocation.getter(Symbol('defaultTheme')));
   ThemeData themeData(ThemeData themeData) => onThemeData(themeData.copyWith(
     colorScheme: themeData.colorScheme.copyWith(
       primary:theme.primary,secondary:theme.primary,
@@ -52,11 +56,6 @@ class SfThemeState<TTheme extends SfTheme> extends SfViewState{
       dividerHeight: 0
     )
   ));
-  
-  Future initData() async {
-    _themes.add(defaultTheme);
-  }
-  TTheme get defaultTheme => noSuchMethod(Invocation.getter(Symbol('defaultTheme')));
   ThemeData onThemeData(ThemeData themeData) => themeData;
 }
 
