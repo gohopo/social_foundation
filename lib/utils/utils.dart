@@ -3,10 +3,10 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:android_id/android_id.dart';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:social_foundation/utils/social_foundation.dart';
 import 'package:uuid/uuid.dart';
 
 class SfUtils{
@@ -90,18 +90,18 @@ class SfUtils{
     else{
       var info = await deviceInfo.androidInfo;
       result['device'] = '${info.manufacturer}${info.model}';
-      result['deviceId'] = await AndroidId().getId();
+      result['deviceId'] = await SocialFoundation.getAndroidID();
     }
     return result;
   }
-  static Future<String> getDeviceId() async {
+  static Future<String?> getDeviceId() async {
     var result = await getDeviceInfo();
     return result['deviceId'];
   }
   static Future<String?> getClientIp() => getClientIpEnhanced();
   static Future<String?> getClientIpEnhanced({List<String>? apiList,String Function(dynamic)? converter,Duration timeout=const Duration(milliseconds:2000)}) async {
     apiList = apiList ?? [
-      'http://www.trackip.net/ip','http://icanhazip.com/','https://www.fbisb.com/ip.php'
+      'http://www.trackip.net/ip','http://icanhazip.com/'
     ];
     var dio = Dio(BaseOptions(sendTimeout:timeout,receiveTimeout:timeout));
     for(var api in apiList){

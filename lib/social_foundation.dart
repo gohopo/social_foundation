@@ -1,7 +1,3 @@
-import 'dart:async';
-
-import 'package:flutter/services.dart';
-
 export 'package:audioplayers/audioplayers.dart';
 export 'package:bot_toast/bot_toast.dart';
 export 'package:collection/collection.dart';
@@ -35,6 +31,7 @@ export './utils/image_helper.dart';
 export './utils/wechat_helper.dart';
 export './utils/contracts.dart';
 export './utils/extensions.dart';
+export './utils/social_foundation.dart';
 //models
 export './models/app.dart';
 export './models/conversation.dart';
@@ -82,16 +79,3 @@ export './services/locator_manager.dart';
 export './states/app_state.dart';
 export './states/chat_state.dart';
 export './states/user_state.dart';
-
-class SocialFoundation {
-  static final SocialFoundation instance = new SocialFoundation();
-  static const MethodChannel _channel = const MethodChannel('social_foundation');
-
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
-  static Future openMainActivity(){
-    return _channel.invokeMethod('openMainActivity');
-  }
-}

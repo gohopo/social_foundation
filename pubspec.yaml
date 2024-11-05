@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.1.5
+version: 0.1.6
 homepage: https://github.com/gohopo/social_foundation
 publish_to: none
 
@@ -35,7 +35,6 @@ dependencies:
   fluwx: 3.9.1
   common_utils: 2.1.0
   device_info_plus: 11.1.0
-  android_id: 0.4.0
   image_gallery_saver: 1.7.1
   svgaplayer_flutter:
     git:
