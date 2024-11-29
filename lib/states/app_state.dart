@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:social_foundation/models/notify.dart';
 import 'package:social_foundation/models/theme.dart';
 import 'package:social_foundation/services/locator_manager.dart';
+import 'package:social_foundation/services/storage_manager.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfThemeState<TTheme extends SfTheme> extends SfViewState{
@@ -99,8 +100,10 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
   //权限
   Future<PermissionStatus> getPermission(Permission permission) async {
     var status = await permission.status;
-    if(!status.isGranted && await confirmPermission(permission,status)){
-      status = await permission.request();
+    var confirmedPermissions = SfLocatorManager.storageManager.sharedPreferences.getAppArray(SfStorageManagerKey.confirmedPermissions).cast<int>().toList();
+    if(!status.isGranted || !confirmedPermissions.contains(permission.value)){
+      if(!confirmedPermissions.contains(permission.value)) SfLocatorManager.storageManager.sharedPreferences.setAppArray(SfStorageManagerKey.confirmedPermissions,confirmedPermissions..add(permission.value));
+      if(await confirmPermission(permission,status) && !status.isGranted) status = await permission.request();
     }
     return status;
   }

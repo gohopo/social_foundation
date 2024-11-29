@@ -107,4 +107,5 @@ class SfSharedPreferencesStore{
 
 class SfStorageManagerKey{
   static const String syncedAtMap = 'syncedAtMap';
+  static const String confirmedPermissions = 'confirmedPermissions';
 }
