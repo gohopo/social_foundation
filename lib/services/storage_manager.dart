@@ -73,6 +73,7 @@ class SfSharedPreferencesStore{
   late SharedPreferences sp;
   Future init() async => sp = await SharedPreferences.getInstance();
   String _convertUserKey(String key) => '${GetIt.instance<SfUserState>().curUserId}:$key';
+  bool containsKey(String key) => containsKeyApp(_convertUserKey(key));
   Future<bool> remove(String key) => removeApp(_convertUserKey(key));
   String? getString(String key,{String? defaultValue}) => getAppString(_convertUserKey(key),defaultValue:defaultValue);
   Future<bool> setString(String key,String value) => setAppString(_convertUserKey(key),value);
@@ -88,6 +89,7 @@ class SfSharedPreferencesStore{
   Future<bool> setJson(String key,Map value) => setAppJson(_convertUserKey(key),value);
   List getArray(String key) => getAppArray(_convertUserKey(key));
   Future<bool> setArray(String key,List value) => setAppArray(_convertUserKey(key),value);
+  bool containsKeyApp(String key) => sp.containsKey(key);
   Future<bool> removeApp(String key) => sp.remove(key);
   String? getAppString(String key,{String? defaultValue}) => sp.getString(key) ?? defaultValue;
   Future<bool> setAppString(String key,String value) => sp.setString(key,value);
