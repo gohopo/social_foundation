@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.1.6
+version: 0.1.7
 homepage: https://github.com/gohopo/social_foundation
 publish_to: none
 
@@ -32,14 +32,17 @@ dependencies:
   flutter_screenutil: 5.9.3
   shimmer: 2.0.0
   flutter_spinkit: 5.0.0
-  fluwx: 3.9.1
+  fluwx: 5.3.1
   common_utils: 2.1.0
   device_info_plus: 11.1.0
-  image_gallery_saver: 1.7.1
+  image_gallery_saver:
+    git:
+      url: https://github.com/knottx/image_gallery_saver.git
+      ref: knottx-latest
   svgaplayer_flutter:
     git:
       url: https://github.com/gohopo/SVGAPlayer-Flutter.git
-  permission_handler: 8.1.6
+  permission_handler: 11.3.1
   audio_session: 0.1.21
 
 flutter:
