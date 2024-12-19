@@ -30,7 +30,7 @@ class SfChatInput extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(15),
+            padding: EdgeInsets.only(left:15,top:15,bottom:15),
             child: Row(
               children: buildInputBar(context)
             )
@@ -74,11 +74,11 @@ class SfChatInput extends StatelessWidget {
   );
   Widget buildSend(BuildContext context,{EdgeInsets? padding}){
     return InkWell(
+      onTap: model.onTapSend,
       child: Container(
-        padding: padding??EdgeInsets.only(left:15),
+        padding: padding??EdgeInsets.symmetric(horizontal:15,vertical:8),
         child: Icon(Icons.send,color:Color.fromRGBO(159,162,178,1)),
       ),
-      onTap: model.onTapSend,
     );
   }
   Widget buildToolbar(BuildContext context){
