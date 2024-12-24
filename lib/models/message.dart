@@ -25,9 +25,9 @@ class SfMessage {
   String msgType;
   Map msgExtra;
   SfMessage(Map data)
-    :id = data['id'],ownerId = data['ownerId']??SfLocatorManager.userState.curUserId,msgId = data['msgId'],convId = data['convId'],fromId = data['fromId'],timestamp = data['timestamp']
-    ,status = data['status']??SfMessageStatus.none,receiptTimestamp = data['receiptTimestamp'],attribute = data['attribute']??{}
-    ,msg = data['msg'],msgType = data['msgType'],msgExtra = data['msgExtra']??{};
+  :id=data['id'],ownerId=data['ownerId']??SfLocatorManager.userState.curUserId??'',msgId=data['msgId'],convId=data['convId']??'',fromId=data['fromId']??'',timestamp=data['timestamp']??0
+  ,status=data['status']??SfMessageStatus.none,receiptTimestamp=data['receiptTimestamp'],attribute=data['attribute']??{}
+  ,msg=data['msg'],msgType=data['msgType']??SfMessageType.text,msgExtra=data['msgExtra']??{};
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
     map['ownerId'] = ownerId;
