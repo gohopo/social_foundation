@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:social_foundation/models/notify.dart';
@@ -99,6 +102,11 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
   Future sync({bool? onlyWhenModified}) async {}
   //权限
   Future<PermissionStatus> getPermission(Permission permission) async {
+    if(permission==Permission.photos && Platform.isAndroid){
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if(androidInfo.version.sdkInt<=32) permission = Permission.storage;
+    }
+
     var status = await permission.status;
     var confirmedPermissions = SfLocatorManager.storageManager.sharedPreferences.getAppArray(SfStorageManagerKey.confirmedPermissions).cast<int>().toList();
     if(!status.isGranted || !confirmedPermissions.contains(permission.value)){
