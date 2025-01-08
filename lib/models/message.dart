@@ -53,7 +53,7 @@ class SfMessage {
   String get des{
     switch(msgType){
       case SfMessageType.text:
-        return msg!;
+        return msg??'';
       case SfMessageType.image:
         return '[图片]';
       case SfMessageType.voice:
