@@ -76,7 +76,7 @@ class SfImageHelper{
     return files;
   }
   static Future saveImage(Uint8List imageBytes,{int quality=80,String? name,bool isReturnImagePathOfIOS=false}) async {
-    var status = await SfLocatorManager.appState.getPermission(Permission.storage);
+    var status = await SfLocatorManager.appState.getPermission(Permission.photos);
     if(!status.isGranted) throw '没有存储权限!';
     return ImageGallerySaver.saveImage(imageBytes,quality:quality,name:name,isReturnImagePathOfIOS:isReturnImagePathOfIOS);
   }

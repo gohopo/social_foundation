@@ -102,9 +102,14 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
   Future sync({bool? onlyWhenModified}) async {}
   //权限
   Future<PermissionStatus> getPermission(Permission permission) async {
-    if(permission==Permission.photos && Platform.isAndroid){
+    if(Platform.isAndroid && [Permission.storage,Permission.photos,Permission.manageExternalStorage].contains(permission)){
       final androidInfo = await DeviceInfoPlugin().androidInfo;
-      if(androidInfo.version.sdkInt<=32) permission = Permission.storage;
+      if(permission==Permission.photos){
+        if(androidInfo.version.sdkInt<33) permission = Permission.storage;
+      }
+      else{
+        permission = androidInfo.version.sdkInt<33 ? Permission.storage : Permission.manageExternalStorage;
+      }
     }
 
     var status = await permission.status;

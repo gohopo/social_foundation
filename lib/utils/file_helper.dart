@@ -22,12 +22,12 @@ class SfFileHelper{
   static String getUrlNameWithoutExt(String url) => getFileNameWithoutExt(getUrlWithoutQueries(url));
   static String getUrlExt(String url) => getFileExt(getUrlWithoutQueries(url));
   static Future saveFile(String filePath,{String? name,bool isReturnPathOfIOS=false}) async {
-    var status = await SfLocatorManager.appState.getPermission(Permission.storage);
+    var status = await SfLocatorManager.appState.getPermission(Permission.manageExternalStorage);
     if(!status.isGranted) throw '没有存储权限!';
     return ImageGallerySaver.saveFile(filePath,name:name,isReturnPathOfIOS:isReturnPathOfIOS);
   }
   static Future saveFileFromUrl(String url,{String? name,bool isReturnPathOfIOS=false}) async {
-    var status = await SfLocatorManager.appState.getPermission(Permission.storage);
+    var status = await SfLocatorManager.appState.getPermission(Permission.manageExternalStorage);
     if(!status.isGranted) throw '没有存储权限!';
     var file = await SfCacheManager().getSingleFile(url);
     return saveFile(file.path,name:name,isReturnPathOfIOS:isReturnPathOfIOS);
