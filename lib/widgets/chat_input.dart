@@ -199,4 +199,9 @@ class SfChatInputModel extends SfViewState {
       }
     });
   }
+  @override
+  void dispose(){
+    focusNode.dispose();
+    super.dispose();
+  }
 }
