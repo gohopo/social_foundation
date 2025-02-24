@@ -16,8 +16,23 @@ class SfThemeState<TTheme extends SfTheme> extends SfViewState{
   SfThemeState(){
     _themes.add(defaultTheme);
   }
-  TTheme get theme => _themes[_themeIndex];
   TTheme get defaultTheme => noSuchMethod(Invocation.getter(Symbol('defaultTheme')));
+  TTheme get theme => _themes[_themeIndex];
+  int get themeIndex => _themeIndex;
+  void set themeIndex(int index){
+    if(index==_themeIndex || index<0 || index>=_themes.length) return;
+    _themeIndex = index;
+    notifyListeners();
+  }
+  List<TTheme> get themes => _themes;
+  void addTheme(TTheme theme){
+    _themes.add(theme);
+    notifyListeners();
+  }
+  void removeTheme(TTheme theme){
+    _themes.remove(theme);
+    notifyListeners();
+  }
   ThemeData themeData(ThemeData themeData) => onThemeData(themeData.copyWith(
     colorScheme: themeData.colorScheme.copyWith(
       primary:theme.primary,secondary:theme.primary,

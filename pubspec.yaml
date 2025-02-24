@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.1.11
+version: 0.1.12
 homepage: https://github.com/gohopo/social_foundation
 publish_to: none
 
@@ -42,7 +42,7 @@ dependencies:
   svgaplayer_flutter:
     git:
       url: https://github.com/gohopo/SVGAPlayer-Flutter.git
-  permission_handler: 11.3.1
+  permission_handler: 8.1.6
   audio_session: 0.1.21
 
 flutter:
