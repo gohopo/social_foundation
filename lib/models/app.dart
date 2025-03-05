@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 
 class SfApp{
+  static bool get isHmOS => !Platform.isAndroid && !Platform.isIOS;
   static const ColorFilter greyColorFilter = ColorFilter.matrix(<double>[
     0.2126, 0.7152, 0.0722, 0, 0,
     0.2126, 0.7152, 0.0722, 0, 0,

@@ -87,10 +87,15 @@ class SfUtils{
       result['device'] = '${info.model}${info.systemVersion}';
       result['deviceId'] = info.identifierForVendor;
     }
-    else{
+    else if(Platform.isAndroid){
       var info = await deviceInfo.androidInfo;
       result['device'] = '${info.manufacturer}${info.model}';
       result['deviceId'] = await SocialFoundation.getAndroidID();
+    }
+    else{
+      var info = (await deviceInfo.deviceInfo).data;
+      result['device'] = '${info['manufacture']}${info['productModel']}';
+      result['deviceId'] = info['ODID'];
     }
     return result;
   }

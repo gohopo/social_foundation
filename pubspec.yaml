@@ -32,7 +32,7 @@ dependencies:
   flutter_screenutil: 5.9.3
   shimmer: 2.0.0
   flutter_spinkit: 5.0.0
-  fluwx: 5.3.1
+  fluwx: 5.4.1
   common_utils: 2.1.0
   device_info_plus: 11.1.0
   image_gallery_saver:
