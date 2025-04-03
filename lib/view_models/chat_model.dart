@@ -39,7 +39,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     _clearEvent.dispose();
     super.dispose();
   }
-  void listenMessageEvent(){
+  Future listenMessageEvent() async {
     convRead();
     _messageEvent.listen(onMessageEvent,onWhere:onMessageEventWhere);
   }
@@ -64,7 +64,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
     notifyListeners();
   }
   void convRead() => conversation?.read();
-  void onUnreadMessages(List<TMessage> messages){}
+  Future onUnreadMessages(List<TMessage> messages) async {}
   void onInitInputModel(){
     inputModel = SfChatInputModel(onTapSend:onTapSend,onPickImage:onPickImage,onRecordVoice:onRecordVoice,onAccessoryChanged:onAccessoryChanged);
   }
