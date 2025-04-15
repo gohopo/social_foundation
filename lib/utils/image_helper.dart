@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:social_foundation/models/app.dart';
 import 'package:social_foundation/services/locator_manager.dart';
 
 class SfImageHelper{
@@ -37,8 +38,10 @@ class SfImageHelper{
     maxFileSize??=6;preferredCameraDevice??=CameraDevice.rear;
     File? file;
     try{
-      var status = await SfLocatorManager.appState.getPermission(source==ImageSource.gallery?Permission.photos:Permission.camera);
-      if(!status.isGranted) throw '!';
+      if(source!=ImageSource.gallery || !SfApp.isHmOS){
+        var status = await SfLocatorManager.appState.getPermission(source==ImageSource.gallery?Permission.photos:Permission.camera);
+        if(!status.isGranted) throw '!';
+      }
       var pickedFile = await ImagePicker().pickImage(
         source:source,maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality,preferredCameraDevice:preferredCameraDevice
       );
@@ -57,8 +60,10 @@ class SfImageHelper{
     maxFileSize??=6;maxLength??=9;
     List<File> files = [];
     try{
-      var status = await SfLocatorManager.appState.getPermission(Permission.photos);
-      if(!status.isGranted) throw '!';
+      if(!SfApp.isHmOS){
+        var status = await SfLocatorManager.appState.getPermission(Permission.photos);
+        if(!status.isGranted) throw '!';
+      }
       var pickedFiles = await ImagePicker().pickMultiImage(maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality);
       files = pickedFiles.map<File>((x) => File(x.path)).toList();
     }
@@ -76,8 +81,10 @@ class SfImageHelper{
     return files;
   }
   static Future saveImage(Uint8List imageBytes,{int quality=80,String? name,bool isReturnImagePathOfIOS=false}) async {
-    var status = await SfLocatorManager.appState.getPermission(Permission.photos);
-    if(!status.isGranted) throw '没有存储权限!';
+    if(!SfApp.isHmOS){
+      var status = await SfLocatorManager.appState.getPermission(Permission.photos);
+      if(!status.isGranted) throw '没有存储权限!';
+    }
     return ImageGallerySaver.saveImage(imageBytes,quality:quality,name:name,isReturnImagePathOfIOS:isReturnImagePathOfIOS);
   }
 }
