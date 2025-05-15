@@ -34,6 +34,20 @@ abstract class SfViewState extends ChangeNotifier {
     _disposed = true;
     super.dispose();
   }
+  void resetState(){}
+  Future delayedNotifyListeners(int milliseconds) => Future.delayed(Duration(milliseconds:milliseconds),() => notifyListeners());
+  void localUpdateItems<T>({List? items,required T Function(dynamic data) factory,required ValueSetter<List<T>> add}){
+    items?.removeWhere((x) => x==null);
+    if(items?.isNotEmpty!=true) return;
+    var list = items!.map<T>((x) => !(x is T) ? factory(x) : x).toList();
+    add(list);
+    notifyListeners();
+  }
+  void localRemoveItems<T>({required List<T> items,required ValueSetter<T> remove}){
+    if(items.isEmpty) return;
+    items.forEach((x)=>remove.call(x));
+    notifyListeners();
+  }
   @override
   void notifyListeners(){
     if(!_disposed){
@@ -41,9 +55,6 @@ abstract class SfViewState extends ChangeNotifier {
     }
   }
   void onRefactor(SfViewState newState){}
-  void setIdle(){
-    viewStatus = SfViewStatus.idle;
-  }
   void setBusy(){
     viewStatus = SfViewStatus.busy;
   }
@@ -54,11 +65,12 @@ abstract class SfViewState extends ChangeNotifier {
     viewStatus = SfViewStatus.error;
     _error = error;
   }
+  void setIdle(){
+    viewStatus = SfViewStatus.idle;
+  }
   void setUnAuthorized(){
     viewStatus = SfViewStatus.unAuthorized;
   }
-  //解决build中调用notifyListeners的错误
-  Future delayedNotifyListeners(int milliseconds) => Future.delayed(Duration(milliseconds:milliseconds),() => notifyListeners());
 }
 
 abstract class SfListViewState<T> extends SfViewState {
@@ -145,20 +157,4 @@ abstract class SfRefreshListViewState<T> extends SfListViewState<T> {
     return data;
   }
   bool loadNoData(int length) => length<20;
-}
-
-abstract class SfProviderState extends SfViewState{
-  void reset(){}
-  void localUpdateItems<T>({List? items,required T Function(dynamic data) factory,required ValueSetter<List<T>> add}){
-    items?.removeWhere((x) => x==null);
-    if(items?.isNotEmpty!=true) return;
-    var list = items!.map<T>((x) => !(x is T) ? factory(x) : x).toList();
-    add(list);
-    notifyListeners();
-  }
-  void localRemoveItems<T>({required List<T> items,required ValueSetter<T> remove}){
-    if(items.isEmpty) return;
-    items.forEach((x)=>remove.call(x));
-    notifyListeners();
-  }
 }
