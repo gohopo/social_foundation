@@ -78,14 +78,15 @@ class SfNinePatchImageModel extends SfViewState{
 }
 
 class SfNinePatchImagePainter extends CustomPainter{
-  SfNinePatchImagePainter(this.image,EdgeInsets centerSlice,this.color):centerSlice=centerSlice/ScreenUtil().pixelRatio!;
+  SfNinePatchImagePainter(this.image,EdgeInsets centerSlice,this.color):centerSlice=centerSlice;
   ui.Image? image;
   EdgeInsets centerSlice;
   Color? color;
   @override
   void paint(Canvas canvas, Size size) {
     if(image == null) return;
-    Size imageSize = Size(image!.width.toDouble(),image!.height.toDouble())/ScreenUtil().pixelRatio!;
+    size = Size(size.width/ScreenUtil().scaleWidth,size.height/ScreenUtil().scaleHeight);
+    Size imageSize = Size(image!.width.toDouble(),image!.height.toDouble());
     final Paint paint = Paint()..isAntiAlias=false;
     if(color!=null) paint.colorFilter = ColorFilter.mode(color!,BlendMode.srcIn);
     canvas.save();
@@ -105,7 +106,7 @@ class SfNinePatchImagePainter extends CustomPainter{
     return painter.image != image;
   }
   void drawImageScale(Canvas canvas,double x,double y,double width,double height,double xSrc,double ySrc,double cxSrc,double cySrc,Paint paint){
-    canvas.drawImageRect(image!,Rect.fromLTWH(xSrc*ScreenUtil().pixelRatio!,ySrc*ScreenUtil().pixelRatio!,cxSrc*ScreenUtil().pixelRatio!,cySrc*ScreenUtil().pixelRatio!),Rect.fromLTWH(x,y,width,height),paint);
+    canvas.drawImageRect(image!,Rect.fromLTWH(xSrc,ySrc,cxSrc,cySrc),Rect.fromLTWH(x*ScreenUtil().scaleWidth,y*ScreenUtil().scaleHeight,width*ScreenUtil().scaleWidth,height*ScreenUtil().scaleHeight),paint);
   }
   void drawImageHorizontal(Canvas canvas,Size size,Size imageSize,Paint paint){
 		//左
