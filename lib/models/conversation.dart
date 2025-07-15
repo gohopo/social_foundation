@@ -46,6 +46,11 @@ abstract class SfConversation<TMessage extends SfMessage>{
     await database.delete('conversation',where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
     SfLocatorManager.chatState.removeConversation(convId);
   }
+  static Future deleteAll(String ownerId) async {
+    var database = await SfLocatorManager.storageManager.getDatabase();
+    await database.delete('conversation',where: 'ownerId=?',whereArgs: [ownerId]);
+    SfLocatorManager.chatState.removeAllConversations();
+  }
   Future read() async {
     if(unreadMessagesCount==0) return;
     unreadMessagesCount = 0;

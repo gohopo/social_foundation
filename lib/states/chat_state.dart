@@ -26,6 +26,10 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
     list.removeWhere((x) => x.convId==convId);
     notifyListeners();
   }
+  void removeAllConversations(){
+    list.clear();
+    notifyListeners();
+  }
   Future<TConversation?> queryConversation(String convId) async {
     return getConversation(convId);
   }
