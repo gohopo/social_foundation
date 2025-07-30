@@ -57,7 +57,7 @@ class SfAudioRecorder extends SfViewState{
         androidWillPauseWhenDucked: true,
       ));
     }
-    await _soundRecorder?.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.recorderDirectory}/${SfUtils.uuid()}.aac');
+    await _soundRecorder?.startRecorder(codec:Codec.aacMP4,toFile:'${SfLocatorManager.storageManager.recorderDirectory}/${SfUtils.uuid()}.aac');
     onStartRecord?.call();
   }
   Future onStop({bool? isCancelled}) async {
