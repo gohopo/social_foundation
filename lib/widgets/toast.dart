@@ -93,9 +93,12 @@ class SfEasyDialog extends SfDialog{
     );
   }
   Widget buildTitle(String title,double fontSize,Color color) => Text(title,style:TextStyle(fontSize:fontSize,color:color),textAlign:TextAlign.center);
-  Widget buildContent(String content) => Container(
+  Widget buildContent({String? content,List<InlineSpan>? contentSpans}) => Container(
     margin: EdgeInsets.only(left:7,bottom:10),
-    child: Text(content,style:TextStyle(fontSize:14,color:dialogContentColor)),
+    child: Text.rich(TextSpan(
+      style: TextStyle(fontSize:14,color:dialogContentColor),
+      children: contentSpans ?? (content!=null ? [TextSpan(text:content)] : null)
+    )),
   );
   Widget buildAction(int index,String action) => Container(
     margin: EdgeInsets.symmetric(horizontal:15),
@@ -141,10 +144,10 @@ class SfEasyDialog extends SfDialog{
     }
     return SfImageHelper.pickImages(maxWidth:maxWidth,maxHeight:maxHeight,imageQuality:imageQuality,maxFileSize:maxFileSize,maxLength:maxLength);
   }
-  Future onShowAlert(String title,String content,String action,{Duration? animationDuration,Duration? animationReverseDuration,WrapAnimation? wrapToastAnimation,bool? clickClose,Color? backgroundColor,Duration? duration}) => onShowConfirm(title,content,[action],animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,backgroundColor:backgroundColor,duration:duration);
-  Future<int> onShowConfirm(String? title,String content,List<String> actions,{Duration? animationDuration,Duration? animationReverseDuration,WrapAnimation? wrapToastAnimation,bool? clickClose,Color? backgroundColor,Duration? duration}) => onShowCustomConfirm(
+  Future onShowAlert(String title,String? content,String action,{List<InlineSpan>? contentSpans,Duration? animationDuration,Duration? animationReverseDuration,WrapAnimation? wrapToastAnimation,bool? clickClose,Color? backgroundColor,Duration? duration}) => onShowConfirm(title,content,[action],contentSpans:contentSpans,animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,backgroundColor:backgroundColor,duration:duration);
+  Future<int> onShowConfirm(String? title,String? content,List<String> actions,{List<InlineSpan>? contentSpans,Duration? animationDuration,Duration? animationReverseDuration,WrapAnimation? wrapToastAnimation,bool? clickClose,Color? backgroundColor,Duration? duration}) => onShowCustomConfirm(
     title: title!=null ? buildTitle(title,dialogTitleFontSize,dialogTitleColor) : null,
-    content: buildContent(content),
+    content: buildContent(content:content,contentSpans:contentSpans),
     actions: actions.asMap().keys.map((index) => buildAction(index,actions[index])).toList(),
     animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,backgroundColor:backgroundColor,duration:duration
   );
