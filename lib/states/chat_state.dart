@@ -4,6 +4,7 @@ import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatState<TConversation extends SfConversation> extends SfRefreshListViewState<TConversation> {
   List<TConversation> getList(String name) => list.where((data) => data.name==name).toList();
+  List<TConversation> getListByNames(List<String> names) => list.where((data) => names.contains(data.name)).toList();
   int getListUnreadMessagesCount(List<TConversation> list) => list.fold(0, (previousValue, conv) => previousValue+conv.unreadMessagesCount);
   TConversation? getConversation(String convId) => list.firstWhereOrNull((data) => data.convId==convId);
   int getUnreadMessagesCount(String convId) => getConversation(convId)?.unreadMessagesCount??0;
