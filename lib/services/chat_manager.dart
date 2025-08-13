@@ -45,6 +45,10 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     saveMessage(message,true);
   }
   void onNotifyReceived(TMessage message) => SfLocatorManager.appState.addNotify(notifyType:message.msgExtra['notifyType'],fromId:message.fromId);
+  void onSendError(String? error){
+    SfLocatorManager.appState.showError(error);
+  }
+  void protectedOnSendError(dynamic error){}
   Future<TMessage> protectedSendMessage(String conversationId,String? msg,String msgType,Map msgExtra);
   Future<TConversation> queryChatWith(String userId,{bool? save=true,String? noAccessError});
   Future<TMessage> recallMessage(TMessage message) async {
@@ -78,6 +82,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     }
     catch(e){
       message.status = SfMessageStatus.failed;
+      protectedOnSendError(e);
     }
     return saveMessage(message);
   }
