@@ -59,8 +59,8 @@ class SfAliyunOss{
   static Future<Response?> uploadVoice(String filePath,{String? fileName,ProgressCallback? onSendProgress,bool? cache}){
     return uploadFile(SfMessageType.voice,filePath,fileName:fileName,onSendProgress: onSendProgress,cache:cache);
   }
-  static String getImageUrl(String fileKey,{String? mode,int? width,int? height,int? short,int? long,int? limit,int? percent}){
-    String url = getFileUrl('image',fileKey);
+  static String getImageUrl(String fileKey,{String? dir,String? mode,int? width,int? height,int? short,int? long,int? limit,int? percent}){
+    String url = getFileUrl(dir??'image',fileKey);
     String resize = '';
     if(mode != null) resize += ',m_$mode';
     if(width != null) resize += ',w_$width';
