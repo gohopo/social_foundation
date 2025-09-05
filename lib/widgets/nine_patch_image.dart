@@ -106,7 +106,7 @@ class SfNinePatchImagePainter extends CustomPainter{
     return painter.image != image;
   }
   void drawImageScale(Canvas canvas,double x,double y,double width,double height,double xSrc,double ySrc,double cxSrc,double cySrc,Paint paint){
-    canvas.drawImageRect(image!,Rect.fromLTWH(xSrc,ySrc,cxSrc,cySrc),Rect.fromLTWH(x*ScreenUtil().scaleWidth,y*ScreenUtil().scaleHeight,width*ScreenUtil().scaleWidth,height*ScreenUtil().scaleHeight),paint);
+    canvas.drawImageRect(image!,Rect.fromLTWH(xSrc,ySrc,cxSrc,cySrc),Rect.fromLTWH((x*ScreenUtil().scaleWidth).floorToDouble(),(y*ScreenUtil().scaleHeight).floorToDouble(),(width*ScreenUtil().scaleWidth).ceilToDouble(),(height*ScreenUtil().scaleHeight).ceilToDouble()),paint);
   }
   void drawImageHorizontal(Canvas canvas,Size size,Size imageSize,Paint paint){
 		//左
