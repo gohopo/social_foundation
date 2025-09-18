@@ -32,6 +32,7 @@ export './utils/wechat_helper.dart';
 export './utils/contracts.dart';
 export './utils/extensions.dart';
 export './utils/social_foundation.dart';
+export './utils/widget_helper.dart';
 //models
 export './models/app.dart';
 export './models/conversation.dart';
