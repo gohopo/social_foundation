@@ -127,9 +127,9 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     return message;
   }
   Future<TMessage> sendNotifyMsg({required String convId,required String notifyType,Map? msgExtra}) => protectedSendMessage(convId,null,SfMessageType.notify,{...msgExtra??{},'notifyType':notifyType,'transient':true});
-  Future<TMessage> sendSystemMsg({required String convId,String? msg,String? systemType,Map? msgExtra}){
+  Future<TMessage> sendSystemMsg({required String convId,String? msg,String? systemType,Map? msgExtra,bool? saveConv}){
     msgExtra ??= {};
     msgExtra['systemType'] = systemType;
-    return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra);
+    return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra,saveConv:saveConv);
   }
 }
