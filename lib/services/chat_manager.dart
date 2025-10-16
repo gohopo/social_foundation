@@ -91,6 +91,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     SfLocatorManager.chatState.updateConversation(conversation);
   }
   Future<TMessage> saveMessage(TMessage message,[bool isNew=false]) async {
+    if(message.attribute['saveMsg']==false) return message;
     if(!message.transient) await message.save();
     SfMessageEvent(message:message,isNew:isNew).emit();
     if(!message.transient && message.attribute['saveConv']!=false && (message.fromOwner || !isNew)){
@@ -117,19 +118,20 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
       attribute:attribute,fromId:fromId,timestamp:timestamp,status:status
     );
   }
-  Future<TMessage> sendMsg({required String convId,String? msg,required String msgType,Map? msgExtra,Map? attribute,bool? transient,bool? saveConv}) async {
+  Future<TMessage> sendMsg({required String convId,String? msg,required String msgType,Map? msgExtra,Map? attribute,bool? transient,bool? saveConv,bool? saveMsg}) async {
     var message = messageFactory2(
       convId:convId,msg:msg,msgType:msgType,msgExtra:msgExtra,attribute:attribute
     );
     if(transient!=null) message.msgExtra['transient'] = transient;
     if(saveConv!=null) message.attribute['saveConv'] = saveConv;
+    if(saveMsg!=null) message.attribute['saveMsg'] = saveMsg;
     resendMessage(message);
     return message;
   }
   Future<TMessage> sendNotifyMsg({required String convId,required String notifyType,Map? msgExtra}) => protectedSendMessage(convId,null,SfMessageType.notify,{...msgExtra??{},'notifyType':notifyType,'transient':true});
-  Future<TMessage> sendSystemMsg({required String convId,String? msg,String? systemType,Map? msgExtra,bool? saveConv}){
+  Future<TMessage> sendSystemMsg({required String convId,String? msg,String? systemType,Map? msgExtra,bool? saveConv,bool? saveMsg}){
     msgExtra ??= {};
     msgExtra['systemType'] = systemType;
-    return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra,saveConv:saveConv);
+    return sendMsg(convId:convId,msg:msg,msgType:SfMessageType.system,msgExtra:msgExtra,saveConv:saveConv,saveMsg:saveMsg);
   }
 }
