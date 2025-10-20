@@ -84,6 +84,7 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
   List<SfNotify> notifyList = [];
   SfNotify? getNotify(String notifyType) => notifyList.firstWhereOrNull((x) => x.notifyType==notifyType);
   int getNotifyCount(String notifyType) => getNotify(notifyType)?.count ?? 0;
+  int getNotifyListCount(List<String> notifyType) => notifyType.fold<int>(0,(t,x) => t+getNotifyCount(x));
   bool isNotifyUnread(String notifyType) => getNotifyCount(notifyType)>0;
   Future queryNotifyList() async {
     notifyList = await SfNotify.queryNotifyList(SfLocatorManager.userState.curUserId);
@@ -110,6 +111,11 @@ class SfAppState<TTheme extends SfTheme> extends SfThemeState<TTheme>{
     notifyList.removeWhere((x) => x.notifyType==notifyType);
     delayedNotifyListeners(500);
     SfNotify.removeNotify(SfLocatorManager.userState.curUserId, notifyType);
+  }
+  void removeNotifyList(List<String> notifyTypes){
+    for(var notifyType in notifyTypes){
+      removeNotify(notifyType);
+    }
   }
   void processNotifyList(){}
   //关键字
