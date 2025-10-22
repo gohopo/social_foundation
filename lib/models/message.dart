@@ -73,14 +73,14 @@ class SfMessage {
   ImageProvider? resolveImage() => msgExtra['fileKey']!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) as ImageProvider : (attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : null);
   Future save() async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
-    if(id != null){
-      await database.update('message', toMap(),where: 'id=?',whereArgs: [id]);
+    if(id!=null){
+      await database.update('message',toMap(),where:'id=?',whereArgs:[id]);
     }
-    else if(msgType == SfMessageType.recall){
-      await database.update('message', toMap(),where: 'msgId=?',whereArgs: [msgId]);
+    else if(msgType==SfMessageType.recall){
+      await database.update('message',toMap(),where:'msgId=?',whereArgs:[msgId]);
     }
     else{
-      this.id = await database.insert('message',toMap(),conflictAlgorithm: ConflictAlgorithm.replace);
+      this.id = await database.insert('message',toMap(),conflictAlgorithm:ConflictAlgorithm.replace);
     }
   }
   static Future update({int? id,String? msgId,required Map<String,dynamic> data}) async {
@@ -97,13 +97,23 @@ class SfMessage {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     return database.update('message',data,where:where.join(' and '),whereArgs:whereArgs);
   }
-  static Future insertAll<TMessage extends SfMessage>(List<TMessage> messages) async {
+  static Future saveAll<TMessage extends SfMessage>(List<TMessage> messages) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     var batch = database.batch();
-    messages.forEach((message) => batch.insert('message',message.toMap(),conflictAlgorithm: ConflictAlgorithm.replace));
+    for(var message in messages){
+      if(message.id!=null){
+        batch.update('message',message.toMap(),where:'id=?',whereArgs:[message.id]);
+      }
+      else if(message.msgType==SfMessageType.recall){
+        batch.update('message',message.toMap(),where:'msgId=?',whereArgs:[message.msgId]);
+      }
+      else{
+        batch.insert('message',message.toMap(),conflictAlgorithm:ConflictAlgorithm.replace);
+      }
+    }
     var results = await batch.commit();
     for(var i=0;i<messages.length;++i){
-      messages[i].id = results[i] as int;
+      messages[i].id ??= results[i] as int;
     }
   }
   static Future<int> sumMessageCount(String ownerId,String convId,String userId,{int? startTime,int? endTime,bool? real}) async {
