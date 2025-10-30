@@ -1,3 +1,4 @@
+export 'package:adaptive_dialog/adaptive_dialog.dart';
 export 'package:audioplayers/audioplayers.dart';
 export 'package:bot_toast/bot_toast.dart';
 export 'package:collection/collection.dart';

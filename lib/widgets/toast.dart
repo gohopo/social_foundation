@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/utils/image_helper.dart';
 import 'package:social_foundation/widgets/animation.dart';
 
@@ -43,6 +46,65 @@ class SfDialog{
     duration: duration,
   );
   void close() => _cancelFunc?.call();
+
+
+
+  static Future<T?> actionSheet<T>({String? title,String? message,List<SheetAction<T>> actions=const[],String? cancelLabel,BuildContext? context,bool dismissible=true,AdaptiveStyle? style}) => showModalActionSheet<T>(
+    context: context ?? SfLocatorManager.routerManager.navigator!.context,
+    title: title,
+    message: message,
+    actions: actions,
+    cancelLabel: cancelLabel,
+    isDismissible: dismissible,
+    style: style
+  );
+  static Future<T?> alert<T>({String? title,String? message,List<AlertDialogAction<T>> actions = const [],BuildContext? context,bool dismissible=true,AdaptiveStyle? style}) => showAlertDialog(
+    context: context ?? SfLocatorManager.routerManager.navigator!.context,
+    title: title,
+    message: message,
+    actions: actions,
+    barrierDismissible: dismissible,
+    style: style
+  );
+  static Future<T?> confirmation<T>({required String title,String? message,List<AlertDialogAction<T>> actions=const[],T? initialSelected,String? okLabel,String? cancelLabel,BuildContext? context,double? contentMaxHeight,bool dismissible=true,AdaptiveStyle? style}) => showConfirmationDialog(
+    context: context ?? SfLocatorManager.routerManager.navigator!.context,
+    title: title,
+    message: message,
+    actions: actions,
+    initialSelectedActionKey: initialSelected,
+    okLabel: okLabel,
+    cancelLabel: cancelLabel,
+    contentMaxHeight: contentMaxHeight,
+    barrierDismissible: dismissible,
+    style: style
+  );
+  static Future<List<String>?> edit({String? title,String? message,List<DialogTextField> textFields=const[],String? okLabel,String? cancelLabel,BuildContext? context,bool dismissible=true,AdaptiveStyle? style}) => showTextInputDialog(
+    context: context ?? SfLocatorManager.routerManager.navigator!.context,
+    title: title,
+    message: message,
+    textFields: textFields,
+    okLabel: okLabel,
+    cancelLabel: cancelLabel,
+    barrierDismissible: dismissible,
+    style: style
+  );
+  static Future<OkCancelResult> okAlert({String? title,String? message,String? okLabel,BuildContext? context,bool dismissible=true,AdaptiveStyle? style}) => showOkAlertDialog(
+    context: context ?? SfLocatorManager.routerManager.navigator!.context,
+    title: title,
+    message: message,
+    okLabel: okLabel,
+    barrierDismissible: dismissible,
+    style: style
+  );
+  static Future<OkCancelResult> okCancelAlert({String? title,String? message,String? okLabel,String? cancelLabel,BuildContext? context,bool dismissible=true,AdaptiveStyle? style}) => showOkCancelAlertDialog(
+    context: context ?? SfLocatorManager.routerManager.navigator!.context,
+    title: title,
+    message: message,
+    okLabel: okLabel,
+    cancelLabel: cancelLabel,
+    barrierDismissible: dismissible,
+    style: style
+  );
 }
 
 class SfEasyDialog extends SfDialog{
@@ -237,6 +299,83 @@ class SfEasyDialog extends SfDialog{
     backgroundColor: backgroundColor,
     duration: duration
   );
+
+
+
+  static Future<int?> actionSheet({String? title,String? message,List<String> actions=const[],String? cancelLabel,BuildContext? context,bool dismissible=true,AdaptiveStyle? style}) => SfDialog.actionSheet<int>(
+    title: title,
+    message: message,
+    actions: actions.mapIndexed<SheetAction<int>>((index,x)=>SheetAction<int>(
+      key: index,
+      label: x
+    )).toList(),
+    cancelLabel: cancelLabel,
+    context: context,
+    dismissible: dismissible,
+    style: style
+  );
+  static Future<int?> alert({String? title,String? message,List<String> actions = const [],BuildContext? context,bool dismissible=true,AdaptiveStyle? style}) => SfDialog.alert<int>(
+    title: title,
+    message: message,
+    actions: actions.mapIndexed<AlertDialogAction<int>>((index,x)=>AlertDialogAction<int>(
+      key: index,
+      label: x
+    )).toList(),
+    context: context,
+    dismissible: dismissible,
+    style: style
+  );
+  static Future<int?> confirmation<T>({required String title,String? message,List<String> actions=const[],int? initialSelected,String? okLabel,String? cancelLabel,BuildContext? context,double? contentMaxHeight,bool dismissible=true,AdaptiveStyle? style}) => SfDialog.confirmation<int>(
+    title: title,
+    message: message,
+    actions: actions.mapIndexed<AlertDialogAction<int>>((index,x)=>AlertDialogAction<int>(
+      key: index,
+      label: x
+    )).toList(),
+    initialSelected: initialSelected,
+    okLabel: okLabel,
+    cancelLabel: cancelLabel,
+    context: context,
+    contentMaxHeight: contentMaxHeight,
+    dismissible: dismissible,
+    style: style
+  );
+  static Future<String?> edit({String? title,String? message,required DialogTextField textField,String? okLabel,String? cancelLabel,BuildContext? context,bool dismissible=true,AdaptiveStyle? style}) async {
+    var result = await SfDialog.edit(
+      title: title,
+      message: message,
+      textFields: [textField],
+      okLabel: okLabel,
+      cancelLabel: cancelLabel,
+      context: context,
+      dismissible: dismissible,
+      style: style
+    );
+    return result?.firstOrNull;
+  }
+  static Future<bool> okAlert({String? title,String? message,String? okLabel,BuildContext? context,bool dismissible=true,AdaptiveStyle? style}) async {
+    var result = await SfDialog.okAlert(
+      title: title,
+      message: message,
+      okLabel: okLabel,
+      context: context,
+      dismissible: dismissible,
+      style: style
+    );
+    return result == OkCancelResult.ok;
+  }
+  static Future<bool> okCancelAlert({String? title,String? message,String? okLabel,String? cancelLabel,BuildContext? context,bool dismissible=true,AdaptiveStyle? style}) async {
+    var result = await SfDialog.okCancelAlert(
+      title: title,
+      message: message,
+      okLabel: okLabel,
+      cancelLabel: cancelLabel,
+      context: context,
+      dismissible: dismissible,
+      style: style
+    );
+    return result == OkCancelResult.ok;
+  }
 }
 
 class SfToast{
