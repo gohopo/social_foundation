@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.1.31
+version: 0.1.32
 homepage: https://github.com/gohopo/social_foundation
 publish_to: none
 
@@ -38,7 +38,7 @@ dependencies:
   image_gallery_saver:
     git:
       url: https://github.com/knottx/image_gallery_saver.git
-      ref: knottx-latest
+      ref: 24fd8207a4491c42ed907060bb5bf40c2430131f
   svgaplayer_flutter:
     git:
       url: https://github.com/gohopo/SVGAPlayer-Flutter.git
