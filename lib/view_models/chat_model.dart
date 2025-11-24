@@ -11,7 +11,7 @@ import 'package:social_foundation/widgets/chat_input.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatModel<TConversation extends SfConversation,TMessage extends SfMessage> extends SfRefreshListViewState<TMessage>{
-  SfChatModel(Map args):conversation=args['conversation'],name=args['name']??'',anonymous=args['anonymous']??false{
+  SfChatModel({this.conversation,this.name='',this.anonymous=false}){
     onInitInputModel();
   }
   TConversation? conversation;
