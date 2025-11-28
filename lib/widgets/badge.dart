@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class SfBadge extends StatelessWidget {
   SfBadge({
-    Key? key,
+    super.key,
     this.child,
     this.visible = true,
     this.left,
@@ -12,12 +12,13 @@ class SfBadge extends StatelessWidget {
     this.width = 10,
     this.height = 10,
     this.padding = const EdgeInsets.symmetric(horizontal:2,vertical:1),
+    this.decoration,
+    this.foregroundDecoration,
     this.color = Colors.red,
     this.borderRadius = const BorderRadius.all(Radius.circular(9)),
     this.text,
-    this.textStyle = const TextStyle(fontSize: 8,color: Colors.white)
-  }) : super(key:key);
-
+    this.textStyle = const TextStyle(fontSize:8,color:Colors.white)
+  });
   final Widget? child;
   final bool visible;
   final double? left;
@@ -27,45 +28,40 @@ class SfBadge extends StatelessWidget {
   final double? width;
   final double? height;
   final EdgeInsetsGeometry padding;
+  final BoxDecoration? decoration;
+  final BoxDecoration? foregroundDecoration;
   final Color color;
   final BorderRadius borderRadius;
   final String? text;
   final TextStyle textStyle;
-
-  Widget buildChild(){
-    return child ?? Container();
-  }
-  Widget buildBadge(){
-    return Positioned(
-      left: left,
-      top: top,
-      right: right,
-      bottom: bottom,
-      child: Container(
-        padding: padding,
-        constraints: BoxConstraints(
-          minWidth: width??0,
-          minHeight: height??0
-        ),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: borderRadius
-        ),
-        alignment: Alignment.center,
-        child: text!=null ? Text(text!,style:textStyle) : null,
-      ),
-    );
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(context){
+    if(!visible) return buildChild();
     return Stack(
-      fit: StackFit.passthrough,
       clipBehavior: Clip.none,
-      children: <Widget>[
+      fit: StackFit.passthrough,
+      children: [
         buildChild(),
-        if(visible) buildBadge()
+        buildBadge()
       ],
     );
   }
+  Widget buildBadge() => Positioned(
+    left:left,top:top,right:right,bottom:bottom,
+    child: Container(
+      constraints: BoxConstraints(
+        minWidth: width??0,
+        minHeight: height??0
+      ),
+      padding: padding,
+      alignment: Alignment.center,
+      decoration: decoration ?? BoxDecoration(
+        color: color,
+        borderRadius: borderRadius
+      ),
+      foregroundDecoration: foregroundDecoration,
+      child: text!=null ? Text(text!,style:textStyle) : null,
+    ),
+  );
+  Widget buildChild() => child ?? const SizedBox();
 }
