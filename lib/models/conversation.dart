@@ -14,9 +14,11 @@ abstract class SfConversation<TMessage extends SfMessage>{
   TMessage? lastMessage;
   int? lastMessageAt;
   int top;
+  Map dict;
   SfConversation(Map data)
   :ownerId=data['ownerId']??'',convId=data['convId']??'',name=data['name']??'chat',creator=data['creator'],members=data['members']??[]
-  ,unreadMessagesCount=data['unreadMessagesCount']??0,lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt'],top=data['top']??0;
+  ,unreadMessagesCount=data['unreadMessagesCount']??0,lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt'],top=data['top']??0
+  ,dict=data['dict']??{};
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
     map['ownerId'] = ownerId;
@@ -28,6 +30,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
     map['lastMessage'] = lastMessage!=null ? json.encode(lastMessage?.toMap()) : null;
     map['lastMessageAt'] = lastMessageAt;
     map['top'] = top;
+    map['dict'] = jsonEncode(dict);
     return map;
   }
   void copyWith(SfConversation<TMessage> conversation){
