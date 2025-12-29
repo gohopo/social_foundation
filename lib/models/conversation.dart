@@ -16,7 +16,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
   int top;
   Map dict;
   SfConversation(Map data)
-  :ownerId=data['ownerId']??'',convId=data['convId']??'',name=data['name']??'chat',creator=data['creator'],members=data['members']??[]
+  :ownerId=data['ownerId']??SfLocatorManager.userState.curUserId,convId=data['convId']??'',name=data['name']??'chat',creator=data['creator'],members=data['members']??[]
   ,unreadMessagesCount=data['unreadMessagesCount']??0,lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt'],top=data['top']??0
   ,dict=data['dict']??{};
   Map<String,dynamic> toMap(){
