@@ -12,12 +12,12 @@ abstract class SfConversation<TMessage extends SfMessage>{
   List members;
   int unreadMessagesCount;
   TMessage? lastMessage;
-  int? lastMessageAt;
+  int lastMessageAt;
   int top;
   Map dict;
   SfConversation(Map data)
   :ownerId=data['ownerId']??SfLocatorManager.userState.curUserId,convId=data['convId']??'',name=data['name']??'chat',creator=data['creator'],members=data['members']??[]
-  ,unreadMessagesCount=data['unreadMessagesCount']??0,lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt'],top=data['top']??0
+  ,unreadMessagesCount=data['unreadMessagesCount']??0,lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt']??DateTime.now().millisecondsSinceEpoch,top=data['top']??0
   ,dict=data['dict']??{};
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
@@ -38,7 +38,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
     lastMessage = conversation.lastMessage;
     lastMessageAt = conversation.lastMessageAt;
   }
-  String? get otherId => members.firstWhereOrNull((userId) => userId!=ownerId);
+  String? get otherId => members.length==2 ? members.firstWhereOrNull((userId) => userId!=ownerId) : null;
   Future save();
   static Future update(String ownerId,String convId,Map<String,dynamic> data) async {
     var database = await SfLocatorManager.storageManager.getDatabase();

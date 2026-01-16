@@ -65,8 +65,8 @@ abstract class SfStorageManager{
     await Directory(voiceDirectory).create(recursive:true);
     await Directory(recorderDirectory).create(recursive:true);
   }
-  @protected void onCreateDatabase(Database database,int version);
-  @protected void onUpgradeDatabase(Database database,int oldVersion, int newVersion);
+  @protected Future<void> onCreateDatabase(Database database,int version);
+  @protected Future<void> onUpgradeDatabase(Database database,int oldVersion, int newVersion);
 }
 
 class SfSharedPreferencesStore{
