@@ -45,7 +45,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
   }
   void disposeMessageEvent() => _messageEvent.dispose();
   Future sendMessage({String? msg,required String msgType,Map? msgExtra,Map? attribute}) async {
-    await SfLocatorManager.chatManager.sendMsg(convId:conversation!.convId,msg:await filterKeyword(msg,msgType),msgType:msgType,msgExtra:msgExtra,attribute:attribute);
+    await SfLocatorManager.chatManager.send(conversation:conversation!,msg:await filterKeyword(msg,msgType),msgType:msgType,msgExtra:msgExtra,attribute:attribute);
     scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
   Future<String?> filterKeyword(String? msg,String msgType) async => SfLocatorManager.appState.filterKeyword(msg);

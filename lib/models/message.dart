@@ -12,44 +12,36 @@ import 'package:social_foundation/widgets/cached_image_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SfMessage {
-  int? id;
-  String ownerId;
-  String? msgId;
+  Map attribute;
   String convId;
   String fromId;
-  int timestamp;
-  int status;
-  int? receiptTimestamp;
-  Map attribute;
+  int? id;
   String? msg;
-  String msgType;
   Map msgExtra;
+  String? msgId;
+  String msgType;
+  String ownerId;
+  int? receiptTimestamp;
+  int status;
+  int timestamp;
   SfMessage(Map data)
-  :id=data['id'],ownerId=data['ownerId']??SfLocatorManager.userState.curUserId??'',msgId=data['msgId'],convId=data['convId']??'',fromId=data['fromId']??'',timestamp=data['timestamp']??0
-  ,status=data['status']??SfMessageStatus.none,receiptTimestamp=data['receiptTimestamp'],attribute=data['attribute']??{}
-  ,msg=data['msg'],msgType=data['msgType']??SfMessageType.text,msgExtra=data['msgExtra']??{};
+  :attribute=data['attribute']??{},convId=data['convId']??'',fromId=data['fromId']??'',id=data['id'],msg=data['msg'],msgExtra=data['msgExtra']??{},msgId=data['msgId'],msgType=data['msgType']??SfMessageType.text
+  ,ownerId=data['ownerId']??SfLocatorManager.userState.curUserId??'',receiptTimestamp=data['receiptTimestamp'],status=data['status']??SfMessageStatus.none,timestamp=data['timestamp']??0;
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
-    map['ownerId'] = ownerId;
-    map['msgId'] = msgId;
+    map['attribute'] = json.encode(attribute);
     map['convId'] = convId;
     map['fromId'] = fromId;
-    map['timestamp'] = timestamp;
-    map['status'] = status;
-    map['receiptTimestamp'] = receiptTimestamp;
-    map['attribute'] = json.encode(attribute);
     map['msg'] = msg;
-    map['msgType'] = msgType;
     map['msgExtra'] = json.encode(msgExtra);
+    map['msgId'] = msgId;
+    map['msgType'] = msgType;
+    map['ownerId'] = ownerId;
+    map['receiptTimestamp'] = receiptTimestamp;
+    map['status'] = status;
+    map['timestamp'] = timestamp;
     return map;
   }
-  bool get fromOwner => fromId==ownerId;
-  bool get transient => msgExtra['transient']??false;
-  String get origin => json.encode({
-    'msg': msg,
-    'msgType': msgType,
-    'msgExtra': msgExtra
-  });
   String get des{
     switch(msgType){
       case SfMessageType.text:
@@ -68,6 +60,19 @@ class SfMessage {
         return '';
     }
   }
+  bool get fromOwner => fromId==ownerId;
+  String get origin => json.encode({
+    'msg': msg,
+    'msgType': msgType,
+    'msgExtra': msgExtra
+  });
+  bool get transient => msgExtra['transient']??false;
+  static Future delete(int id) => SfSyncEntity.delete('message',where:'id=?',whereArgs:[id]);
+  static Future deleteAll(String ownerId,String convId) async {
+    var result = await SfSyncEntity.delete('message',where:'ownerId=? and convId=?',whereArgs:[ownerId,convId]);
+    SfMessageClearEvent(convId:convId).emit();
+    return result;
+  }
   bool equalTo(SfMessage other) => msgId!=null&&msgId==other.msgId || id!=null&&id==other.id || this==other;
   String resolveFileUri() => msgExtra['fileKey']!=null ? SfAliyunOss.getFileUrl(msgType,msgExtra['fileKey']) : (attribute['filePath'] ?? '');
   ImageProvider? resolveImage() => msgExtra['fileKey']!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) as ImageProvider : (attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : null);
@@ -82,20 +87,6 @@ class SfMessage {
     else{
       this.id = await database.insert('message',toMap(),conflictAlgorithm:ConflictAlgorithm.replace);
     }
-  }
-  static Future update({int? id,String? msgId,required Map<String,dynamic> data}) async {
-    List<String> where=[];List<Object?> whereArgs=[];
-    if(id!=null){
-      where.add('id=?');
-      whereArgs.add(id);
-    }
-    if(msgId?.isNotEmpty==true){
-      where.add('msgId=?');
-      whereArgs.add(msgId);
-    }
-    if(where.isEmpty) throw '参数不能为空';
-    var database = await GetIt.instance<SfStorageManager>().getDatabase();
-    return database.update('message',data,where:where.join(' and '),whereArgs:whereArgs);
   }
   static Future saveAll<TMessage extends SfMessage>(List<TMessage> messages) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
@@ -124,11 +115,19 @@ class SfMessage {
     if(real==true) where += ' and msgId is not null';
     return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where $where'))!;
   }
-  static Future delete(int id) => SfSyncEntity.delete('message',where:'id=?',whereArgs:[id]);
-  static Future deleteAll(String ownerId,String convId) async {
-    var result = await SfSyncEntity.delete('message',where:'ownerId=? and convId=?',whereArgs:[ownerId,convId]);
-    SfMessageClearEvent(convId:convId).emit();
-    return result;
+  static Future update({int? id,String? msgId,required Map<String,dynamic> data}) async {
+    List<String> where=[];List<Object?> whereArgs=[];
+    if(id!=null){
+      where.add('id=?');
+      whereArgs.add(id);
+    }
+    if(msgId?.isNotEmpty==true){
+      where.add('msgId=?');
+      whereArgs.add(msgId);
+    }
+    if(where.isEmpty) throw '参数不能为空';
+    var database = await GetIt.instance<SfStorageManager>().getDatabase();
+    return database.update('message',data,where:where.join(' and '),whereArgs:whereArgs);
   }
 }
 
@@ -141,11 +140,11 @@ class SfMessageStatus{
   static const int read = 5;//已读
 }
 
-class SfMessageType {
-  static const String text = 'text';
+class SfMessageType{
   static const String image = 'image';
-  static const String voice = 'voice';
-  static const String system = 'system';
   static const String notify = 'notify';
   static const String recall = 'recall';
+  static const String system = 'system';
+  static const String text = 'text';
+  static const String voice = 'voice';
 }

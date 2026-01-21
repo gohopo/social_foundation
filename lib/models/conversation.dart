@@ -5,44 +5,44 @@ import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/locator_manager.dart';
 
 abstract class SfConversation<TMessage extends SfMessage>{
-  String ownerId;
   String convId;
-  String name;
   String? creator;
-  List members;
-  int unreadMessagesCount;
+  Map dict;
   TMessage? lastMessage;
   int lastMessageAt;
+  List members;
+  String name;
+  String ownerId;
   int top;
-  Map dict;
+  int unreadMessagesCount;
   SfConversation(Map data)
-  :ownerId=data['ownerId']??SfLocatorManager.userState.curUserId,convId=data['convId']??'',name=data['name']??'chat',creator=data['creator'],members=data['members']??[]
-  ,unreadMessagesCount=data['unreadMessagesCount']??0,lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt']??DateTime.now().millisecondsSinceEpoch,top=data['top']??0
-  ,dict=data['dict']??{};
+  :convId=data['convId']??'',creator=data['creator'],dict=data['dict']??{},lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt']??DateTime.now().millisecondsSinceEpoch
+  ,members=data['members']??[],name=data['name']??'chat',ownerId=data['ownerId']??SfLocatorManager.userState.curUserId,top=data['top']??0,unreadMessagesCount=data['unreadMessagesCount']??0;
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
-    map['ownerId'] = ownerId;
     map['convId'] = convId;
-    map['name'] = name;
     map['creator'] = creator;
-    map['members'] = json.encode(members);
-    map['unreadMessagesCount'] = unreadMessagesCount;
+    map['dict'] = jsonEncode(dict);
     map['lastMessage'] = lastMessage!=null ? json.encode(lastMessage?.toMap()) : null;
     map['lastMessageAt'] = lastMessageAt;
+    map['members'] = json.encode(members);
+    map['name'] = name;
+    map['ownerId'] = ownerId;
     map['top'] = top;
-    map['dict'] = jsonEncode(dict);
+    map['unreadMessagesCount'] = unreadMessagesCount;
     return map;
   }
+  String? get otherId => type==0 ? members.firstWhereOrNull((userId) => userId!=ownerId) : null;
+  /// 会话类型
+  ///
+  /// 0: 单聊
+  /// 1: 群聊
+  /// 2: 聊天室
+  int get type => dict['__type']??0;
   void copyWith(SfConversation<TMessage> conversation){
     unreadMessagesCount = conversation.unreadMessagesCount;
     lastMessage = conversation.lastMessage;
     lastMessageAt = conversation.lastMessageAt;
-  }
-  String? get otherId => members.length==2 ? members.firstWhereOrNull((userId) => userId!=ownerId) : null;
-  Future save();
-  static Future update(String ownerId,String convId,Map<String,dynamic> data) async {
-    var database = await SfLocatorManager.storageManager.getDatabase();
-    return database.update('conversation',data,where:'ownerId=? and convId=?',whereArgs:[ownerId,convId]);
   }
   Future delete() async {
     var database = await SfLocatorManager.storageManager.getDatabase();
@@ -54,21 +54,26 @@ abstract class SfConversation<TMessage extends SfMessage>{
     await database.delete('conversation',where: 'ownerId=?',whereArgs: [ownerId]);
     SfLocatorManager.chatState.removeAllConversations();
   }
+  Future queryUnreadMessagesCount() async {
+    var result = await SfLocatorManager.requestManager.invokeFunction('app', 'queryConversationUnreadCount', {
+      'userId':ownerId,'convId':convId
+    });
+    unreadMessagesCount += result['count'] as int;
+  }
   Future read() async {
     if(unreadMessagesCount==0) return;
     unreadMessagesCount = 0;
     await update(ownerId,convId,{'unreadMessagesCount':unreadMessagesCount});
     SfLocatorManager.chatState.updateConversation(this);
   }
+  Future save();
   Future toggleTop() async {
     this.top = this.top==0 ? 1 : 0;
     await update(ownerId,convId,{'top':top});
     SfLocatorManager.chatState.updateConversation(this);
   }
-  Future queryUnreadMessagesCount() async {
-    var result = await SfLocatorManager.requestManager.invokeFunction('app', 'queryConversationUnreadCount', {
-      'userId':ownerId,'convId':convId
-    });
-    unreadMessagesCount += result['count'] as int;
+  static Future update(String ownerId,String convId,Map<String,dynamic> data) async {
+    var database = await SfLocatorManager.storageManager.getDatabase();
+    return database.update('conversation',data,where:'ownerId=? and convId=?',whereArgs:[ownerId,convId]);
   }
 }
