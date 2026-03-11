@@ -90,10 +90,12 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     conversation.save();
     SfLocatorManager.chatState.updateConversation(conversation);
   }
-  Future<TMessage> saveMessage(TMessage message,{TConversation? conversation,bool isNew=false}) async {
+  Future<TMessage> saveMessage(TMessage message,{TConversation? conversation,bool isNew=false,int delayEmitEvent=0}) async {
     if(message.attribute['saveMsg']==false) return message;
     if(!message.transient) await message.save();
-    SfMessageEvent(message:message,isNew:isNew).emit();
+
+    Future.delayed(Duration(milliseconds:delayEmitEvent)).then((_) => SfMessageEvent(message:message,isNew:isNew).emit());
+
     if(!message.transient && message.attribute['saveConv']!=false && (message.fromOwner || !isNew)){
       conversation ??= await SfLocatorManager.chatState.queryConversation(message.convId) as TConversation?;
       if(conversation!=null && (isNew || conversation.lastMessage==null || conversation.lastMessage?.id==message.id)){
@@ -102,20 +104,22 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
         saveConversation(conversation);
       }
     }
+
     return message;
   }
-  Future<TMessage> saveMessage2({required TConversation conversation,String? msg,String? msgType,Map? msgExtra,Map? attribute,String? fromId,int? timestamp,int? status}){
+  Future<TMessage> saveMessage2({required TConversation conversation,String? msg,String? msgType,Map? msgExtra,Map? attribute,String? fromId,int? timestamp,int? status,int delayEmitEvent=0}){
     var message = messageFactory2(
       convId:conversation.convId,msg:msg,msgType:msgType,msgExtra:msgExtra,
       attribute:attribute,fromId:fromId,timestamp:timestamp,status:status??SfMessageStatus.sent
     );
-    return saveMessage(message,conversation:conversation,isNew:true);
+    return saveMessage(message,conversation:conversation,isNew:true,delayEmitEvent:delayEmitEvent);
   }
-  Future<TMessage> saveMessage3({required String otherId,String? msg,String? msgType,Map? msgExtra,Map? attribute,String? fromId,int? timestamp,int? status}) async {
+  Future<TMessage> saveMessage3({required String otherId,String? msg,String? msgType,Map? msgExtra,Map? attribute,String? fromId,int? timestamp,int? status,int delayEmitEvent=0}) async {
     var conversation = await queryChatWith(otherId,save:false);
     return saveMessage2(
       conversation:conversation,msg:msg,msgType:msgType,msgExtra:msgExtra,
-      attribute:attribute,fromId:fromId,timestamp:timestamp,status:status
+      attribute:attribute,fromId:fromId,timestamp:timestamp,status:status,
+      delayEmitEvent:delayEmitEvent
     );
   }
   Future<TMessage> send({required TConversation conversation,String? msg,required String msgType,Map? msgExtra,Map? attribute,bool? transient,bool? saveConv,bool? saveMsg}) async {
