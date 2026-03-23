@@ -23,7 +23,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
     map['convId'] = convId;
     map['creator'] = creator;
     map['dict'] = jsonEncode(dict);
-    map['lastMessage'] = lastMessage!=null ? json.encode(lastMessage?.toMap()) : null;
+    map['lastMessage'] = lastMessage!=null ? json.encode({'id':lastMessage!.id,...lastMessage!.toMap()}) : null;
     map['lastMessageAt'] = lastMessageAt;
     map['members'] = json.encode(members);
     map['name'] = name;
