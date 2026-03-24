@@ -42,22 +42,22 @@ class SfMessage {
     map['timestamp'] = timestamp;
     return map;
   }
-  String get des{
+  List<InlineSpan> get des{
     switch(msgType){
       case SfMessageType.text:
-        return msg??'';
+        return msg!=null ? [TextSpan(text:msg)] : [];
       case SfMessageType.image:
-        return '[图片]';
+        return [TextSpan(text:'[图片]')];
       case SfMessageType.voice:
-        return '[声音]';
+        return [TextSpan(text:'[声音]')];
       case SfMessageType.system:
-        return '[系统]';
+        return [TextSpan(text:'[系统]')];
       case SfMessageType.notify:
-        return '[通知]';
+        return [TextSpan(text:'[通知]')];
       case SfMessageType.recall:
-        return '[已撤回]';
+        return [TextSpan(text:'[已撤回]')];
       default:
-        return '';
+        return [];
     }
   }
   bool get fromOwner => fromId==ownerId;
