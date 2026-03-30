@@ -8,11 +8,12 @@ import 'package:social_foundation/widgets/audio_widget.dart';
 import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
-class SfChatInput extends StatelessWidget {
+class SfChatInput extends StatelessWidget{
   SfChatInput({
-    super.key,required this.model,double? accessoryHeight,this.backgroundColor,
+    super.key,required this.model,
+    double? accessoryHeight,this.backgroundColor,
     this.editorBackgroundColor,this.editorColor,this.hintText,
-    this.recorderBackgroundColor,this.recorderColor
+    this.onTap,this.readOnly,this.recorderBackgroundColor,this.recorderColor
   }):accessoryHeight=accessoryHeight??262;
   final SfChatInputModel model;
   final double accessoryHeight;
@@ -20,6 +21,8 @@ class SfChatInput extends StatelessWidget {
   final Color? editorBackgroundColor;
   final Color? editorColor;
   final String? hintText;
+  final VoidCallback? onTap;
+  final bool? readOnly;
   final Color? recorderBackgroundColor;
   final Color? recorderColor;
   @override
@@ -56,9 +59,6 @@ class SfChatInput extends StatelessWidget {
     child: TextField(
       controller: model.textEditingController,
       focusNode: model.focusNode,
-      textInputAction: model.textInputAction,
-      onEditingComplete: model.onTapSend,
-      style: TextStyle(fontSize:16,color:editorColor),
       decoration: InputDecoration(
         hintText: hintText??'友善是交流的起点~',
         hintStyle: TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8)),
@@ -70,6 +70,11 @@ class SfChatInput extends StatelessWidget {
         disabledBorder: InputBorder.none,
         enabledBorder: InputBorder.none,
       ),
+      onEditingComplete: model.onTapSend,
+      onTap: onTap,
+      readOnly: readOnly??false,
+      style: TextStyle(fontSize:16,color:editorColor),
+      textInputAction: model.textInputAction,
     )
   );
   Widget buildSend(BuildContext context,{EdgeInsets? padding}){
@@ -131,7 +136,13 @@ class SfChatInput extends StatelessWidget {
   );
 }
 
-class SfChatInputModel extends SfViewState {
+class SfChatInputModel extends SfViewState{
+  SfChatInputModel({
+    this.onAccessoryChanged,
+    this.onPickImage,
+    this.onRecordVoice,
+    this.onTapSend,
+  });
   TextEditingController textEditingController = TextEditingController();
   FocusNode focusNode = FocusNode();
   TextInputAction textInputAction = TextInputAction.send;
@@ -145,14 +156,21 @@ class SfChatInputModel extends SfViewState {
   final void Function(String path,int duration)? onRecordVoice;
   final void Function(SfChatInputModel model)? onAccessoryChanged;
   bool editorHasFocus = false;
-  SfChatInputModel({
-    this.onTapSend,
-    this.onPickImage,
-    this.onRecordVoice,
-    this.onAccessoryChanged
-  });
-
   int get curAccessory => _curAccessory;
+  @override
+  Future initData() async {
+    focusNode.addListener((){
+      editorHasFocus = focusNode.hasFocus;
+      if(focusNode.hasFocus){
+        changeAccessory(-1);
+      }
+    });
+  }
+  @override
+  void dispose(){
+    focusNode.dispose();
+    super.dispose();
+  }
   void changeAccessory(int curAccessory){
     if(curAccessory!=-1 && focusNode.hasFocus){
       focusNode.unfocus();
@@ -188,20 +206,5 @@ class SfChatInputModel extends SfViewState {
     recorderTips = '按住 说话';
     notifyListeners();
     if(!isCancelled) onRecordVoice?.call(path,duration);
-  }
-
-  @override
-  Future initData() async {
-    focusNode.addListener((){
-      editorHasFocus = focusNode.hasFocus;
-      if(focusNode.hasFocus){
-        changeAccessory(-1);
-      }
-    });
-  }
-  @override
-  void dispose(){
-    focusNode.dispose();
-    super.dispose();
   }
 }
