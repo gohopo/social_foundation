@@ -11,7 +11,7 @@ import 'package:social_foundation/utils/aliyun_helper.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SfMessage {
+class SfMessage{
   Map attribute;
   String convId;
   String fromId;
@@ -77,16 +77,11 @@ class SfMessage {
   String resolveFileUri() => msgExtra['fileKey']!=null ? SfAliyunOss.getFileUrl(msgType,msgExtra['fileKey']) : (attribute['filePath'] ?? '');
   ImageProvider? resolveImage() => msgExtra['fileKey']!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) as ImageProvider : (attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : null);
   Future save() async {
+    if(id!=null) return update(id:id,data:toMap());
+    var count = await update(ownerId:ownerId,msgId:msgId,data:toMap());
+    if(count>0) return;
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
-    if(id!=null){
-      await database.update('message',toMap(),where:'id=?',whereArgs:[id]);
-    }
-    else if(msgType==SfMessageType.recall){
-      await database.update('message',toMap(),where:'msgId=?',whereArgs:[msgId]);
-    }
-    else{
-      this.id = await database.insert('message',toMap(),conflictAlgorithm:ConflictAlgorithm.replace);
-    }
+    this.id = await database.insert('message',toMap(),conflictAlgorithm:ConflictAlgorithm.replace);
   }
   static Future saveAll<TMessage extends SfMessage>(List<TMessage> messages) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
@@ -96,7 +91,7 @@ class SfMessage {
         batch.update('message',message.toMap(),where:'id=?',whereArgs:[message.id]);
       }
       else if(message.msgType==SfMessageType.recall){
-        batch.update('message',message.toMap(),where:'msgId=?',whereArgs:[message.msgId]);
+        batch.update('message',message.toMap(),where:'ownerId=? and msgId=?',whereArgs:[message.ownerId,message.msgId]);
       }
       else{
         batch.insert('message',message.toMap(),conflictAlgorithm:ConflictAlgorithm.replace);
@@ -104,7 +99,9 @@ class SfMessage {
     }
     var results = await batch.commit();
     for(var i=0;i<messages.length;++i){
-      messages[i].id ??= results[i] as int;
+      var message = messages[i];
+      if(message.msgType==SfMessageType.recall) continue;
+      message.id ??= results[i] as int;
     }
   }
   static Future<int> sumMessageCount(String ownerId,String convId,String userId,{int? startTime,int? endTime,bool? real}) async {
@@ -115,17 +112,19 @@ class SfMessage {
     if(real==true) where += ' and msgId is not null';
     return Sqflite.firstIntValue(await database.rawQuery('select count(*) from message where $where'))!;
   }
-  static Future update({int? id,String? msgId,required Map<String,dynamic> data}) async {
+  static Future<int> update({int? id,String? ownerId,String? msgId,required Map<String,dynamic> data}) async {
     List<String> where=[];List<Object?> whereArgs=[];
     if(id!=null){
       where.add('id=?');
       whereArgs.add(id);
     }
     if(msgId?.isNotEmpty==true){
+      where.add('ownerId=?');
+      whereArgs.add(ownerId ?? SfLocatorManager.userState.curUserId);
       where.add('msgId=?');
       whereArgs.add(msgId);
     }
-    if(where.isEmpty) throw '参数不能为空';
+    if(where.isEmpty) return 0;
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     return database.update('message',data,where:where.join(' and '),whereArgs:whereArgs);
   }
