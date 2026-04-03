@@ -16,7 +16,7 @@ abstract class SfConversation<TMessage extends SfMessage>{
   int top;
   int unreadMessagesCount;
   SfConversation(Map data)
-  :convId=data['convId']??'',creator=data['creator'],dict=data['dict']??{},lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt']??DateTime.now().millisecondsSinceEpoch
+  :convId=data['convId']??'',creator=data['creator'],dict=<dynamic,dynamic>{...data['dict']??{}},lastMessage=data['lastMessage'],lastMessageAt=data['lastMessageAt']??DateTime.now().millisecondsSinceEpoch
   ,members=data['members']??[],name=data['name']??'chat',ownerId=data['ownerId']??SfLocatorManager.userState.curUserId,top=data['top']??0,unreadMessagesCount=data['unreadMessagesCount']??0;
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();

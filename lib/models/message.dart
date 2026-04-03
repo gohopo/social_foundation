@@ -25,7 +25,7 @@ class SfMessage{
   int status;
   int timestamp;
   SfMessage(Map data)
-  :attribute=data['attribute']??{},convId=data['convId']??'',fromId=data['fromId']??'',id=data['id'],msg=data['msg'],msgExtra=data['msgExtra']??{},msgId=data['msgId'],msgType=data['msgType']??SfMessageType.text
+  :attribute=<dynamic,dynamic>{...data['attribute']??{}},convId=data['convId']??'',fromId=data['fromId']??'',id=data['id'],msg=data['msg'],msgExtra=<dynamic,dynamic>{...data['msgExtra']??{}},msgId=data['msgId'],msgType=data['msgType']??SfMessageType.text
   ,ownerId=data['ownerId']??SfLocatorManager.userState.curUserId??'',receiptTimestamp=data['receiptTimestamp'],status=data['status']??SfMessageStatus.none,timestamp=data['timestamp']??0;
   Map<String,dynamic> toMap(){
     var map = Map<String,dynamic>();
