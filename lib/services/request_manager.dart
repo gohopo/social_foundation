@@ -29,6 +29,7 @@ class SfRequestManager{
   void onError(Object error){
     if(error is DioException){
       if(error.response==null) throw '网络异常';
+      if(error.response!.statusCode==302) throw '服务器连接异常';
       throw error.response?.data['errorMessage'];
     }
   }
