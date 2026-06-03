@@ -5,7 +5,7 @@ import 'dart:ui' as ui show Image,ImageByteFormat;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:social_foundation/models/app.dart';
@@ -85,6 +85,6 @@ class SfImageHelper{
       var status = await SfLocatorManager.appState.getPermission(Permission.photos);
       if(!status.isGranted) throw '没有存储权限!';
     }
-    return ImageGallerySaver.saveImage(imageBytes,quality:quality,name:name,isReturnImagePathOfIOS:isReturnImagePathOfIOS);
+    return ImageGallerySaverPlus.saveImage(imageBytes,quality:quality,name:name,isReturnImagePathOfIOS:isReturnImagePathOfIOS);
   }
 }

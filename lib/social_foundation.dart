@@ -13,7 +13,7 @@ export 'package:flutter_sound/flutter_sound.dart' hide PlayerState;
 export 'package:flutter_spinkit/flutter_spinkit.dart';
 export 'package:fluwx/fluwx.dart';
 export 'package:get_it/get_it.dart';
-export 'package:image_gallery_saver/image_gallery_saver.dart';
+export 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 export 'package:image_picker/image_picker.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:permission_handler/permission_handler.dart';

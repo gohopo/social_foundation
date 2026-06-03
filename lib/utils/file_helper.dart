@@ -1,4 +1,4 @@
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:social_foundation/services/locator_manager.dart';
@@ -24,7 +24,7 @@ class SfFileHelper{
   static Future saveFile(String filePath,{String? name,bool isReturnPathOfIOS=false}) async {
     var status = await SfLocatorManager.appState.getPermission(Permission.manageExternalStorage);
     if(!status.isGranted) throw '没有存储权限!';
-    return ImageGallerySaver.saveFile(filePath,name:name,isReturnPathOfIOS:isReturnPathOfIOS);
+    return ImageGallerySaverPlus.saveFile(filePath,name:name,isReturnPathOfIOS:isReturnPathOfIOS);
   }
   static Future saveFileFromUrl(String url,{String? name,bool isReturnPathOfIOS=false}) async {
     var status = await SfLocatorManager.appState.getPermission(Permission.manageExternalStorage);
