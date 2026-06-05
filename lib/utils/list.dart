@@ -1,6 +1,14 @@
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+
+class SfListHelper{
+  static List<T> join<T>(Iterable<T> list,T separator) => list.foldIndexed<List<T>>([],(index,t,x){
+    if(index!=0) t.add(separator);
+    return t..add(x);
+  });
+}
 
 class SfQueue<T>{
   SfQueue(this.onPop);

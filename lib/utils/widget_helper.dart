@@ -1,9 +1,6 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
+import 'package:social_foundation/utils/list.dart';
 
 class SfWidgetHelper{
-  static List<Widget> join(Iterable<Widget> list,Widget separator) => list.foldIndexed<List<Widget>>([],(index,t,x){
-    if(index!=0) t.add(separator);
-    return t..add(x);
-  });
+  static List<Widget> join(Iterable<Widget> list,Widget separator) => SfListHelper.join<Widget>(list,separator);
 }
