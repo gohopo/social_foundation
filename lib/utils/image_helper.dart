@@ -5,9 +5,9 @@ import 'dart:ui' as ui show Image,ImageByteFormat;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 import 'package:social_foundation/models/app.dart';
 import 'package:social_foundation/services/locator_manager.dart';
 
@@ -80,11 +80,11 @@ class SfImageHelper{
     }));
     return files;
   }
-  static Future saveImage(Uint8List imageBytes,{int quality=80,String? name,bool isReturnImagePathOfIOS=false}) async {
+  static Future<SaveResult> saveImage(Uint8List imageBytes,{int quality=100,String? fileName,String? extension,bool skipIfExists=false}) async {
     if(!SfApp.isHmOS){
       var status = await SfLocatorManager.appState.getPermission(Permission.photos);
       if(!status.isGranted) throw '没有存储权限!';
     }
-    return ImageGallerySaverPlus.saveImage(imageBytes,quality:quality,name:name,isReturnImagePathOfIOS:isReturnImagePathOfIOS);
+    return SaverGallery.saveImage(imageBytes,quality:quality,fileName:fileName??DateTime.now().millisecondsSinceEpoch.toString(),extension:extension,skipIfExists:skipIfExists);
   }
 }

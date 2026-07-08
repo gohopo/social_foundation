@@ -1,6 +1,6 @@
-import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
 
@@ -21,15 +21,15 @@ class SfFileHelper{
   static String getUrlName(String url) => getFileName(getUrlWithoutQueries(url));
   static String getUrlNameWithoutExt(String url) => getFileNameWithoutExt(getUrlWithoutQueries(url));
   static String getUrlExt(String url) => getFileExt(getUrlWithoutQueries(url));
-  static Future saveFile(String filePath,{String? name,bool isReturnPathOfIOS=false}) async {
+  static Future<SaveResult> saveFile(String filePath,{String? fileName,bool skipIfExists=false}) async {
     var status = await SfLocatorManager.appState.getPermission(Permission.manageExternalStorage);
     if(!status.isGranted) throw '没有存储权限!';
-    return ImageGallerySaverPlus.saveFile(filePath,name:name,isReturnPathOfIOS:isReturnPathOfIOS);
+    return SaverGallery.saveFile(filePath:filePath,fileName:fileName??DateTime.now().millisecondsSinceEpoch.toString(),skipIfExists:skipIfExists);
   }
-  static Future saveFileFromUrl(String url,{String? name,bool isReturnPathOfIOS=false}) async {
+  static Future<SaveResult> saveFileFromUrl(String url,{String? fileName,bool skipIfExists=false}) async {
     var status = await SfLocatorManager.appState.getPermission(Permission.manageExternalStorage);
     if(!status.isGranted) throw '没有存储权限!';
     var file = await SfCacheManager().getSingleFile(url);
-    return saveFile(file.path,name:name,isReturnPathOfIOS:isReturnPathOfIOS);
+    return saveFile(file.path,fileName:fileName,skipIfExists:skipIfExists);
   }
 }

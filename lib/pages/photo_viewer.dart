@@ -89,8 +89,8 @@ class SfPhotoViewerVM extends SfViewState{
     try{
       var bytes = await SfImageHelper.convertProviderToBytes(widget.images[index]);
       if(bytes==null) throw '';
-      var result = await SfImageHelper.saveImage(bytes,quality:100,name:'${widget.heroPrefix}_${DateTime.now().millisecondsSinceEpoch}');
-      if(result['isSuccess']==false) throw result['errorMessage'];
+      var result = await SfImageHelper.saveImage(bytes,quality:100,fileName:'${widget.heroPrefix}_${DateTime.now().millisecondsSinceEpoch}',extension:'jpg');
+      if(!result.isSuccess) throw result.errorMessage??'';
       GetIt.instance<SfToast>().onShowText('保存成功');
     }
     catch(error){
