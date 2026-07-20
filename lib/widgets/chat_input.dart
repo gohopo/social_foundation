@@ -11,13 +11,16 @@ import 'package:social_foundation/widgets/view_state.dart';
 class SfChatInput extends StatelessWidget{
   SfChatInput({
     super.key,required this.model,
-    double? accessoryHeight,this.backgroundColor,
+    double? accessoryHeight,this.backgroundColor,this.children1,this.children2,this.children3,
     this.editorBackgroundColor,this.editorColor,this.hintText,
     this.onTap,this.readOnly,this.recorderBackgroundColor,this.recorderColor
   }):accessoryHeight=accessoryHeight??262;
   final SfChatInputModel model;
   final double accessoryHeight;
   final Color? backgroundColor;
+  final List<Widget>? children1;
+  final List<Widget>? children2;
+  final List<Widget>? children3;
   final Color? editorBackgroundColor;
   final Color? editorColor;
   final String? hintText;
@@ -28,28 +31,34 @@ class SfChatInput extends StatelessWidget{
   @override
   Widget build(context) => SfProvider<SfChatInputModel>(
     model: model,
-    builder: (_,model,__) => Container(
+    builder: (_,model,__) => buildView(context),
+  );
+  Widget buildInputBar(BuildContext context) => Row(
+    children: [
+      SizedBox(width:15),
+      Expanded(
+        child: buildEditor(context)
+      ),
+      buildSend(context)
+    ]
+  );
+  Widget buildView(BuildContext context){
+    return Container(
+      padding: EdgeInsets.only(top:15),
       color: backgroundColor,
       child: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.only(left:15,top:15,bottom:15),
-            child: Row(
-              children: buildInputBar(context)
-            )
-          ),
+          if(children1!=null) ...children1!,
+          buildInputBar(context),
+          if(children2!=null) ...children2!,
           buildToolbar(context),
+          if(children3!=null) ...children3!,
+          SizedBox(height:15),
           buildAccessoryContainer(context)
         ]
       ),
-    ),
-  );
-  List<Widget> buildInputBar(BuildContext context) => [
-    Expanded(
-      child: buildEditor(context)
-    ),
-    buildSend(context)
-  ];
+    );
+  }
   Widget buildEditor(BuildContext context) => Container(
     padding: EdgeInsets.symmetric(horizontal:11),
     decoration: BoxDecoration(
@@ -88,8 +97,9 @@ class SfChatInput extends StatelessWidget{
   }
   Widget buildToolbar(BuildContext context){
     var list = buildMenuList(context);
+    if(list.isEmpty) return const SizedBox();
     return Container(
-      padding: EdgeInsets.only(bottom:16),
+      padding: EdgeInsets.only(top:15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: list.asMap().keys.map((index) => GestureDetector(
