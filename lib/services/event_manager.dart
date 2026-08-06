@@ -26,6 +26,8 @@ class SfEvent<T extends _SfEventBase> extends _SfEventBase{
   }
 }
 
+class SfCacheClearedEvent extends SfEvent<SfCacheClearedEvent>{}
+
 class SfClientDisconnectedEvent extends SfEvent<SfClientDisconnectedEvent>{}
 class SfClientResumingEvent extends SfEvent<SfClientResumingEvent>{}
 

@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_foundation/services/event_manager.dart';
 import 'package:social_foundation/states/user_state.dart';
 import 'package:social_foundation/utils/utils.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
@@ -53,6 +54,7 @@ abstract class SfStorageManager{
     await deleteDirectory('image');
     await deleteDirectory('recorder');
     await onInit();
+    SfCacheClearedEvent().emit();
   }
   
   @protected Future onInit() async {

@@ -6,6 +6,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 // ignore: implementation_imports
 import 'package:flutter_cache_manager/src/compat/file_service_compat.dart';
 import 'package:http/http.dart' as http;
+import 'package:social_foundation/services/event_manager.dart';
 import 'package:social_foundation/utils/aliyun_helper.dart';
 import 'package:social_foundation/utils/file_helper.dart';
 import 'package:social_foundation/utils/utils.dart';
@@ -195,24 +196,30 @@ class SfCachedImage extends StatelessWidget{
 class _SfCachedImageModel extends SfViewState{
   _SfCachedImageModel(this.widget);
   SfCachedImage widget;
+  var _cacheClearedEvent = SfCacheClearedEvent();
   String? ext;
   late bool network;
   File? file;
-
+  @override
+  Future initData() async {
+    _cacheClearedEvent.listen((_) => reload());
+    reload();
+  }
+  @override
+  void onRefactor(covariant _SfCachedImageModel newState){
+    var changed = widget.imagePath!=newState.widget.imagePath;
+    widget = newState.widget;
+    if(changed) reload();
+  }
   void reload() async {
     if(widget.imagePath != null){
       ext = SfFileHelper.getUrlExt(widget.imagePath!);
       network = SfFileHelper.isUrl(widget.imagePath!);
       if(network) file = await SfCacheManager().getSingleFile(widget.imagePath!);
     }
+    else{
+      file = null;
+    }
     notifyListeners();
-  }
-
-  @override
-  Future initData() async => reload();
-  @override
-  void onRefactor(newState){
-    var model = newState as _SfCachedImageModel;
-    if(widget.imagePath!=model.widget.imagePath) reload();
   }
 }

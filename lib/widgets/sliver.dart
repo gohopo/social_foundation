@@ -142,9 +142,9 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
   Widget buildTitle(BuildContext context,double shrinkOffset,bool overlapsContent) => titleBuilder?.call(this,context,shrinkOffset,overlapsContent) ?? Text(title??'',style:TextStyle(fontSize:iconSize,fontWeight:FontWeight.w500,color:getTextColor(shrinkOffset)));
   List<Widget> buildActions(BuildContext context,double shrinkOffset,bool overlapsContent) => actionsBuilder?.call(this,context,shrinkOffset,overlapsContent) ?? actions;
   double getOpacity(double shrinkOffset) => shrinkOffset / (this.maxExtent - this.minExtent);
-  Color getBarBackgroundColor(double shrinkOffset) => barBackgroundColor.withOpacity(getOpacity(shrinkOffset));
-  Color getIconColor(double shrinkOffset) => shrinkOffset<=shrinkOffsetThreshold ? collapsedIconColor : expandedColor.withOpacity(getOpacity(shrinkOffset));
-  Color getTextColor(double shrinkOffset) => shrinkOffset<=shrinkOffsetThreshold ? collapsedTextColor : expandedColor.withOpacity(getOpacity(shrinkOffset));
+  Color getBarBackgroundColor(double shrinkOffset) => barBackgroundColor.withValues(alpha:getOpacity(shrinkOffset));
+  Color getIconColor(double shrinkOffset) => shrinkOffset<=shrinkOffsetThreshold ? collapsedIconColor : expandedColor.withValues(alpha:getOpacity(shrinkOffset));
+  Color getTextColor(double shrinkOffset) => shrinkOffset<=shrinkOffsetThreshold ? collapsedTextColor : expandedColor.withValues(alpha:getOpacity(shrinkOffset));
   void updateStatusBarBrightness(double shrinkOffset){
     if(shrinkOffset<=collapsedHeight && statusBarBrightness!=collapsedBrightness) {
       statusBarBrightness = collapsedBrightness;

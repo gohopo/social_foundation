@@ -110,7 +110,7 @@ class SfDialog{
 class SfEasyDialog extends SfDialog{
   Color get dialogBackgroundColor => Colors.white;
   double get dialogTitleFontSize => 18;
-  Color get dialogTitleColor => Colors.black.withOpacity(0.85);
+  Color get dialogTitleColor => Colors.black.withValues(alpha:0.85);
   Color get dialogContentColor => Color.fromRGBO(51,51,51,1);
   Color get dialogActionBorderColor => Color.fromRGBO(217,217,217,1);
   Color get dialogActionTextColor => Color.fromRGBO(51,51,51,1);
