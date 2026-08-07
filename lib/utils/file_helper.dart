@@ -21,15 +21,15 @@ class SfFileHelper{
   static String getUrlName(String url) => getFileName(getUrlWithoutQueries(url));
   static String getUrlNameWithoutExt(String url) => getFileNameWithoutExt(getUrlWithoutQueries(url));
   static String getUrlExt(String url) => getFileExt(getUrlWithoutQueries(url));
-  static Future<SaveResult> saveFile(String filePath,{String? fileName,bool skipIfExists=false}) async {
+  static Future<SaveResult> saveFile(String filePath,{String? fileName,String? albumPath,bool skipIfExists=false}) async {
     var status = await SfLocatorManager.appState.getPermission(Permission.manageExternalStorage);
     if(!status.isGranted) throw '没有存储权限!';
-    return SaverGallery.saveFile(filePath:filePath,fileName:fileName??DateTime.now().millisecondsSinceEpoch.toString(),skipIfExists:skipIfExists);
+    return SaverGallery.saveFile(filePath:filePath,fileName:fileName??DateTime.now().millisecondsSinceEpoch.toString(),albumPath:albumPath,skipIfExists:skipIfExists);
   }
-  static Future<SaveResult> saveFileFromUrl(String url,{String? fileName,bool skipIfExists=false}) async {
+  static Future<SaveResult> saveFileFromUrl(String url,{String? fileName,String? albumPath,bool skipIfExists=false}) async {
     var status = await SfLocatorManager.appState.getPermission(Permission.manageExternalStorage);
     if(!status.isGranted) throw '没有存储权限!';
     var file = await SfCacheManager().getSingleFile(url);
-    return saveFile(file.path,fileName:fileName,skipIfExists:skipIfExists);
+    return saveFile(file.path,fileName:fileName,albumPath:albumPath,skipIfExists:skipIfExists);
   }
 }

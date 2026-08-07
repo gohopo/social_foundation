@@ -80,11 +80,11 @@ class SfImageHelper{
     }));
     return files;
   }
-  static Future<SaveResult> saveImage(Uint8List imageBytes,{int quality=100,String? fileName,String? extension,bool skipIfExists=false}) async {
+  static Future<SaveResult> saveImage(Uint8List imageBytes,{int quality=100,String? fileName,String? extension,String? albumPath,bool skipIfExists=false}) async {
     if(!SfApp.isHmOS){
       var status = await SfLocatorManager.appState.getPermission(Permission.photos);
       if(!status.isGranted) throw '没有存储权限!';
     }
-    return SaverGallery.saveImage(imageBytes,quality:quality,fileName:fileName??DateTime.now().millisecondsSinceEpoch.toString(),extension:extension,skipIfExists:skipIfExists);
+    return SaverGallery.saveImage(imageBytes,quality:quality,fileName:fileName??DateTime.now().millisecondsSinceEpoch.toString(),extension:extension,albumPath:albumPath,skipIfExists:skipIfExists);
   }
 }

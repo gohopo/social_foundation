@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SfPath{
-  static Path getScaledPath(Path path,double x,double y){
+  static Path getScaledPath(Path path,double x,[double? y,double? z]){
     var matrix4 = Matrix4.identity();
-    matrix4.scale(x,y);
+    matrix4.scaleByDouble(x, y ?? x, z ?? x, 1.0);
     return path.transform(matrix4.storage);
   }
   static Path getHeartPath(){
