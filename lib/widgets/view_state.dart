@@ -1,5 +1,5 @@
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 enum SfViewStatus {
   idle,
@@ -106,44 +106,33 @@ abstract class SfListViewState<T> extends SfViewState {
   void onCompleted(List<T> data){}
 }
 
-abstract class SfRefreshListViewState<T> extends SfListViewState<T> {
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
-  RefreshController get refreshController => _refreshController;
+abstract class SfRefreshListViewState<T> extends SfListViewState<T>{
+  EasyRefreshController refreshController = EasyRefreshController(controlFinishRefresh:true,controlFinishLoad:true);
   @override
   void dispose(){
-    _refreshController.dispose();
+    refreshController.dispose();
     super.dispose();
   }
   @override
   Future refresh() async {
     try{
       var data = await refreshUnsafe();
-      refreshController.refreshCompleted();
-      if(loadNoData(data.length)){
-        refreshController.loadNoData();
-      }
-      else{
-        refreshController.loadComplete();
-      }
+      refreshController.finishRefresh();
+      refreshController.finishLoad(loadNoData(data.length)?IndicatorResult.noMore:IndicatorResult.none);
     }
     catch(e){
-      refreshController.refreshFailed();
+      refreshController.finishRefresh(IndicatorResult.fail);
       setError(e);
     }
   }
   Future<List<T>?> loadMore() async {
     try{
       var data = await loadMoreUnsafe();
-      if(loadNoData(data.length)){
-        refreshController.loadNoData();
-      }
-      else{
-        refreshController.loadComplete();
-      }
+      refreshController.finishLoad(loadNoData(data.length)?IndicatorResult.noMore:IndicatorResult.success);
       return data;
     }
     catch(e){
-      refreshController.loadFailed();
+      refreshController.finishLoad(IndicatorResult.fail);
       return null;
     }
   }

@@ -1,6 +1,6 @@
 name: social_foundation
 description: social foundation
-version: 0.2.17
+version: 0.3.0
 homepage: https://github.com/gohopo/social_foundation
 publish_to: none
 
@@ -17,6 +17,7 @@ dependencies:
   common_utils: 2.1.0
   device_info_plus: 11.1.0
   dio: 5.7.0
+  easy_refresh: 3.5.1
   event_bus: 2.0.0
   extended_image: 8.3.0
   flutter:
@@ -32,9 +33,6 @@ dependencies:
   path_provider: 2.1.5
   permission_handler: 12.0.3
   provider: 6.1.2
-  pull_to_refresh:
-    git:
-      url: https://github.com/gohopo/flutter_pulltorefresh.git
   saver_gallery: 5.1.0
   shared_preferences: 2.5.5
   shimmer: 2.0.0
