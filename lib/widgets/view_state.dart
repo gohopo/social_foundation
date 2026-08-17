@@ -118,7 +118,9 @@ abstract class SfRefreshListViewState<T> extends SfListViewState<T>{
     try{
       var data = await refreshUnsafe();
       refreshController.finishRefresh();
-      refreshController.finishLoad(loadNoData(data.length)?IndicatorResult.noMore:IndicatorResult.none);
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        refreshController.finishLoad(loadNoData(data.length)?IndicatorResult.noMore:IndicatorResult.none);
+      });
     }
     catch(e){
       refreshController.finishRefresh(IndicatorResult.fail);
