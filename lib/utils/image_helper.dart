@@ -8,7 +8,6 @@ import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:saver_gallery/saver_gallery.dart';
-import 'package:social_foundation/models/app.dart';
 import 'package:social_foundation/services/locator_manager.dart';
 
 class SfImageHelper{
@@ -38,7 +37,7 @@ class SfImageHelper{
     maxFileSize??=6;preferredCameraDevice??=CameraDevice.rear;
     File? file;
     try{
-      if(source!=ImageSource.gallery || !SfApp.isHmOS){
+      if(source!=ImageSource.gallery || Platform.isIOS){
         var status = await SfLocatorManager.appState.getPermission(source==ImageSource.gallery?Permission.photos:Permission.camera);
         if(!status.isGranted) throw '!';
       }
@@ -60,7 +59,7 @@ class SfImageHelper{
     maxFileSize??=6;maxLength??=9;
     List<File> files = [];
     try{
-      if(!SfApp.isHmOS){
+      if(Platform.isIOS){
         var status = await SfLocatorManager.appState.getPermission(Permission.photos);
         if(!status.isGranted) throw '!';
       }
@@ -81,7 +80,7 @@ class SfImageHelper{
     return files;
   }
   static Future<SaveResult> saveImage(Uint8List imageBytes,{int quality=100,String? fileName,String? extension,String? albumPath,bool skipIfExists=false}) async {
-    if(!SfApp.isHmOS){
+    if(Platform.isIOS){
       var status = await SfLocatorManager.appState.getPermission(Permission.photos);
       if(!status.isGranted) throw '没有存储权限!';
     }
