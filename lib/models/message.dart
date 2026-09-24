@@ -11,35 +11,27 @@ import 'package:social_foundation/utils/aliyun_helper.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SfMessage{
-  Map attribute;
-  String convId;
-  String fromId;
-  int? id;
+abstract class SfMessage extends SfMessageBase{
   String? msg;
-  Map msgExtra;
-  String? msgId;
-  String msgType;
-  String ownerId;
+  late String msgType;
   int? receiptTimestamp;
-  int status;
-  int timestamp;
-  SfMessage(Map data)
-  :attribute=<dynamic,dynamic>{...data['attribute']??{}},convId=data['convId']??'',fromId=data['fromId']??'',id=data['id'],msg=data['msg'],msgExtra=<dynamic,dynamic>{...data['msgExtra']??{}},msgId=data['msgId'],msgType=data['msgType']??SfMessageType.text
-  ,ownerId=data['ownerId']??SfLocatorManager.userState.curUserId??'',receiptTimestamp=data['receiptTimestamp'],status=data['status']??SfMessageStatus.none,timestamp=data['timestamp']??0;
-  Map<String,dynamic> toMap(){
-    var map = Map<String,dynamic>();
-    map['attribute'] = json.encode(attribute);
-    map['convId'] = convId;
-    map['fromId'] = fromId;
+  late int status;
+  SfMessage(super.data);
+  @override
+  void populate(Map data){
+    super.populate(data);
+    msg = data['msg'];
+    msgType = data['msgType']??SfMessageType.text;
+    receiptTimestamp = data['receiptTimestamp'];
+    status = data['status']??SfMessageStatus.none;
+  }
+  @override
+  Map<String,dynamic> toJson(){
+    var map = super.toJson();
     map['msg'] = msg;
-    map['msgExtra'] = json.encode(msgExtra);
-    map['msgId'] = msgId;
     map['msgType'] = msgType;
-    map['ownerId'] = ownerId;
     map['receiptTimestamp'] = receiptTimestamp;
     map['status'] = status;
-    map['timestamp'] = timestamp;
     return map;
   }
   List<InlineSpan> get des{
@@ -60,41 +52,38 @@ class SfMessage{
         return [];
     }
   }
-  bool get fromOwner => fromId==ownerId;
   String get origin => json.encode({
     'msg': msg,
     'msgType': msgType,
     'msgExtra': msgExtra
   });
-  bool get transient => msgExtra['transient']??false;
   static Future delete(int id) => SfSyncEntity.delete('message',where:'id=?',whereArgs:[id]);
   static Future deleteAll(String ownerId,String convId) async {
     var result = await SfSyncEntity.delete('message',where:'ownerId=? and convId=?',whereArgs:[ownerId,convId]);
     SfMessageClearEvent(convId:convId).emit();
     return result;
   }
-  bool equalTo(SfMessage other) => msgId!=null&&msgId==other.msgId || id!=null&&id==other.id || this==other;
   String resolveFileUri() => msgExtra['fileKey']!=null ? SfAliyunOss.getFileUrl(msgType,msgExtra['fileKey']) : (attribute['filePath'] ?? '');
   ImageProvider? resolveImage() => msgExtra['fileKey']!=null ? SfCacheManager.provider(SfAliyunOss.getImageUrl(msgExtra['fileKey'])) as ImageProvider : (attribute['filePath']!=null ? FileImage(File(attribute['filePath'])) : null);
   Future save() async {
-    if(id!=null) return update(id:id,data:toMap());
-    var count = await update(ownerId:ownerId,msgId:msgId,data:toMap());
+    if(id!=null) return update(data:toDB(),id:id);
+    var count = await update(data:toDB(),msgId:msgId,ownerId:ownerId);
     if(count>0) return;
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
-    this.id = await database.insert('message',toMap(),conflictAlgorithm:ConflictAlgorithm.replace);
+    this.id = await database.insert('message',toDB(),conflictAlgorithm:ConflictAlgorithm.replace);
   }
   static Future saveAll<TMessage extends SfMessage>(List<TMessage> messages) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     var batch = database.batch();
     for(var message in messages){
       if(message.id!=null){
-        batch.update('message',message.toMap(),where:'id=?',whereArgs:[message.id]);
+        batch.update('message',message.toDB(),where:'id=?',whereArgs:[message.id]);
       }
       else if(message.msgType==SfMessageType.recall){
-        batch.update('message',message.toMap(),where:'ownerId=? and msgId=?',whereArgs:[message.ownerId,message.msgId]);
+        batch.update('message',message.toDB(),where:'ownerId=? and msgId=?',whereArgs:[message.ownerId,message.msgId]);
       }
       else{
-        batch.insert('message',message.toMap(),conflictAlgorithm:ConflictAlgorithm.replace);
+        batch.insert('message',message.toDB(),conflictAlgorithm:ConflictAlgorithm.replace);
       }
     }
     var results = await batch.commit();
@@ -128,6 +117,60 @@ class SfMessage{
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
     return database.update('message',data,where:where.join(' and '),whereArgs:whereArgs);
   }
+}
+
+abstract class SfMessageBase extends SfEntity{
+  late Map attribute;
+  late String convId;
+  late String fromId;
+  int? id;
+  late Map msgExtra;
+  String? msgId;
+  late String ownerId;
+  late int timestamp;
+  SfMessageBase(super.data);
+  @override
+  void populate(Map data){
+    attribute = <dynamic,dynamic>{...data['attribute']??{}};
+    convId = data['convId']??'';
+    fromId = data['fromId']??'';
+    id = data['id'];
+    msgExtra = <dynamic,dynamic>{...data['msgExtra']??{}};
+    msgId = data['msgId'];
+    ownerId = data['ownerId']??SfLocatorManager.userState.curUserId??'';
+    timestamp = data['timestamp']??0;
+  }
+  @override
+  void populateDB(Map data){
+    super.populateDB({
+      ...data,
+      'attribute': json.decode(data['attribute']??'{}'),
+      'msgExtra': json.decode(data['msgExtra']??'{}')
+    });
+  }
+  @override
+  Map<String,dynamic> toDB(){
+    var map = toJson();
+    map['attribute'] = json.encode(attribute);
+    map.remove('id');
+    map['msgExtra'] = json.encode(msgExtra);
+    return map;
+  }
+  @override
+  Map<String,dynamic> toJson() => {
+    'attribute': attribute,
+    'convId': convId,
+    'fromId': fromId,
+    'id': id,
+    'msgExtra': msgExtra,
+    'msgId': msgId,
+    'ownerId': ownerId,
+    'timestamp': timestamp,
+  };
+  bool get fromOwner => fromId==ownerId;
+  bool get transient => msgExtra['transient']??false;
+  @override
+  bool equals(covariant SfMessageBase other) => msgId!=null&&msgId==other.msgId || id!=null&&id==other.id || super.equals(other);
 }
 
 class SfMessageStatus{

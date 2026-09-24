@@ -58,7 +58,7 @@ abstract class SfChatModel<TConversation extends SfConversation,TMessage extends
       if(!message.fromOwner) convRead();
     }
     else{
-      var index = list.indexWhere((data) => data.equalTo(message));
+      var index = list.indexWhere((data) => data.equals(message));
       if(index != -1) list[index] = message;
     }
     notifyListeners();
