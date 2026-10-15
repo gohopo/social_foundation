@@ -53,6 +53,26 @@ class SfAliyunOss{
     return 0;
   }
   static String getFilePath(String dir,String fileKey) => p.join(GetIt.instance<SfStorageManager>().getFileDirectory(dir),fileKey);
+  /// 上传时写进 OSS 对象元数据的 Content-Type，按后缀推。
+  /// 后缀是录音/选图时就定下的（见 ADR 0010「语音文件的格式与上传元数据：后缀必须等于真实容器」），
+  /// 所以这里只做映射、不做嗅探；认不出的一律 application/octet-stream，与改动前一致。
+  static const Map<String,String> _contentTypeByExt = {
+    '.m4a': 'audio/mp4',
+    '.mp4': 'audio/mp4',
+    '.aac': 'audio/aac',
+    '.mp3': 'audio/mpeg',
+    '.wav': 'audio/wav',
+    '.amr': 'audio/amr',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+  };
+  static String getContentTypeByFileName(String? fileName){
+    if(fileName==null) return 'application/octet-stream';
+    return _contentTypeByExt[SfFileHelper.getFileExt(fileName).toLowerCase()] ?? 'application/octet-stream';
+  }
   static Future<Response?> uploadImage(String filePath,{String? fileName,ProgressCallback? onSendProgress,bool? cache}){
     return uploadFile(SfMessageType.image,filePath,fileName:fileName,onSendProgress: onSendProgress,cache:cache);
   }
@@ -113,7 +133,10 @@ class SfAliyunOss{
       'OSSAccessKeyId': accessKeyId,
       'success_action_status': '200',
       'signature': signature,
-      'file': file
+      //OSS 表单域，优先级高于 file 字段自带的 Content-Type（ADR 0010）：
+      //iOS 播放时只看对象元数据，写对它，播放就不必再靠文件名猜格式
+      'x-oss-content-type': getContentTypeByFileName(fileName),
+      'file': file  //必须是最后一个表单域，OSS 规则
     });
     Dio dio = Dio(BaseOptions(responseType: ResponseType.plain));
     return dio.post(endPoint,data: data,onSendProgress:onSendProgress);

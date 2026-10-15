@@ -57,7 +57,14 @@ class SfAudioRecorder extends SfViewState{
         androidWillPauseWhenDucked: true,
       ));
     }
-    await _soundRecorder?.startRecorder(codec:Codec.aacADTS,toFile:'${SfLocatorManager.storageManager.recorderDirectory}/${SfUtils.uuid()}.aac');
+    //鸿蒙的 flutter_sound 不接受 aacADTS：它把请求静默降级成 AVRecorder 的 AAC，
+    //产物是 MPEG-4 容器（CFT_MPEG_4A）。所以鸿蒙显式要 aacMP4、后缀跟着用 .m4a，
+    //让「后缀＝真实容器」成立——iOS 就是按后缀/元数据判格式的（ADR 0010）
+    var isHmOS = SfApp.isHmOS;
+    await _soundRecorder?.startRecorder(
+      codec:isHmOS ? Codec.aacMP4 : Codec.aacADTS,
+      toFile:'${SfLocatorManager.storageManager.recorderDirectory}/${SfUtils.uuid()}.${isHmOS ? 'm4a' : 'aac'}'
+    );
     onStartRecord?.call();
   }
   Future onStop({bool? isCancelled}) async {
