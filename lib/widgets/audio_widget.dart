@@ -223,7 +223,17 @@ class SfAudioPlayerWidget extends StatelessWidget {
   final bool? earpieceMode;
   final ValueChanged<SfAudioPlayerModel>? onReady;
 
-  int getSecond(SfAudioPlayerModel model) => ((model.position>0?duration-model.position:duration)/1000).ceil();
+  /// 播放结束后 audioplayers 先广播 completed（position 归 0），紧接着
+  /// positionUpdater.stopAndUpdate() 又补发一次 position≈duration 的位移事件，
+  /// 最终 position 停在总时长上、isPlaying 已是 false。所以秒数不能用
+  /// position>0 判断：没在播放时显示总时长，播放中显示剩余秒数，且至少 1"。
+  int getSecond(SfAudioPlayerModel model){
+    var total = duration > 0 ? duration : model.duration;
+    if(total <= 0) return 0;
+    if(!model.isPlaying || model.position <= 0) return (total/1000).ceil();
+    var remaining = total - model.position;
+    return remaining > 0 ? (remaining/1000).ceil() : 1;
+  }
   Widget buildContainer(BuildContext context,SfAudioPlayerModel model){
     return Container(
       width: width,
@@ -236,12 +246,14 @@ class SfAudioPlayerWidget extends StatelessWidget {
       child: buildChildren(context, model),
     );
   }
+  /// 播放结束后 position 仍停在总时长上，用 position<=0 判断会让播完后的点击
+  /// 只走 stop() 而不重播，这里按 isPlaying 切换，播完再点一次即可重播。
   onTapContainer(SfAudioPlayerModel model){
-    if(model.position <= 0){
-      model.play();
+    if(model.isPlaying){
+      model.stop();
     }
     else{
-      model.stop();
+      model.play();
     }
     onTap?.call();
   }
