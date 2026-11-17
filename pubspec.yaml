@@ -33,7 +33,10 @@ dependencies:
   path_provider: 2.1.5
   permission_handler: 12.0.3
   provider: 6.1.2
-  saver_gallery: 5.1.0
+  saver_gallery:
+    git:
+      url: https://github.com/gohopo/saver_gallery.git
+      ref: hm
   shared_preferences: 2.5.5
   shimmer: 2.0.0
   sqflite: 2.4.2
@@ -51,5 +54,8 @@ flutter:
         package: com.gohopo.social_foundation
         pluginClass: SocialFoundationPlugin
       ios:
+        pluginClass: SocialFoundationPlugin
+      ohos:
+        package: com.gohopo.social_foundation
         pluginClass: SocialFoundationPlugin
   uses-material-design: true

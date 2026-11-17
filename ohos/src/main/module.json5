@@ -1,0 +1,10 @@
+{
+  "module": {
+    "name": "social_foundation",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ]
+  }
+}
