@@ -26,7 +26,7 @@ abstract class SfConversation<TMessage extends SfMessage> extends SfEntity{
     lastMessageAt = data['lastMessageAt']??DateTime.now().millisecondsSinceEpoch;
     members = data['members']??[];
     name = data['name']??'chat';
-    ownerId = data['ownerId']??SfLocatorManager.userState.curUserId;
+    ownerId = data['ownerId']??SfLocatorManager.userState.curUserId??'';
     top = data['top']??0;
     unreadMessagesCount = data['unreadMessagesCount']??0;
   }
