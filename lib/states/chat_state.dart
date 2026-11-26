@@ -13,9 +13,9 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
   Future<List<TConversation>> loadData(bool refresh){
     return SfLocatorManager.chatManager.queryConversations() as Future<List<TConversation>>;
   }
-  Future<TConversation> queryConversation(String convId) async {
+  Future<TConversation> queryConversation(String convId,{String? name,String? otherId,int? type}) async {
     var conversation = getConversation(convId);
-    return conversation ?? SfLocatorManager.chatManager.queryConversation(convId) as Future<TConversation>;
+    return conversation ?? SfLocatorManager.chatManager.queryConversation(convId,name:name,otherId:otherId,type:type) as Future<TConversation>;
   }
   void removeAllConversations(){
     list.clear();

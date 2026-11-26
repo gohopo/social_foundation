@@ -18,7 +18,7 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   Future convQuit(String conversationId);
   Future convRead(TConversation conversation);
   Future convRecall(String messageID,{String? conversationId,int? timestamp});
-  Future<TConversation> getConversation(String conversationId);
+  Future<TConversation> getConversation(String conversationId,{String? name,String? otherId,int? type});
   Future<TMessage?> getMessage({int? id,String? msgId});
   Future init() async {}
   Future login(String userId,{String? token});
@@ -64,18 +64,18 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
     }
     return conversation;
   }
-  Future<TConversation> queryConversation(String convId) async {
+  Future<TConversation> queryConversation(String convId,{String? name,String? otherId,int? type}) async {
     var conversation = await queryConversationOrNull(convId);
-    return conversation ?? await getConversation(convId);
+    return conversation ?? await getConversation(convId,name:name,otherId:otherId,type:type);
   }
   Future<TConversation?> queryConversationOrNull(String convId) async {
     var database = await SfLocatorManager.storageManager.getDatabase();
     var result = await database.query('conversation',where:'ownerId=? and convId=?',whereArgs:[SfLocatorManager.userState.curUserId,convId],limit:1);
     return result.isNotEmpty ? (conversationFactory({})..populateDB(result[0])) : null;
   }
-  Future<TConversation> queryConversationWith(String otherId) async {
+  Future<TConversation> queryConversationWith(String otherId,{String? name,int? type}) async {
     var conversation = await queryConversationWithOrNull(otherId);
-    return conversation ?? await getConversation(otherId);
+    return conversation ?? await getConversation(otherId,name:name,otherId:otherId,type:type);
   }
   Future<TConversation?> queryConversationWithOrNull(String otherId) async {
     var database = await SfLocatorManager.storageManager.getDatabase();
