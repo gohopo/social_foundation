@@ -6,16 +6,17 @@ import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfRollingNumber extends StatelessWidget{
-  SfRollingNumber({
-    Key? key,
+  const SfRollingNumber({
+    super.key,
     required this.number,
     required this.style,
     this.duration = const Duration(milliseconds:400)
-  }) : super(key:key);
+  });
   final String? number;
   final TextStyle style;
   final Duration duration;
 
+  @override
   Widget build(_) => SfProvider<SfRollingNumberVM>(
     model: SfRollingNumberVM(this),
     builder: (_,model,__) => AnimatedBuilder(
@@ -42,7 +43,7 @@ class SfRollingNumber extends StatelessWidget{
             alignment: Alignment(0,-1 + animation.value),
             heightFactor: 0.5,
             child: Column(
-              children: ['0','1','2','3','4','5','6','7','8','9'].map((num) => Text(num,style:style)).toList(),
+              children: ['0','1','2','3','4','5','6','7','8','9'].map((x) => Text(x,style:style)).toList(),
             )
           )
         )
@@ -57,14 +58,16 @@ class SfRollingNumberVM extends SfViewState{
   late List<String> oldNumbers;
   List<String>? numbers;
 
+  @override
   Future initDataVsync(vsync){
     controller = AnimationController(duration:widget.duration,vsync:vsync);
     rolling();
     return super.initDataVsync(vsync);
   }
-  void onRefactor(covariant SfRollingNumberVM model){
-    if(model.widget.number!=widget.number){
-      widget = model.widget;
+  @override
+  void onRefactor(covariant SfRollingNumberVM newState){
+    if(newState.widget.number!=widget.number){
+      widget = newState.widget;
       rolling();
     }
   }
@@ -86,14 +89,14 @@ class SfRollingNumberVM extends SfViewState{
 }
 
 class SfRollingNumberEnhanced extends StatelessWidget{
-  SfRollingNumberEnhanced({
-    Key? key,
+  const SfRollingNumberEnhanced({
+    super.key,
     this.number,
     this.duration = const Duration(milliseconds:400),
     required this.height,
     required this.path,
     this.slotImage = '8'
-  }) : super(key:key);
+  });
   final String? number;
   final Duration duration;
   final double height;
@@ -150,14 +153,17 @@ class SfRollingNumberEnhancedModel extends SfViewState{
   late List<String> oldNumbers;
   List<String>? numbers;
 
+  @override
   Future initDataVsync(vsync) async {
     controller = AnimationController(duration:widget.duration,vsync:vsync);
     rolling();
   }
+  @override
   void dispose(){
     controller.dispose();
     super.dispose();
   }
+  @override
   void onRefactor(SfViewState newState){
     var state = newState as SfRollingNumberEnhancedModel;
     if(state.widget.number!=widget.number){
@@ -185,7 +191,8 @@ class SfRollingNumberEnhancedModel extends SfViewState{
 }
 
 class SfAnimatedNumber extends StatelessWidget{
-  SfAnimatedNumber({
+  const SfAnimatedNumber({
+    super.key,
     this.number,
     this.style,
     this.duration = const Duration(milliseconds:400),
@@ -213,11 +220,14 @@ class SfAnimatedNumberModel extends SfViewState{
   Timer? _timer;
   List<double> _frameList = [];
 
+  @override
   Future initData() async => animate();
+  @override
   void dispose(){
     stop();
     super.dispose();
   }
+  @override
   void onRefactor(SfViewState newState){
     var state = newState as SfAnimatedNumberModel;
     if(state.widget.number!=widget.number){
@@ -228,7 +238,7 @@ class SfAnimatedNumberModel extends SfViewState{
   void animate() async {
     stop();
     if(widget.number==null || widget.number==number) return;
-    if(number==null) number = widget.number;
+    number ??= widget.number;
     _frameList = [];
     var random = Random();
     int count = widget.duration.inMilliseconds*widget.framesPerSecond~/1000;
@@ -251,13 +261,13 @@ class SfAnimatedNumberModel extends SfViewState{
   void onUpdate(timer){
     number = _frameList.removeAt(0);
     notifyListeners();
-    if(_frameList.length==0) stop();
+    if(_frameList.isEmpty) stop();
   }
 }
 
 class SfFlipNumberEnhanced extends StatelessWidget{
-  SfFlipNumberEnhanced({
-    Key? key,
+  const SfFlipNumberEnhanced({
+    super.key,
     this.number,
     this.duration = const Duration(milliseconds:400),
     this.path,
@@ -269,7 +279,7 @@ class SfFlipNumberEnhanced extends StatelessWidget{
     this.numberContainerSize = const Size(33,46),
     this.numberContainerMargin = const EdgeInsets.symmetric(horizontal:1.5),
     this.numberContainerDecoration = numberContainerDefaultDecoration
-  }) : super(key:key);
+  });
   final String? number;
   final Duration duration;
   final String? path;
@@ -330,6 +340,7 @@ class SfFlipNumberEnhanced extends StatelessWidget{
     ],
   );
 
+  @override
   Widget build(BuildContext context) => SfProvider<SfFlipNumberEnhancedVM>(
     model: SfFlipNumberEnhancedVM(this),
     builder: (_,model,__) => AnimatedBuilder(
@@ -349,6 +360,7 @@ class SfFlipNumberEnhancedVM extends SfViewState{
   List<String>? numbers;
   late Animation<double> rotateX;
   bool isReversePhase = false;
+  @override
   Future initDataVsync(vsync) async {
     controller = AnimationController(duration:widget.duration,vsync:vsync);
     controller.addStatusListener((status){
@@ -361,10 +373,12 @@ class SfFlipNumberEnhancedVM extends SfViewState{
     rotateX = Tween(begin:0.0001,end:pi/2).animate(controller);
     flip();
   }
+  @override
   void dispose(){
     controller.dispose();
     super.dispose();
   }
+  @override
   void onRefactor(SfViewState newState){
     var state = newState as SfFlipNumberEnhancedVM;
     if(state.widget.number!=widget.number){

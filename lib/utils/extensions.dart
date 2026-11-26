@@ -25,6 +25,6 @@ extension SfSizeExtension on num {
 
 extension SfNumExtension on num {
   String toStringWithFraction(int fractionDigits){
-    return this.toStringAsFixed(fractionDigits).replaceAll(RegExp(r'([.]*0+)(?!.*\d)'),'');
+    return toStringAsFixed(fractionDigits).replaceAll(RegExp(r'([.]*0+)(?!.*\d)'),'');
   }
 }

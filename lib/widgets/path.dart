@@ -162,8 +162,8 @@ class SfTrapezoidClipper extends CustomClipper<Path>{
 class SfCubicPath{
   static CatmullRomSpline getCatmullRomSpline(List<Offset> controlPoints) => CatmullRomSpline(
     controlPoints,
-    startHandle: Offset(0.099, 0.102),
-    endHandle: Offset(0.91, 0.66),
+    startHandle: const Offset(0.099, 0.102),
+    endHandle: const Offset(0.91, 0.66),
     tension: 0.0,
   );
   static List<Offset> getDots(CatmullRomSpline catmullRomSpline,Size size,{double start=0,double end=1}){
@@ -174,7 +174,9 @@ class SfCubicPath{
   static Path getPath(List<Offset> dots){
     var path = Path();
     path.moveTo(dots.first.dx, dots.first.dy);
-    dots.forEach((x) => path.lineTo(x.dx, x.dy));
+    for (var x in dots) {
+      path.lineTo(x.dx, x.dy);
+    }
     return path;
   }
 }
@@ -184,6 +186,7 @@ class SfCubicChartClipper extends CustomClipper<Path>{
   CatmullRomSpline catmullRomSpline;
   Offset Function(Size size,Offset dot)? dotFn;
   
+  @override
   Path getClip(Size size){
     final dots = SfCubicPath.getDots(catmullRomSpline,size).map((x) => dotFn?.call(size,x)??x).toList();
     return SfCubicPath.getPath(dots)
@@ -191,6 +194,7 @@ class SfCubicChartClipper extends CustomClipper<Path>{
       ..lineTo(dots.first.dx,size.height)
       ..close();
   }
+  @override
   bool shouldReclip(covariant CustomClipper<Path> oldClipper){
     var oldie = oldClipper as SfCubicChartClipper;
     return controlPoints.length!=oldie.controlPoints.length || this!=oldie;

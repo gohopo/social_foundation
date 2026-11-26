@@ -20,7 +20,7 @@ class SfDialog{
       _cancelFunc = cancelFunc;
       return builder(this);
     },
-    animationDuration: animationDuration ?? Duration(milliseconds:250),
+    animationDuration: animationDuration ?? const Duration(milliseconds:250),
     animationReverseDuration: animationReverseDuration,
     wrapAnimation: wrapAnimation ?? (controller,cancelFunc,widget) => Material(
       color: Colors.transparent,
@@ -42,7 +42,7 @@ class SfDialog{
     ignoreContentClick: ignoreContentClick ?? false,
     onlyOne: onlyOne ?? true,
     onClose: onClose,
-    backgroundColor: backgroundColor ?? Color.fromRGBO(221,221,221,0.6),
+    backgroundColor: backgroundColor ?? const Color.fromRGBO(221,221,221,0.6),
     duration: duration,
   );
   void close() => _cancelFunc?.call();
@@ -111,19 +111,19 @@ class SfEasyDialog extends SfDialog{
   Color get dialogBackgroundColor => Colors.white;
   double get dialogTitleFontSize => 18;
   Color get dialogTitleColor => Colors.black.withValues(alpha:0.85);
-  Color get dialogContentColor => Color.fromRGBO(51,51,51,1);
-  Color get dialogActionBorderColor => Color.fromRGBO(217,217,217,1);
-  Color get dialogActionTextColor => Color.fromRGBO(51,51,51,1);
+  Color get dialogContentColor => const Color.fromRGBO(51,51,51,1);
+  Color get dialogActionBorderColor => const Color.fromRGBO(217,217,217,1);
+  Color get dialogActionTextColor => const Color.fromRGBO(51,51,51,1);
   double get sheetTitleFontSize => 16;
   Color get sheetTitleColor => Colors.black;
   Color get sheetActionBackgroundColor => Colors.white;
-  Color get sheetActionTextColor => Color.fromRGBO(51,51,51,1);
-  Color get sheetActionSeparatorColor => Color.fromRGBO(232,232,232,1);
+  Color get sheetActionTextColor => const Color.fromRGBO(51,51,51,1);
+  Color get sheetActionSeparatorColor => const Color.fromRGBO(232,232,232,1);
 
   Widget buildDialog({Widget? child,BoxConstraints? constraints}){
     return Container(
-      constraints: constraints ?? BoxConstraints.tightFor(width:250),
-      padding: EdgeInsets.all(3),
+      constraints: constraints ?? const BoxConstraints.tightFor(width:250),
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         color: dialogBackgroundColor,
         borderRadius: BorderRadius.circular(10)
@@ -133,15 +133,15 @@ class SfEasyDialog extends SfDialog{
   }
   Widget buildTitle(String title,double fontSize,Color color) => Text(title,style:TextStyle(fontSize:fontSize,color:color),textAlign:TextAlign.center);
   Widget buildContent({String? content,List<InlineSpan>? contentSpans}) => Container(
-    margin: EdgeInsets.only(left:7,bottom:10),
+    margin: const EdgeInsets.only(left:7,bottom:10),
     child: Text.rich(TextSpan(
       style: TextStyle(fontSize:14,color:dialogContentColor),
       children: contentSpans ?? (content!=null ? [TextSpan(text:content)] : null)
     )),
   );
   Widget buildAction(int index,String action) => Container(
-    margin: EdgeInsets.symmetric(horizontal:15),
-    padding: EdgeInsets.symmetric(horizontal:14,vertical:4),
+    margin: const EdgeInsets.symmetric(horizontal:15),
+    padding: const EdgeInsets.symmetric(horizontal:14,vertical:4),
     decoration: BoxDecoration(
       border: Border.all(width:0.5,color:dialogActionBorderColor),
       borderRadius: BorderRadius.circular(2)
@@ -153,8 +153,8 @@ class SfEasyDialog extends SfDialog{
     decoration: BoxDecoration(
       color: sheetActionBackgroundColor,
       borderRadius: BorderRadius.vertical(
-        top: index==0||splitLast==true&&index==length-1?Radius.circular(10):Radius.zero,
-        bottom: index==length-1||splitLast==true&&index==length-2?Radius.circular(10):Radius.zero
+        top: index==0||splitLast==true&&index==length-1?const Radius.circular(10):Radius.zero,
+        bottom: index==length-1||splitLast==true&&index==length-2?const Radius.circular(10):Radius.zero
       )
     ),
     foregroundDecoration: BoxDecoration(
@@ -196,12 +196,12 @@ class SfEasyDialog extends SfDialog{
       title: title,
       body: content,
       footer: Container(
-        margin: EdgeInsets.only(top:10,bottom:3),
+        margin: const EdgeInsets.only(top:10,bottom:3),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: actions.asMap().keys.map((index) => GestureDetector(
             onTap: (){
-              this.close();
+              close();
               completer.complete(index);
             },
             child: actions[index]
@@ -238,13 +238,13 @@ class SfEasyDialog extends SfDialog{
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if(title != null) Padding(
-              padding: EdgeInsets.only(left:10,right:10,bottom:16),
+              padding: const EdgeInsets.only(left:10,right:10,bottom:16),
               child: title,
             ),
             Column(
               children: actions.asMap().keys.map((index) => GestureDetector(
                 onTap: (){
-                  this.close();
+                  close();
                   completer.complete(index);
                 },
                 child: actions[index]
@@ -261,7 +261,7 @@ class SfEasyDialog extends SfDialog{
   }
   void onShowFrame({Widget? title,Widget? body,Widget? footer,Alignment? alignment,Duration? animationDuration,Duration? animationReverseDuration,WrapAnimation? wrapToastAnimation,bool? clickClose,VoidCallback? onClose,Color? backgroundColor,Duration? duration}) => onShowCustomFrame(
     header: Padding(
-      padding: EdgeInsets.only(bottom:3),
+      padding: const EdgeInsets.only(bottom:3),
       child: title,
     ),
     body:body,footer:footer,alignment:alignment,animationDuration:animationDuration,animationReverseDuration:animationReverseDuration,wrapToastAnimation:wrapToastAnimation,clickClose:clickClose,onClose:onClose,backgroundColor:backgroundColor,duration:duration
@@ -385,10 +385,10 @@ class SfToast{
     text: text,
     backgroundColor: backgroundColor ?? Colors.transparent,
     align: align ?? const Alignment(0, 0.8),
-    contentPadding: contentPadding ?? EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 7),
+    contentPadding: contentPadding ?? const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 7),
     contentColor: contentColor ?? Colors.black54,
-    borderRadius: borderRadius ?? BorderRadius.all(Radius.circular(8)),
-    textStyle: textStyle ?? TextStyle(fontSize: 17, color: Colors.white)
+    borderRadius: borderRadius ?? const BorderRadius.all(Radius.circular(8)),
+    textStyle: textStyle ?? const TextStyle(fontSize: 17, color: Colors.white)
   );
   void onShowLoading({double? size,Color? color}) => onShowCustomLoading(SpinKitCircle(
     size: size ?? 50.0,

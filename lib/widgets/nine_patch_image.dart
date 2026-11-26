@@ -6,13 +6,13 @@ import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfNinePatchImage extends StatelessWidget{
-  SfNinePatchImage({
-    Key? key,
+  const SfNinePatchImage({
+    super.key,
     required this.image,
     required this.centerSlice,
     this.color,
     this.child
-  }):super(key:key);
+  });
   final ImageProvider? image;
   final EdgeInsets centerSlice;
   final Color? color;
@@ -57,9 +57,11 @@ class SfNinePatchImageModel extends SfViewState{
     if(!synchronousCall) notifyListeners();
   }
 
+  @override
   Future initData() async {
     _resolveImage();
   }
+  @override
   void dispose() {
     _imageStream?.removeListener(ImageStreamListener(
       _handleImage,
@@ -68,6 +70,7 @@ class SfNinePatchImageModel extends SfViewState{
     image = null;
     super.dispose();
   }
+  @override
   void onRefactor(SfViewState newState){
     var model = newState as SfNinePatchImageModel;
     if(!(widget.image==model.widget.image && widget.centerSlice==model.widget.centerSlice)){
@@ -78,7 +81,7 @@ class SfNinePatchImageModel extends SfViewState{
 }
 
 class SfNinePatchImagePainter extends CustomPainter{
-  SfNinePatchImagePainter(this.image,EdgeInsets centerSlice,this.color):centerSlice=centerSlice;
+  SfNinePatchImagePainter(this.image,this.centerSlice,this.color);
   ui.Image? image;
   EdgeInsets centerSlice;
   Color? color;

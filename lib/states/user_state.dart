@@ -4,12 +4,15 @@ import 'package:social_foundation/models/user.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfUserState<TUser extends SfUser> extends SfViewState{
-  Map<String,TUser> _users = {};
+  final Map<String,TUser> _users = {};
   String? _curUserId;
 
   TUser? operator [](String? userId) => _users[userId];
   String? get curUserId => _curUserId;
   TUser? get curUser => _users[_curUserId];
+  void checkAccessWith(String otherId,[String error='']){
+    
+  }
   Future<TUser?> queryUser(String userId,bool fetch) async => this[userId];
   Future<TUser?> queryUserEx(bool Function(TUser user) test) async => _users.values.firstWhereOrNull(test);
   void updateStateUser(dynamic user) => setUser(user);

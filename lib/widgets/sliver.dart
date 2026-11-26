@@ -87,7 +87,7 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
   double get minExtent => collapsedHeight + paddingTop;
   @override
   Widget build(BuildContext context,double shrinkOffset,bool overlapsContent){
-    this.updateStatusBarBrightness(shrinkOffset);
+    updateStatusBarBrightness(shrinkOffset);
     return SizedBox(
       width:MediaQuery.of(context).size.width,height:expandedHeight,
       child: Stack(
@@ -116,17 +116,17 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
     child: Row(
       children: [
         if(Navigator.canPop(context)) Padding(
-          padding: EdgeInsets.only(left:15),
+          padding: const EdgeInsets.only(left:15),
           child: buildGoBackButton(context,shrinkOffset,overlapsContent),
         ),
         Expanded(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal:10),
+            padding: const EdgeInsets.symmetric(horizontal:10),
             child: buildTitle(context,shrinkOffset,overlapsContent),
           )
         ),
         Padding(
-          padding: EdgeInsets.only(right:15),
+          padding: const EdgeInsets.only(right:15),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: buildActions(context,shrinkOffset,overlapsContent),
@@ -141,7 +141,7 @@ class SfSliverStickyAppBarDelegate extends SliverPersistentHeaderDelegate{
   );
   Widget buildTitle(BuildContext context,double shrinkOffset,bool overlapsContent) => titleBuilder?.call(this,context,shrinkOffset,overlapsContent) ?? Text(title??'',style:TextStyle(fontSize:iconSize,fontWeight:FontWeight.w500,color:getTextColor(shrinkOffset)));
   List<Widget> buildActions(BuildContext context,double shrinkOffset,bool overlapsContent) => actionsBuilder?.call(this,context,shrinkOffset,overlapsContent) ?? actions;
-  double getOpacity(double shrinkOffset) => shrinkOffset / (this.maxExtent - this.minExtent);
+  double getOpacity(double shrinkOffset) => shrinkOffset / (maxExtent - minExtent);
   Color getBarBackgroundColor(double shrinkOffset) => barBackgroundColor.withValues(alpha:getOpacity(shrinkOffset));
   Color getIconColor(double shrinkOffset) => shrinkOffset<=shrinkOffsetThreshold ? collapsedIconColor : expandedColor.withValues(alpha:getOpacity(shrinkOffset));
   Color getTextColor(double shrinkOffset) => shrinkOffset<=shrinkOffsetThreshold ? collapsedTextColor : expandedColor.withValues(alpha:getOpacity(shrinkOffset));

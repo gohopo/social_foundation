@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfProvider<T extends SfViewState> extends StatelessWidget{
-  SfProvider({
+  const SfProvider({
+    super.key,
     this.stateKey,
     required this.model,
     required this.builder,
@@ -20,20 +21,20 @@ class SfProvider<T extends SfViewState> extends StatelessWidget{
   Widget build(_) => SfProviderEnhanced<T>(
     onModelReady: (vsync, model) => model.initDataVsync(vsync),
     onModelRefactor: (model, newModel) => model.onRefactor(newModel),
-    key:stateKey,model:model,builder:builder,child:child,autoDispose:autoDispose,
+    key:stateKey,model:model,builder:builder,autoDispose:autoDispose,child:child,
   );
 }
 
 class SfProviderEnhanced<T extends SfViewState> extends StatefulWidget{
-  SfProviderEnhanced({
-    Key? key,
+  const SfProviderEnhanced({
+    super.key,
     required this.model,
     required this.builder,
     this.child,
     this.onModelReady,
     this.onModelRefactor,
     this.autoDispose = false,
-  }) : super(key:key);
+  });
   final T model;
   final ValueWidgetBuilder<T> builder;
   final Widget? child;

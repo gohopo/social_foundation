@@ -29,28 +29,29 @@ class SfUserConsumer<TUser extends SfUser> extends StatelessWidget {
     return SfProviderEnhanced<SfUserState>(
       model: GetIt.instance<SfUserState>(),
       onModelReady: (vsync,model){
-        if(this.user==null && this.userId!=null){
-          model.queryUser(this.userId!,this.fetch);
+        if(user==null && userId!=null){
+          model.queryUser(userId!,fetch);
         }
       },
-      builder: (context,model,child) => consumer(context,this.user??model[this.userId] as TUser?,child),
-      child: this.child,
+      builder: (context,model,child) => consumer(context,user??model[userId] as TUser?,child),
+      child: child,
     );
   }
 }
 
 class SfUserConsumerEx<TUser extends SfUser> extends SfUserConsumer<TUser>{
   SfUserConsumerEx({
-    Key? key,
-    String? userId,
-    TUser? user,
-    required ValueWidgetBuilder<TUser?> builder,
-    Widget? child,
-    bool fetch = false,
+    super.key,
+    super.userId,
+    super.user,
+    required super.builder,
+    super.child,
+    super.fetch,
     this.onUserChanged
-  }):super(key:key,userId:userId,user:user,builder:builder,child:child,fetch:fetch);
+  });
   final void Function(TUser? oldUser,TUser? newUser)? onUserChanged;
 
+  @override
   Widget consumer(BuildContext context,TUser? user,Widget? child) => SfProvider<_SfUserConsumerExModel>(
     model: _SfUserConsumerExModel<TUser>(this,user),
     builder: (context,model,child) => super.consumer(context,user,child)

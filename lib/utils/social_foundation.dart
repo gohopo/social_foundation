@@ -1,8 +1,8 @@
 import 'package:flutter/services.dart';
 
 class SocialFoundation{
-  static final SocialFoundation instance = new SocialFoundation();
-  static const MethodChannel _channel = const MethodChannel('social_foundation');
+  static final SocialFoundation instance = SocialFoundation();
+  static const MethodChannel _channel = MethodChannel('social_foundation');
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');

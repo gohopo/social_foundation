@@ -5,8 +5,8 @@ import 'package:social_foundation/widgets/cached_image_provider.dart';
 
 typedef SfAvatarBuilder<T extends SfAvatar> = Widget Function(BuildContext context,T avatar,ImageProvider image);
 class SfAvatar extends StatelessWidget{
-  SfAvatar({
-    Key? key,
+  const SfAvatar({
+    super.key,
     required this.user,
     this.width = 45,
     this.height = 45,
@@ -20,7 +20,7 @@ class SfAvatar extends StatelessWidget{
     this.builder,
     this.imageLongSide = 200,
     this.preventDefault
-  }) : super(key:key);
+  });
   final SfUser? user;
   final double width;
   final double height;

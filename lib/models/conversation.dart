@@ -32,6 +32,10 @@ abstract class SfConversation<TMessage extends SfMessage> extends SfEntity{
   }
   @override
   void populateDB(Map data){
+    if(data['lastMessage']!=null) data = {
+      ...data,
+      'lastMessage': SfLocatorManager.chatManager.messageFactory({})..populateDB(json.decode(data['lastMessage']))
+    };
     super.populateDB({
       ...data,
       'dict': jsonDecode(data['dict']??'{}'),
@@ -95,9 +99,18 @@ abstract class SfConversation<TMessage extends SfMessage> extends SfEntity{
     await update(ownerId,convId,{'unreadMessagesCount':unreadMessagesCount});
     SfLocatorManager.chatState.updateConversation(this);
   }
-  Future save();
+  Future save() async {
+    var conversation = await SfLocatorManager.chatManager.queryConversationOrNull(convId);
+    var database = await SfLocatorManager.storageManager.getDatabase();
+    if(conversation != null){
+      await database.update('conversation',toDB(), where: 'ownerId=? and convId=?',whereArgs: [ownerId,convId]);
+    }
+    else{
+      await database.insert('conversation',toDB());
+    }
+  }
   Future toggleTop() async {
-    this.top = this.top==0 ? 1 : 0;
+    top = top==0 ? 1 : 0;
     await update(ownerId,convId,{'top':top});
     SfLocatorManager.chatState.updateConversation(this);
   }

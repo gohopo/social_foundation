@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:social_foundation/widgets/path.dart';
 
 class SfUnderlineTabIndicator extends Decoration{
-  SfUnderlineTabIndicator({
+  const SfUnderlineTabIndicator({
     this.width,
     this.height,
     this.offsetY = 0,
@@ -177,10 +177,12 @@ class SfCubicPathPainter extends CustomPainter{
     canvas.drawCircle(offset, radius, paint);
   }
 
+  @override
   void paint(Canvas canvas,Size size){
     paintLine(canvas:canvas,size:size,color:lineColor);
     paintDots(canvas:canvas,size:size,color:dotColor);
   }
+  @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
@@ -188,15 +190,17 @@ class SfCustomPainter extends CustomPainter{
   SfCustomPainter({this.onPaint,this.onShouldRepaint});
   void Function(Canvas canvas, Size size)? onPaint;
   bool Function()? onShouldRepaint;
+  @override
   void paint(Canvas canvas, Size size) => onPaint?.call(canvas,size);
+  @override
   bool shouldRepaint(_) => onShouldRepaint?.call() ?? true;
 }
 
 class SfGradientCircularProgressIndicator extends StatelessWidget{
-  SfGradientCircularProgressIndicator({
-    Key? key,this.value=0.5,this.backgroundColor=Colors.transparent,this.strokeWidth=4,this.radius,
+  const SfGradientCircularProgressIndicator({
+    super.key,this.value=0.5,this.backgroundColor=Colors.transparent,this.strokeWidth=4,this.radius,
     this.gradientStops=const[0,1],required this.gradientColors,this.child
-  }):super(key:key);
+  });
   final double value;
   final Color backgroundColor;
   final double strokeWidth;
@@ -205,13 +209,13 @@ class SfGradientCircularProgressIndicator extends StatelessWidget{
   final List<Color> gradientColors;
   final Widget? child;
   void onPaint(Canvas canvas, Size size){
-    final total = 2 * pi;
+    const total = 2 * pi;
     size = radius!=null ? Size.fromRadius(radius!) : size;
 
-    double _value = value.clamp(0,1) * total;
-    const double _start = 0.05;
-    final double _offset = strokeWidth / 2;
-    final Rect rect = Offset(_offset, _offset) & Size(size.width - strokeWidth, size.height - strokeWidth);
+    double value = this.value.clamp(0,1) * total;
+    const double start = 0.05;
+    final double offset = strokeWidth / 2;
+    final Rect rect = Offset(offset, offset) & Size(size.width - strokeWidth, size.height - strokeWidth);
 
     final paint = Paint()
       ..strokeWidth = strokeWidth
@@ -221,17 +225,18 @@ class SfGradientCircularProgressIndicator extends StatelessWidget{
 
     if (backgroundColor != Colors.transparent) {
       paint.color = backgroundColor;
-      canvas.drawArc(rect, _start, total, false, paint);
+      canvas.drawArc(rect, start, total, false, paint);
     }
 
-    if (_value > 0) {
+    if (value > 0) {
       paint.shader = SweepGradient(
-        colors: gradientColors, endAngle: _value, stops: gradientStops
+        colors: gradientColors, endAngle: value, stops: gradientStops
       ).createShader(rect);
-      canvas.drawArc(rect, _start, _value, false, paint);
+      canvas.drawArc(rect, start, value, false, paint);
     }
   }
 
+  @override
   Widget build(_) => Stack(
     alignment: Alignment.center,
     children: [

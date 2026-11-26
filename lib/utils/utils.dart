@@ -10,7 +10,7 @@ import 'package:social_foundation/utils/social_foundation.dart';
 import 'package:uuid/uuid.dart';
 
 class SfUtils{
-  static String uuid() => Uuid().v4().replaceAll(new RegExp(r'[-]'),'');
+  static String uuid() => const Uuid().v4().replaceAll(RegExp(r'[-]'),'');
   static Uint8List encrypt(Uint8List bytes){
     for(var i=0;i<bytes.length;++i){
       bytes[i] = 255 - bytes[i];
@@ -32,19 +32,19 @@ class SfUtils{
     var hmac = crypto.Hmac(crypto.sha256,convert.utf8.encode(key));
     return hmac.convert(convert.utf8.encode(data)).toString();
   }
-  static int getIndexInRange<T>(List<T> range,bool predicate(T element)){
+  static int getIndexInRange<T>(List<T> range,bool Function(T element) predicate){
     var index = range.indexWhere(predicate);
     if(--index < 0) index = range.length-1;
     return index;
   }
-  static int calcIndexInRange(int value,int calculator(int index)){
+  static int calcIndexInRange(int value,int Function(int index) calculator){
     var index = 0;
     for(;value >= calculator(index);++index){}
     return index;
   }
   //获取经验等级
   static int getLevelFromExp(List<int> exps,int exp) => getIndexInRange<int>(exps,(e) => e>exp);
-  static int calcLevelFromExp(int exp,int calculator(int level)) => calcIndexInRange(exp,calculator);
+  static int calcLevelFromExp(int exp,int Function(int level) calculator) => calcIndexInRange(exp,calculator);
   //返回min,max之间的随机数
   static int randRange(int min,int max) => min + Random().nextInt(max-min);
   static double randRangeDouble(double min,double max) => min + Random().nextDouble()*(max-min);

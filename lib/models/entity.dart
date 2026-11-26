@@ -15,7 +15,7 @@ abstract class SfEntity{
   Map<String,dynamic> toDB() => toJson();
   Map<String,dynamic> toJson() => {};
   bool equals(SfEntity other) => this==other;
-  SfEntity newInstance() => noSuchMethod(Invocation.method(Symbol('newInstance'),null));
+  SfEntity newInstance() => noSuchMethod(Invocation.method(const Symbol('newInstance'),null));
 }
 
 abstract class SfSyncEntity extends SfEntity{
@@ -23,12 +23,14 @@ abstract class SfSyncEntity extends SfEntity{
   late int modifiedAt;
   late int isDeleted;
   SfSyncEntity(super.data);
+  @override
   void populate(Map data){
     super.populate(data);
     userId = data['userId']??SfLocatorManager.userState.curUserId;
     modifiedAt = data['modifiedAt']??0;
     isDeleted = data['isDeleted']??0;
   }
+  @override
   Map<String,dynamic> toJson() => {
     ...super.toJson(),
     'userId': userId,
@@ -36,13 +38,14 @@ abstract class SfSyncEntity extends SfEntity{
     'isDeleted': isDeleted,
   };
   bool get isSynced => modifiedAt<=(SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap)[syncTable] ?? 0);
-  String get syncTable => noSuchMethod(Invocation.getter(Symbol('syncTable')));
+  String get syncTable => noSuchMethod(Invocation.getter(const Symbol('syncTable')));
   static Future delete(String table,{String? where, List<Object?>? whereArgs}) async {
     var database = await SfLocatorManager.storageManager.getDatabase();
     return database.delete(table,where:where,whereArgs:whereArgs);
   }
   static Future deleteAll(String table) => delete(table);
-  SfSyncEntity newInstance() => noSuchMethod(Invocation.method(Symbol('newInstance'),null));
+  @override
+  SfSyncEntity newInstance() => noSuchMethod(Invocation.method(const Symbol('newInstance'),null));
   static Future<Map<String,List<SfSyncEntity>>> sync({required List<SfSyncEntity> schemas,bool? onlyWhenModified}) async {
     if(schemas.isNotEmpty!=true) return {};
     var syncedAtMap = SfLocatorManager.storageManager.sharedPreferences.getJson(SfStorageManagerKey.syncedAtMap);

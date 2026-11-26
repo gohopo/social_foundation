@@ -12,6 +12,7 @@ class SfRouterManager extends NavigatorObserver{
   static Future<T?> routeReplacement<T extends Object?>(Route<T> route,{NavigatorState? navigator,BuildContext? context}) => getNavigator(navigator:navigator,context:context).pushReplacement(route);
   static void pop<T extends Object?>({T? result,NavigatorState? navigator,BuildContext? context}) => getNavigator(navigator:navigator,context:context).pop(result);
 
+  @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
     final focus = FocusManager.instance.primaryFocus;

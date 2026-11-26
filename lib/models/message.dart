@@ -39,15 +39,15 @@ abstract class SfMessage extends SfMessageBase{
       case SfMessageType.text:
         return msg!=null ? [TextSpan(text:msg)] : [];
       case SfMessageType.image:
-        return [TextSpan(text:'[图片]')];
+        return [const TextSpan(text:'[图片]')];
       case SfMessageType.voice:
-        return [TextSpan(text:'[声音]')];
+        return [const TextSpan(text:'[声音]')];
       case SfMessageType.system:
-        return [TextSpan(text:'[系统]')];
+        return [const TextSpan(text:'[系统]')];
       case SfMessageType.notify:
-        return [TextSpan(text:'[通知]')];
+        return [const TextSpan(text:'[通知]')];
       case SfMessageType.recall:
-        return [TextSpan(text:'[已撤回]')];
+        return [const TextSpan(text:'[已撤回]')];
       default:
         return [];
     }
@@ -70,7 +70,7 @@ abstract class SfMessage extends SfMessageBase{
     var count = await update(data:toDB(),msgId:msgId,ownerId:ownerId);
     if(count>0) return;
     var database = await GetIt.instance<SfStorageManager>().getDatabase();
-    this.id = await database.insert('message',toDB(),conflictAlgorithm:ConflictAlgorithm.replace);
+    id = await database.insert('message',toDB(),conflictAlgorithm:ConflictAlgorithm.replace);
   }
   static Future saveAll<TMessage extends SfMessage>(List<TMessage> messages) async {
     var database = await GetIt.instance<SfStorageManager>().getDatabase();

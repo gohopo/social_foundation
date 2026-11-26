@@ -30,7 +30,7 @@ class SfQueue<T>{
 }
 
 class SfMap<K,T>{
-  Map<K,T> _map = {};
+  final Map<K,T> _map = {};
   void clear() => _map.clear();
   T? find(K? key) => _map[key];
   List<K> get keys => _map.keys.toList();

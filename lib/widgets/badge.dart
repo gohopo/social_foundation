@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SfBadge extends StatelessWidget {
-  SfBadge({
+  const SfBadge({
     super.key,
     this.child,
     this.visible = true,

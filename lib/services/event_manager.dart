@@ -5,14 +5,14 @@ import 'package:get_it/get_it.dart';
 import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
 
-class _SfEventBase{
+class SfEventBase{
   List<String> handledTags = [];
 }
 
-class SfEvent<T extends _SfEventBase> extends _SfEventBase{
+class SfEvent<T extends SfEventBase> extends SfEventBase{
   StreamSubscription? _subscription;
   
-  void listen(void onData(T event),{bool Function(T event)? onWhere}){
+  void listen(void Function(T event) onData,{bool Function(T event)? onWhere}){
     _subscription = GetIt.instance<EventBus>().on<T>().listen((event){
       if(onWhere==null || onWhere(event)) onData(event);
     });

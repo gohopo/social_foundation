@@ -1,19 +1,19 @@
 import 'package:flutter/widgets.dart';
 
 class SfKeepAlive extends StatefulWidget{
-  SfKeepAlive({
-    Key? key,
+  const SfKeepAlive({
+    super.key,
     required this.child,
     this.wantKeepAlive = true
-  }) : super(key:key);
+  });
   final Widget child;
   final bool wantKeepAlive;
 
   @override
-  _SfKeepAliveState createState() => _SfKeepAliveState();
+  SfKeepAliveState createState() => SfKeepAliveState();
 }
 
-class _SfKeepAliveState extends State<SfKeepAlive> with AutomaticKeepAliveClientMixin{
+class SfKeepAliveState extends State<SfKeepAlive> with AutomaticKeepAliveClientMixin{
   @override
   void didUpdateWidget(oldWidget){
     if(oldWidget.wantKeepAlive!=widget.wantKeepAlive) updateKeepAlive();

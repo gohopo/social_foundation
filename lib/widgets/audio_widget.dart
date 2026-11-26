@@ -42,13 +42,13 @@ class SfAudioRecorder extends SfViewState{
   Future onStart() async {
     if(Platform.isIOS){
       final session = await AudioSession.instance;
-      await session.configure(AudioSessionConfiguration(
+      await session.configure(const AudioSessionConfiguration(
         avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
         avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.allowBluetooth,
         avAudioSessionMode: AVAudioSessionMode.spokenAudio,
         avAudioSessionRouteSharingPolicy: AVAudioSessionRouteSharingPolicy.defaultPolicy,
         avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
-        androidAudioAttributes: const AndroidAudioAttributes(
+        androidAudioAttributes: AndroidAudioAttributes(
           contentType: AndroidAudioContentType.speech,
           flags: AndroidAudioFlags.none,
           usage: AndroidAudioUsage.voiceCommunication,
@@ -77,12 +77,14 @@ class SfAudioRecorder extends SfViewState{
     notifyListeners();
   }
 
+  @override
   Future initData() async {
     _soundRecorder = await FlutterSoundRecorder().openRecorder();
-    await _soundRecorder?.setSubscriptionDuration(Duration(milliseconds:100));
+    await _soundRecorder?.setSubscriptionDuration(const Duration(milliseconds:100));
     _soundRecorder?.onProgress?.listen(onProgress);
     return super.initData();
   }
+  @override
   void dispose() async {
     await stop(isCancelled:true);
     await _soundRecorder?.closeRecorder();
@@ -91,16 +93,17 @@ class SfAudioRecorder extends SfViewState{
 }
 
 class SfAudioRecorderConsumer extends StatelessWidget{
-  SfAudioRecorderConsumer({
-    Key? key,
+  const SfAudioRecorderConsumer({
+    super.key,
     this.child,
     this.onStartRecord,
     this.onStopRecord
-  }):super(key:key);
+  });
   final Widget? child;
   final VoidCallback? onStartRecord;
   final SfAudioRecorderStopCallback? onStopRecord;
 
+  @override
   Widget build(context) => SfProvider<SfAudioRecorderConsumerVM>(
     model: SfAudioRecorderConsumerVM(onStartRecord:onStartRecord,onStopRecord:onStopRecord),
     builder: (_,model,child) => GestureDetector(
@@ -114,7 +117,7 @@ class SfAudioRecorderConsumer extends StatelessWidget{
   );
 }
 class SfAudioRecorderConsumerVM extends SfAudioRecorder{
-  SfAudioRecorderConsumerVM({VoidCallback? onStartRecord,SfAudioRecorderStopCallback? onStopRecord}):super(onStartRecord:onStartRecord,onStopRecord:onStopRecord);
+  SfAudioRecorderConsumerVM({super.onStartRecord,super.onStopRecord});
   OverlayEntry? _overlayEntry;
   String decibelsIconDir = 'assets/images/audio_recorder/';
   String _tips = '手指上滑,取消录音';
@@ -145,14 +148,14 @@ class SfAudioRecorderConsumerVM extends SfAudioRecorder{
             child: Container(
               width: 160,
               height: 160,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xff77797A),
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
               ),
               child: Column(
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 10),
+                    margin: const EdgeInsets.only(top: 10),
                     child: Image.asset(
                       '$decibelsIconDir$decibelsIcon.png',
                       width: 100,
@@ -160,14 +163,12 @@ class SfAudioRecorderConsumerVM extends SfAudioRecorder{
                       package: 'social_foundation',
                     ),
                   ),
-                  Container(
-                    child: Text(
-                      _tips,
-                      style: TextStyle(
-                        fontStyle: FontStyle.normal,
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
+                  Text(
+                    _tips,
+                    style: const TextStyle(
+                      fontStyle: FontStyle.normal,
+                      color: Colors.white,
+                      fontSize: 14,
                     ),
                   )
                 ]),
@@ -180,10 +181,12 @@ class SfAudioRecorderConsumerVM extends SfAudioRecorder{
     SfLocatorManager.routerManager.navigator?.overlay?.insert(_overlayEntry!);
   }
 
+  @override
   Future onStart() async {
     buildOverLay();
     return super.onStart();
   }
+  @override
   Future onStop({bool? isCancelled}) async {
     if(_overlayEntry==null) return;
     _overlayEntry?.remove();
@@ -191,6 +194,7 @@ class SfAudioRecorderConsumerVM extends SfAudioRecorder{
     await super.onStop(isCancelled:isCancelled);
     _startY = _offsetY = 0;
   }
+  @override
   void onProgress(RecordingDisposition event){
     super.onProgress(event);
     _overlayEntry?.markNeedsBuild();
@@ -199,8 +203,8 @@ class SfAudioRecorderConsumerVM extends SfAudioRecorder{
 }
 
 class SfAudioPlayerWidget extends StatelessWidget {
-  SfAudioPlayerWidget({
-    Key? key,
+  const SfAudioPlayerWidget({
+    super.key,
     this.uri,
     required this.duration,
     this.width,
@@ -211,7 +215,7 @@ class SfAudioPlayerWidget extends StatelessWidget {
     this.onTap,
     this.earpieceMode,
     this.onReady
-  }) : super(key:key);
+  });
   final String? uri;
   final int duration;
   final double? width;
@@ -306,15 +310,17 @@ class SfAudioPlayerModel extends SfViewState{
   double volume;
   bool loop;
   ValueChanged<SfAudioPlayerModel>? onReady;
-  AudioPlayer player = new AudioPlayer();
+  AudioPlayer player = AudioPlayer();
   late StreamSubscription _stateSubscription;
   late StreamSubscription _positionSubscription;
   int position = 0;
   int duration = 0;
   static SfAudioPlayerModel? playingVM;
   
+  @override
   bool get wantKeepAlive => isPlaying;
   bool get isPlaying => player.state==PlayerState.playing;
+  @override
   Future initData() async {
     _stateSubscription = player.onPlayerStateChanged.listen(onPlayerStateChanged);
     _positionSubscription = player.onPositionChanged.listen(onPositionChanged);
@@ -324,6 +330,7 @@ class SfAudioPlayerModel extends SfViewState{
     if(uri!=null) uri = await SfApp.prepareSound(uri!);
     onReady?.call(this);
   }
+  @override
   void dispose(){
     setGlobal(false);
     player.dispose();
@@ -331,6 +338,7 @@ class SfAudioPlayerModel extends SfViewState{
     _positionSubscription.cancel();
     super.dispose();
   }
+  @override
   void onRefactor(newState) async {
     var state = newState as SfAudioPlayerModel;
     if(uri!=state.uri){
@@ -393,8 +401,8 @@ class SfAudioPlayerModel extends SfViewState{
 }
 
 class SfAudioPlayer extends StatelessWidget{
-  SfAudioPlayer({
-    Key? key,
+  const SfAudioPlayer({
+    super.key,
     required this.uri,
     required this.builder,
     this.autoplay = true,
@@ -403,7 +411,7 @@ class SfAudioPlayer extends StatelessWidget{
     this.volume = 1.0,
     this.onInit,
     this.onDispose
-  }):super(key:key);
+  });
   final String uri;
   final Widget Function(SfAudioPlayerVM model) builder;
   final bool autoplay;
@@ -413,6 +421,7 @@ class SfAudioPlayer extends StatelessWidget{
   final Future Function(SfAudioPlayerVM model)? onInit;
   final void Function(SfAudioPlayerVM model)? onDispose;
   SfAudioPlayerVM createModel() => SfAudioPlayerVM(this);
+  @override
   Widget build(BuildContext context) => SfProvider<SfAudioPlayerVM>(
     model: createModel(),
     builder: (_,model,__) => builder.call(model)
@@ -421,11 +430,13 @@ class SfAudioPlayer extends StatelessWidget{
 class SfAudioPlayerVM extends SfAudioPlayerModel{
   SfAudioPlayerVM(this.widget):super(uri:widget.uri,compatible:widget.compatible,loop:widget.loop);
   SfAudioPlayer widget;
+  @override
   Future initData() async {
     await super.initData();
     await widget.onInit?.call(this);
     if(widget.autoplay) await play();
   }
+  @override
   void dispose(){
     widget.onDispose?.call(this);
     super.dispose();

@@ -18,21 +18,18 @@ class SfCacheManager extends CacheManager with ImageCacheManager {
   static SfCacheManager? _cached;
   static SfCacheManager? _persisted;
   factory SfCacheManager(){
-    if(_cached==null){
-      _cached = SfCacheManager.custom(cacheKey:'libCachedImageData');
-    }
+    _cached ??= SfCacheManager.custom(cacheKey:'libCachedImageData');
     return _cached!;
   }
   factory SfCacheManager.persisted(){
-    if(_persisted==null){
-      _persisted = SfCacheManager.custom(cacheKey:'libPersistedImageData',stalePeriod:Duration(days:40000));
-    }
+    _persisted ??= SfCacheManager.custom(cacheKey:'libPersistedImageData',stalePeriod:const Duration(days:40000));
     return _persisted!;
   }
   SfCacheManager.custom({required String cacheKey,Duration? stalePeriod}):super(Config(cacheKey,stalePeriod:stalePeriod??const Duration(days:30),fileService:SfFileServiceCompat()));
   static CachedNetworkImageProvider provider(String url) => CachedNetworkImageProvider(url,cacheManager:SfCacheManager());
 }
 class SfFileServiceCompat extends FileService{
+  @override
   Future<FileServiceResponse> get(String url,{Map<String,String>? headers}) async {
     var response = await http.get(Uri.parse(url),headers:headers);
     var encrypt = SfAliyunOss.getEncryptFromFileUrl(url);
@@ -59,8 +56,8 @@ class SfCompatFileServiceGetResponse extends CompatFileServiceGetResponse{
 }
 
 class SfCachedNetworkImage extends StatelessWidget{
-  SfCachedNetworkImage({
-    Key? key,
+  const SfCachedNetworkImage({
+    super.key,
     this.placeholder,
     this.errorWidget,
     required this.imageUrl,
@@ -82,7 +79,7 @@ class SfCachedNetworkImage extends StatelessWidget{
     this.filterQuality,
     this.colorBlendMode,
     this.placeholderFadeInDuration,
-  }) : super(key:key);
+  });
   final Widget? placeholder;
   final Widget? errorWidget;
   final String imageUrl;
@@ -108,8 +105,8 @@ class SfCachedNetworkImage extends StatelessWidget{
     return placeholder ?? Container(
       width: 60,
       height: 60,
-      color: Color.fromARGB(255,48,50,66),
-      child: Icon(Icons.image,color:Color.fromRGBO(172,175,192,0.8))
+      color: const Color.fromARGB(255,48,50,66),
+      child: const Icon(Icons.image,color:Color.fromRGBO(172,175,192,0.8))
     );
   }
   Widget buildProgressIndicator(BuildContext context, String url, DownloadProgress progress){
@@ -126,9 +123,9 @@ class SfCachedNetworkImage extends StatelessWidget{
       imageBuilder: imageBuilder,
       progressIndicatorBuilder: buildProgressIndicator,
       errorWidget: buildError,
-      fadeOutDuration: fadeOutDuration ?? Duration(milliseconds: 1000),
+      fadeOutDuration: fadeOutDuration ?? const Duration(milliseconds: 1000),
       fadeOutCurve: fadeOutCurve ?? Curves.easeOut,
-      fadeInDuration: fadeInDuration ?? Duration(milliseconds: 500),
+      fadeInDuration: fadeInDuration ?? const Duration(milliseconds: 500),
       fadeInCurve: fadeInCurve ?? Curves.easeIn,
       width: width,
       height: height,
@@ -167,7 +164,7 @@ class SfCachedImage extends StatelessWidget{
     fit: fit,
     alignment: alignment ?? Alignment.center,
   );
-  Widget buildImage(BuildContext context,_SfCachedImageModel model){
+  Widget buildImage(BuildContext context,SfCachedImageModel model){
     switch(model.ext){
       case '.png':
       case '.gif':
@@ -181,22 +178,22 @@ class SfCachedImage extends StatelessWidget{
           file: model.file,
         );
       default:
-        return SizedBox();
+        return const SizedBox();
     }
   }
 
   @override
   Widget build(BuildContext context){
-    return SfProvider<_SfCachedImageModel>(
-      model: _SfCachedImageModel(this),
-      builder: (context,model,child) => imagePath==null || model.network&&model.file==null ? SizedBox() : buildImage(context,model)
+    return SfProvider<SfCachedImageModel>(
+      model: SfCachedImageModel(this),
+      builder: (context,model,child) => imagePath==null || model.network&&model.file==null ? const SizedBox() : buildImage(context,model)
     );
   }
 }
-class _SfCachedImageModel extends SfViewState{
-  _SfCachedImageModel(this.widget);
+class SfCachedImageModel extends SfViewState{
+  SfCachedImageModel(this.widget);
   SfCachedImage widget;
-  var _cacheClearedEvent = SfCacheClearedEvent();
+  final _cacheClearedEvent = SfCacheClearedEvent();
   String? ext;
   late bool network;
   File? file;
@@ -206,7 +203,7 @@ class _SfCachedImageModel extends SfViewState{
     reload();
   }
   @override
-  void onRefactor(covariant _SfCachedImageModel newState){
+  void onRefactor(covariant SfCachedImageModel newState){
     var changed = widget.imagePath!=newState.widget.imagePath;
     widget = newState.widget;
     if(changed) reload();

@@ -39,13 +39,15 @@ abstract class SfViewState extends ChangeNotifier {
   void localUpdateItems<T>({List? items,required T Function(dynamic data) factory,required ValueSetter<List<T>> add}){
     items?.removeWhere((x) => x==null);
     if(items?.isNotEmpty!=true) return;
-    var list = items!.map<T>((x) => !(x is T) ? factory(x) : x).toList();
+    var list = items!.map<T>((x) => x is! T ? factory(x) : x).toList();
     add(list);
     notifyListeners();
   }
   void localRemoveItems<T>({required List<T> items,required ValueSetter<T> remove}){
     if(items.isEmpty) return;
-    items.forEach((x)=>remove.call(x));
+    for (var x in items) {
+      remove.call(x);
+    }
     notifyListeners();
   }
   @override

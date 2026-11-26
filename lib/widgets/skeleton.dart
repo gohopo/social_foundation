@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SfSkeletonList extends StatelessWidget{
-  SfSkeletonList({
+  const SfSkeletonList({
+    super.key,
     this.length = 7,
     this.padding = const EdgeInsets.all(7),
     required this.builder,
@@ -18,12 +19,12 @@ class SfSkeletonList extends StatelessWidget{
     var theme = Theme.of(context);
     bool isDark = theme.brightness == Brightness.dark;
     return Shimmer.fromColors(
-      period: Duration(milliseconds:1200),
+      period: const Duration(milliseconds:1200),
       baseColor: isDark ? Colors.grey[700]! : Colors.grey[350]!,
       highlightColor: isDark ? Colors.grey[500]! : Colors.grey[200]!,
       child: ListView.builder(
         shrinkWrap: shrinkWrap,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         padding: padding,
         itemCount: length,
         itemBuilder: builder,
@@ -43,6 +44,7 @@ class SfSkeletonDecoration extends BoxDecoration{
 }
 
 class SfSkeletonItem extends StatelessWidget{
+  const SfSkeletonItem({super.key});
   @override
   Widget build(BuildContext context){
     bool isDark = Theme.of(context).brightness == Brightness.dark;
@@ -72,12 +74,12 @@ class SfSkeletonItem extends StatelessWidget{
                 decoration: SfSkeletonDecoration(isCircle: true, isDark: isDark),
               ),
               Container(
-                margin: EdgeInsets.only(left: 10),
+                margin: const EdgeInsets.only(left: 10),
                 height: 5,
                 width: 100,
                 decoration: SfSkeletonDecoration(isDark: isDark),
               ),
-              Expanded(child: SizedBox.shrink()),
+              const Expanded(child: SizedBox.shrink()),
               Container(
                 height: 5,
                 width: 30,
@@ -88,7 +90,7 @@ class SfSkeletonItem extends StatelessWidget{
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Container(
@@ -96,7 +98,7 @@ class SfSkeletonItem extends StatelessWidget{
                 width: width * 0.7,
                 decoration: SfSkeletonDecoration(isDark: isDark),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Container(
@@ -104,7 +106,7 @@ class SfSkeletonItem extends StatelessWidget{
                 width: width * 0.8,
                 decoration: SfSkeletonDecoration(isDark: isDark),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Container(
@@ -114,13 +116,13 @@ class SfSkeletonItem extends StatelessWidget{
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(right: 10),
+                margin: const EdgeInsets.only(right: 10),
                 height: 8,
                 width: 20,
                 decoration: SfSkeletonDecoration(isDark: isDark),
@@ -130,7 +132,7 @@ class SfSkeletonItem extends StatelessWidget{
                 width: 80,
                 decoration: SfSkeletonDecoration(isDark: isDark),
               ),
-              Expanded(child: SizedBox.shrink()),
+              const Expanded(child: SizedBox.shrink()),
               Container(
                 height: 20,
                 width: 20,
@@ -145,7 +147,8 @@ class SfSkeletonItem extends StatelessWidget{
 }
 
 class SfEasySkeletonList extends StatelessWidget{
-  SfEasySkeletonList({
+  const SfEasySkeletonList({
+    super.key,
     this.length = 7,
     this.padding = const EdgeInsets.all(7),
     this.shrinkWrap = false
@@ -160,7 +163,7 @@ class SfEasySkeletonList extends StatelessWidget{
       length: length,
       padding: padding,
       shrinkWrap: shrinkWrap,
-      builder: (context,index) => SfSkeletonItem(),
+      builder: (context,index) => const SfSkeletonItem(),
     );
   }
 }

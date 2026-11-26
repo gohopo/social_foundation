@@ -9,7 +9,7 @@ import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfChatInput extends StatelessWidget{
-  SfChatInput({
+  const SfChatInput({
     super.key,required this.model,
     double? accessoryHeight,this.backgroundColor,this.children1,this.children2,this.children3,
     this.editorBackgroundColor,this.editorColor,this.hintText,
@@ -35,7 +35,7 @@ class SfChatInput extends StatelessWidget{
   );
   Widget buildInputBar(BuildContext context) => Row(
     children: [
-      SizedBox(width:15),
+      const SizedBox(width:15),
       Expanded(
         child: buildEditor(context)
       ),
@@ -44,7 +44,7 @@ class SfChatInput extends StatelessWidget{
   );
   Widget buildView(BuildContext context){
     return Container(
-      padding: EdgeInsets.only(top:15),
+      padding: const EdgeInsets.only(top:15),
       color: backgroundColor,
       child: Column(
         children: [
@@ -53,14 +53,14 @@ class SfChatInput extends StatelessWidget{
           if(children2!=null) ...children2!,
           buildToolbar(context),
           if(children3!=null) ...children3!,
-          SizedBox(height:15),
+          const SizedBox(height:15),
           buildAccessoryContainer(context)
         ]
       ),
     );
   }
   Widget buildEditor(BuildContext context) => Container(
-    padding: EdgeInsets.symmetric(horizontal:11),
+    padding: const EdgeInsets.symmetric(horizontal:11),
     decoration: BoxDecoration(
       color: editorBackgroundColor,
       borderRadius: BorderRadius.circular(16.5)
@@ -70,8 +70,8 @@ class SfChatInput extends StatelessWidget{
       focusNode: model.focusNode,
       decoration: InputDecoration(
         hintText: hintText??'友善是交流的起点~',
-        hintStyle: TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8)),
-        contentPadding: EdgeInsets.symmetric(vertical:14),
+        hintStyle: const TextStyle(fontSize:16,color:Color.fromRGBO(172,175,192,0.8)),
+        contentPadding: const EdgeInsets.symmetric(vertical:14),
         border: InputBorder.none,
         errorBorder: InputBorder.none,
         focusedBorder: InputBorder.none,
@@ -90,8 +90,8 @@ class SfChatInput extends StatelessWidget{
     return InkWell(
       onTap: model.onTapSend,
       child: Container(
-        padding: padding??EdgeInsets.symmetric(horizontal:15,vertical:8),
-        child: Icon(Icons.send,color:Color.fromRGBO(159,162,178,1)),
+        padding: padding??const EdgeInsets.symmetric(horizontal:15,vertical:8),
+        child: const Icon(Icons.send,color:Color.fromRGBO(159,162,178,1)),
       ),
     );
   }
@@ -99,7 +99,7 @@ class SfChatInput extends StatelessWidget{
     var list = buildMenuList(context);
     if(list.isEmpty) return const SizedBox();
     return Container(
-      padding: EdgeInsets.only(top:15),
+      padding: const EdgeInsets.only(top:15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: list.asMap().keys.map((index) => GestureDetector(
@@ -112,14 +112,14 @@ class SfChatInput extends StatelessWidget{
   List<Widget> buildMenuList(BuildContext context){
     return [
       Icon(Icons.keyboard_voice,color: model.curAccessory==0?Colors.blue:null),
-      Icon(Icons.photo_album),
-      Icon(Icons.photo_camera),
+      const Icon(Icons.photo_album),
+      const Icon(Icons.photo_camera),
     ];
   }
   Widget buildAccessoryContainer(BuildContext context){
     var accessory = buildAccessory(context);
     return AnimatedContainer(
-      duration: Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 200),
       height: accessory!=null ? accessoryHeight : 0,
       child: accessory
     );

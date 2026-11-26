@@ -6,7 +6,8 @@ import 'package:social_foundation/widgets/provider_widget.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 class SfStrokeText extends StatelessWidget{
-  SfStrokeText({
+  const SfStrokeText({
+    super.key,
     required this.child,
     this.strokeCap = StrokeCap.round,
     this.strokeJoin = StrokeJoin.round,
@@ -66,7 +67,7 @@ class SfStrokeText extends StatelessWidget{
 }
 
 class SfLoadingText extends StatelessWidget{
-  SfLoadingText({this.text,TextStyle? style}):style=TextStyle(fontSize:24.sp,color:const Color.fromRGBO(100,100,100,1)).merge(style);
+  SfLoadingText({super.key,this.text,TextStyle? style}):style=TextStyle(fontSize:24.sp,color:const Color.fromRGBO(100,100,100,1)).merge(style);
   final String? text;
   final TextStyle style;
   @override

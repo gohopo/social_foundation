@@ -40,9 +40,7 @@ abstract class SfStorageManager{
   String get voiceDirectory => getFileDirectory('voice');
   String get recorderDirectory => getFileDirectory('recorder');
   Future<Database> getDatabase() async {
-    if(_database == null){
-      _database = await openDatabase(dbPath,version:dbVersion,onCreate: onCreateDatabase,onUpgrade: onUpgradeDatabase);
-    }
+    _database ??= await openDatabase(dbPath,version:dbVersion,onCreate: onCreateDatabase,onUpgrade: onUpgradeDatabase);
     return _database!;
   }
   Future deleteDirectory(String? dir){

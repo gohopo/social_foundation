@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:social_foundation/models/conversation.dart';
+import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/widgets/view_state.dart';
 
 abstract class SfChatState<TConversation extends SfConversation> extends SfRefreshListViewState<TConversation> {
@@ -8,8 +9,13 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
   List<TConversation> getListByNames(List<String> names) => list.where((data) => names.contains(data.name)).toList();
   int getListUnreadMessagesCount(List<TConversation> list) => list.fold(0, (previousValue, conv) => previousValue+conv.unreadMessagesCount);
   int getUnreadMessagesCount(String convId) => getConversation(convId)?.unreadMessagesCount??0;
-  Future<TConversation?> queryConversation(String convId) async {
-    return getConversation(convId);
+  @override
+  Future<List<TConversation>> loadData(bool refresh){
+    return SfLocatorManager.chatManager.queryConversations() as Future<List<TConversation>>;
+  }
+  Future<TConversation> queryConversation(String convId) async {
+    var conversation = getConversation(convId);
+    return conversation ?? SfLocatorManager.chatManager.queryConversation(convId) as Future<TConversation>;
   }
   void removeAllConversations(){
     list.clear();
@@ -18,6 +24,10 @@ abstract class SfChatState<TConversation extends SfConversation> extends SfRefre
   void removeConversation(String convId){
     list.removeWhere((x) => x.convId==convId);
     notifyListeners();
+  }
+  @override
+  void resetState(){
+    list.clear();
   }
   void updateConversation(TConversation conversation){
     list.removeWhere((x) => x.convId==conversation.convId);

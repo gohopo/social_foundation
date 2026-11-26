@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/widgets.dart';
 
 class SfColorFiltered extends StatelessWidget{
-  SfColorFiltered({this.hue,this.saturation,this.brightness,required this.child});
+  const SfColorFiltered({super.key,this.hue,this.saturation,this.brightness,required this.child});
   final double? hue;
   final double? saturation;
   final double? brightness;
@@ -66,6 +66,7 @@ class SfColorFiltered extends StatelessWidget{
     ]).map((i) => i.toDouble()).toList();
   }
 
+  @override
   Widget build(_){
     var c = child;
     if(hue!=null) c = ColorFiltered(
@@ -85,10 +86,11 @@ class SfColorFiltered extends StatelessWidget{
 }
 
 class SfColorWidget extends StatelessWidget{
-  SfColorWidget({Key? key,required this.color,required this.child,this.blendMode=BlendMode.srcIn}):super(key:key);
+  const SfColorWidget({super.key,required this.color,required this.child,this.blendMode=BlendMode.srcIn});
   final Color? color;
   final Widget child;
   final BlendMode blendMode;
+  @override
   Widget build(_) => color!=null ? ColorFiltered(
     colorFilter: ColorFilter.mode(color!,blendMode),
     child: child

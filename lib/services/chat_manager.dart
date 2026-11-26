@@ -1,13 +1,17 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:social_foundation/models/conversation.dart';
 import 'package:social_foundation/models/message.dart';
 import 'package:social_foundation/services/event_manager.dart';
 import 'package:social_foundation/services/locator_manager.dart';
 import 'package:social_foundation/utils/aliyun_helper.dart';
 import 'package:social_foundation/utils/file_helper.dart';
+import 'package:social_foundation/utils/utils.dart';
 
 abstract class SfChatManager<TConversation extends SfConversation,TMessage extends SfMessage>{
+  TConversation? chatGetter(List<TConversation> list,String otherId) => list.firstWhereOrNull((x) => x.convId==otherId);
+  List<TConversation> chatListGetter();
   Future close();
   TConversation conversationFactory(Map data);
   Future<TConversation> convJoin(String conversationId);
@@ -50,7 +54,41 @@ abstract class SfChatManager<TConversation extends SfConversation,TMessage exten
   }
   void protectedOnSendError(dynamic error){}
   Future<TMessage> protectedSendMessage(TConversation conversation,String? msg,String msgType,Map msgExtra);
-  Future<TConversation> queryChatWith(String userId,{bool? save=true,String? noAccessError});
+  Future<TConversation> queryChatWith(String userId,{bool? save=true,String? noAccessError}) async {
+    if(userId==SfLocatorManager.userState.curUserId) throw '不能发起会话';
+    if(noAccessError!=null) SfLocatorManager.userState.checkAccessWith(userId,noAccessError);
+    var conversation = chatGetter(chatListGetter(),userId);
+    if(conversation==null){
+      conversation = await queryConversationWith(userId);
+      if(save!=false) saveConversation(conversation);
+    }
+    return conversation;
+  }
+  Future<TConversation> queryConversation(String convId) async {
+    var conversation = await queryConversationOrNull(convId);
+    return conversation ?? await getConversation(convId);
+  }
+  Future<TConversation?> queryConversationOrNull(String convId) async {
+    var database = await SfLocatorManager.storageManager.getDatabase();
+    var result = await database.query('conversation',where:'ownerId=? and convId=?',whereArgs:[SfLocatorManager.userState.curUserId,convId],limit:1);
+    return result.isNotEmpty ? (conversationFactory({})..populateDB(result[0])) : null;
+  }
+  Future<TConversation> queryConversationWith(String otherId) async {
+    var conversation = await queryConversationWithOrNull(otherId);
+    return conversation ?? await getConversation(otherId);
+  }
+  Future<TConversation?> queryConversationWithOrNull(String otherId) async {
+    var database = await SfLocatorManager.storageManager.getDatabase();
+    var result = await database.query('conversation',where:'ownerId=? and members like ?',whereArgs:[SfLocatorManager.userState.curUserId,'%$otherId%']);
+    var conversations = result.map((x) => conversationFactory({})..populateDB(x)).toList();
+    return chatGetter(conversations,otherId);
+  }
+  Future<List<TConversation>> queryConversations() async {
+    var database = await SfLocatorManager.storageManager.getDatabase();
+    var result = await database.query('conversation',where:'ownerId=?',whereArgs:[SfLocatorManager.userState.curUserId],orderBy:'top desc,lastMessageAt desc');
+    var list = result.map((x) => conversationFactory({})..populateDB(x)).toList();
+    return SfUtils.distinct(list, (data) => data.convId);
+  }
   Future<TMessage> recallMessage(TMessage message) async {
     await convRecall(message.msgId!,conversationId:message.convId,timestamp:message.timestamp);
     message.msgType = SfMessageType.recall;

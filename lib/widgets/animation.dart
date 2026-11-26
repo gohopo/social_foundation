@@ -7,6 +7,7 @@ import 'package:social_foundation/widgets/view_state.dart';
 
 class SfTranslateAnimation extends StatelessWidget{
   SfTranslateAnimation({
+    super.key, 
     required this.controller,
     required this.child,
     Animation<double>? animation,
@@ -26,7 +27,7 @@ class SfTranslateAnimation extends StatelessWidget{
       builder: (context, child) => Transform.translate(
         offset: Tween<Offset>(
           begin: Offset(offsetX, offsetY),
-          end: Offset(0, 0),
+          end: const Offset(0, 0),
         ).animate(animation).value,
         child: Opacity(
           opacity: Tween<double>(
@@ -42,6 +43,7 @@ class SfTranslateAnimation extends StatelessWidget{
 
 class SfFadeAnimation extends StatelessWidget{
   SfFadeAnimation({
+    super.key, 
     required AnimationController controller,
     required this.child,
     Animation<double>? animation,
@@ -61,7 +63,8 @@ class SfFadeAnimation extends StatelessWidget{
 }
 
 class SfShakeAnimation extends StatelessWidget{
-  SfShakeAnimation({
+  const SfShakeAnimation({
+    super.key, 
     required this.child,
     this.repeat = 3,
     this.duration = const Duration(milliseconds:200),
@@ -143,7 +146,8 @@ class _SfShakeAnimationModel extends SfViewState{
 }
 
 class SfRotationAnimation extends StatelessWidget{
-  SfRotationAnimation({
+  const SfRotationAnimation({
+    super.key, 
     required this.child,
     this.duration = const Duration(seconds:30),
     this.alignment = Alignment.center
@@ -152,6 +156,7 @@ class SfRotationAnimation extends StatelessWidget{
   final Duration duration;
   final Alignment alignment;
 
+  @override
   Widget build(_) => SfProvider<_SfRotationAnimationModel>(
     model: _SfRotationAnimationModel(this),
     builder: (_,model,__) => AnimatedBuilder(
@@ -170,6 +175,7 @@ class _SfRotationAnimationModel extends SfViewState{
   SfRotationAnimation widget;
   late AnimationController controller;
 
+  @override
   Future initDataVsync(vsync) async {
     controller = AnimationController(duration:widget.duration,vsync:vsync);
     controller.addStatusListener((status){
@@ -181,6 +187,7 @@ class _SfRotationAnimationModel extends SfViewState{
     controller.forward();
     return super.initDataVsync(vsync);
   }
+  @override
   void dispose(){
     controller.dispose();
     super.dispose();
@@ -188,15 +195,15 @@ class _SfRotationAnimationModel extends SfViewState{
 }
 
 class SfAnimatedDouble extends ImplicitlyAnimatedWidget{
-  SfAnimatedDouble({
-    Key? key,
+  const SfAnimatedDouble({
+    super.key,
     required this.builder,
     required this.value,
     this.child,
-    Curve curve = Curves.linear,
-    required Duration duration,
-    VoidCallback? onEnd
-  }) : super(key:key,curve:curve,duration:duration,onEnd:onEnd);
+    super.curve,
+    required super.duration,
+    super.onEnd
+  });
   final ValueWidgetBuilder<double> builder;
   final double value;
   final Widget? child;
@@ -218,7 +225,7 @@ class _SfAnimatedDoubleState extends AnimatedWidgetBaseState<SfAnimatedDouble>{
 }
 
 class SfHeartFadeAnimation extends StatelessWidget{
-  SfHeartFadeAnimation({required this.heart,required this.position,required this.translateY,double? rotate,this.onCompleted})
+  SfHeartFadeAnimation({super.key, required this.heart,required this.position,required this.translateY,double? rotate,this.onCompleted})
   :rotate=rotate??SfUtils.randRangeDouble(-0.5,0.5);
   final Widget heart;
   final Offset position;

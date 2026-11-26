@@ -13,7 +13,7 @@ import 'package:social_foundation/utils/utils.dart';
 import 'package:social_foundation/widgets/cached_image_provider.dart';
 
 class SfAliyunOss{
-  static Map<String,String> _uploadCache = {};
+  static final Map<String,String> _uploadCache = {};
   static late String endPoint;
   static late String accessKeyId;
   static late String accessKeySecret;
@@ -89,7 +89,7 @@ class SfAliyunOss{
     if(long != null) resize += ',l_$long';
     if(limit != null) resize += ',limit_$limit';
     if(percent != null) resize += ',p_$percent';
-    if(resize.isNotEmpty) url += '?x-oss-process=image/resize' + resize;
+    if(resize.isNotEmpty) url += '?x-oss-process=image/resize$resize';
     return url;
   }
   static String getFileUrl(String dir,String fileKey){
@@ -152,7 +152,7 @@ class SfAliyunOssResizeMode {
 
 class SfAliyunFc{
   static void getAuthorization(RequestOptions requestOptions){
-    const ALGORITHM = 'ACS3-HMAC-SHA256';
+    const algorithm = 'ACS3-HMAC-SHA256';
     try{
       //初始化
       requestOptions.headers = {
@@ -184,11 +184,11 @@ class SfAliyunFc{
       var canonicalRequest = '${requestOptions.method}\n${requestOptions.uri.path}\n$canonicalQueryString\n$canonicalHeaders\n$signedHeaders\n$hashedRequestPayload';
       //拼接待签名字符串
       var hashedCanonicalRequest = SfUtils.sha256(canonicalRequest);
-      var stringToSign = ALGORITHM + '\n' + hashedCanonicalRequest;
+      var stringToSign = '$algorithm\n$hashedCanonicalRequest';
       //计算签名
       var signature = SfUtils.hmacSha256(SfAliyunOss.accessKeySecret,stringToSign);
       //拼接 Authorization
-      var authorization = '$ALGORITHM Credential=${SfAliyunOss.accessKeyId},SignedHeaders=$signedHeaders,Signature=$signature';
+      var authorization = '$algorithm Credential=${SfAliyunOss.accessKeyId},SignedHeaders=$signedHeaders,Signature=$signature';
       requestOptions.headers['Authorization'] = authorization;
     }
     catch(error){

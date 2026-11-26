@@ -1,4 +1,5 @@
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:social_foundation/services/router_manager.dart';
@@ -12,8 +13,8 @@ import 'package:social_foundation/widgets/view_state.dart';
 typedef SfLoadStateChanged = Widget? Function(int index,ExtendedImageState state);
 
 class SfPhotoViewer extends StatelessWidget{
-  SfPhotoViewer({
-    required this.images,int? index,String? heroPrefix,this.controller,bool? canSave,
+  const SfPhotoViewer({
+    super.key,required this.images,int? index,String? heroPrefix,this.controller,bool? canSave,
     this.loadStateChanged,this.childrenBuilder
   })
   :_index=index??0,heroPrefix=heroPrefix??'SfPhotoViewer',canSave=canSave??true;
@@ -24,6 +25,7 @@ class SfPhotoViewer extends StatelessWidget{
   final bool canSave;
   final SfLoadStateChanged? loadStateChanged;
   final List<Widget> Function(int index)? childrenBuilder;
+  @override
   Widget build(context) => SfProvider<SfPhotoViewerVM>(
     model: SfPhotoViewerVM(this),
     builder: (context,model,__)=>buildPage(context,model)
@@ -73,7 +75,7 @@ class SfPhotoViewer extends StatelessWidget{
   Widget buildIndex(BuildContext context,SfPhotoViewerVM model) => Positioned(
     top:MediaQuery.of(context).padding.top+15,width:MediaQuery.of(context).size.width,
     child: Center(
-      child: Text("${model.index+1}/${images.length}",style:TextStyle(color:Colors.white,fontSize:16)),
+      child: Text("${model.index+1}/${images.length}",style:const TextStyle(color:Colors.white,fontSize:16)),
     ),
   );
 }
@@ -94,7 +96,9 @@ class SfPhotoViewerVM extends SfViewState{
       GetIt.instance<SfToast>().onShowText('保存成功');
     }
     catch(error){
-      print(error);
+      if(kDebugMode){
+        print(error);
+      }
       GetIt.instance<SfToast>().onShowText('保存失败');
     }
   }
@@ -106,7 +110,7 @@ class SfPhotoViewerVM extends SfViewState{
 }
 
 class SfPhotoViewer2 extends StatelessWidget{
-  SfPhotoViewer2({required this.imageKeys,this.index,this.heroPrefix,this.controller,this.canSave,this.thumbnailGetter,this.childrenBuilder});
+  const SfPhotoViewer2({super.key,required this.imageKeys,this.index,this.heroPrefix,this.controller,this.canSave,this.thumbnailGetter,this.childrenBuilder});
   final List<String> imageKeys;
   final int? index;
   final String? heroPrefix;
